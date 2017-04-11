@@ -1,0 +1,115 @@
+body
+{
+font-size: 100%;	
+}
+
+table.Certificate	{
+		font: 1em 'Times New Roman';
+		color:black;
+		text-align:center;
+		background:transparent;
+		background-image: url(/site/1554/Freshcare_FSQ_Certificate_NoAddress_950x1282.jpg);
+		background-repeat: no-repeat;
+}
+
+table.CertificateFC_Other	{
+		font: 1em 'Times New Roman';
+		color:black;
+		text-align:center;
+		background:transparent;
+		background-image: url(/site/1554/Freshcare_ENV_Certificate_NoAddress_950x1282.jpg);
+		background-repeat: no-repeat;
+}
+
+table.CertificateJA_FSQ	{
+		font: 1em 'Times New Roman';
+		color:black;
+		text-align:center;
+		background:transparent;
+		background-image: url(/site/1554/JASANZ_FSQ_Certificate_NoAddress_950x1282.jpg);
+		background-repeat: no-repeat;
+}
+
+table.CertificateJA_Other	{
+		font: 1em 'Times New Roman';
+		color:black;
+		text-align:center;
+		background:transparent;
+		background-image: url(/site/1554/JASANZ_ENV_Certificate_NoAddress_950x1282.jpg);
+		background-repeat: no-repeat;
+}
+
+
+
+td.CertHeaderNew {
+		font: 2em 'Times New Roman';
+		color:black;
+		vertical-align:'top';
+		text-align:center;
+		background-color:transparent;
+}
+
+td.Cert {
+		font: 2em 'Times New Roman';
+		color:black;
+		vertical-align:'top';
+		text-align:center;
+		background-color:transparent;
+}
+
+td.Cert2 {
+		font:1.2em 'Times New Roman';
+		color:black;
+		vertical-align:'top';
+		text-align:center;
+		background-color:transparent;
+}
+
+span.CertBody, span.certdody {
+		font:0.65em 'Times New Roman';
+		color:black;
+		vertical-align:'top';
+		text-align:center;
+		background-color:transparent;
+}
+
+td.CertBody {
+		font:1.2em 'Times New Roman';
+		color:black;
+		vertical-align:'top';
+		text-align:center;
+		background-color:transparent;
+}
+
+
+td.CertBodyLarge	{
+		font:1.8em 'Times New Roman';
+		color:black;
+		vertical-align:'top';
+		text-align:center;
+		background-color:transparent;
+}
+
+td.CertBodySmall	{
+		font:0.925em 'Times New Roman';
+		color:black;
+		vertical-align:'top';
+		text-align:center;
+		background-color:transparent;
+}
+
+td.CertHeader	{
+		font: 3em 'Times New Roman';
+		color:black;
+		vertical-align:'top';
+		text-align:center;
+		background-color:transparent;
+}
+td.Small	{
+		font:0.5em 'Times New Roman';
+		color:black;
+		background-color:transparent;
+		vertical-align:'top';
+		text-align:center;
+}
+		
