@@ -3216,7 +3216,6 @@ nsFreshcare.external.grower =
 
 						if ($.trim(sNewAddress) != "") 
 						{
-							
 							if ($(sFirstRowElement).attr('data-default') === '1') 
 							{
 								// If we're looking at the primary business address, check if this has changed
@@ -3228,10 +3227,10 @@ nsFreshcare.external.grower =
 											  oOldAddress.addresspostcode.formatXHTML();
 
 								if (sNewAddress != sOldAddress) 
-									{
-										bChanged = true;
-										aChangedFields.push("Modified Site Address");
-									}
+								{
+									bChanged = true;
+									aChangedFields.push("Site Address Modified");
+								}
 
 							}
 							else 
@@ -3268,7 +3267,7 @@ nsFreshcare.external.grower =
 									// This is a new site that's been added
 									aChangedFields.push("New Site Address");
 									bChanged 	= true;
-									sOldAddress = '[New Site added]'
+									sOldAddress = '[New Site added]';
 								}
 							}
 
@@ -3279,6 +3278,12 @@ nsFreshcare.external.grower =
 										 freshcareUpdate: true }));
 							}
 						}		// New address is not blank
+
+						if (bRemoved)	
+						{
+							aChangedFields.push("Site Address Removed");
+						}
+						
 					});
 				}
 
@@ -3312,7 +3317,7 @@ nsFreshcare.external.grower =
 						if (this['agrisubscription.harvestmonth']
 							!= nsFreshcare.admin.grower.membership.harvestMonths.store({xhtmlElementId: 'ns1blankspaceMembership' + iMembershipId + 'HarvestMonthsUpdate'}))
 						{	
-							aChangedFields.push("Modified Harvest Months");
+							aChangedFields.push("Harvest Months");
 							// v2.0.4 newValue didn't have # in elment id
 							aMembershipHTML.push(nsFreshcare.external.grower.save.addToEmail(
 										{label: 'Harvest Months',
@@ -3337,7 +3342,7 @@ nsFreshcare.external.grower =
 						// v2.0.3 added formatXHTML()
 						if (this['agrisubscription.crop'].formatXHTML() != sCropsAfter)
 						{
-							aChangedFields.push("Modified Selected Crops");
+							aChangedFields.push("Crops");
 							// We want to email the sorted values, displaying erroroneous values where applicable
 							var aCropsSorted = $.map($('#ns1blankspaceMembership' + this.id + 'CropsUpdate_SelectRows .ns1blankspaceMultiSelect'), 
 													function(x) 
@@ -3366,8 +3371,9 @@ nsFreshcare.external.grower =
 						{
 							var sScopesBefore = ($.map(ns1blankspace.objectContextData.memberships[index].scopeValues, function (a) {return a.scopetext.formatXHTML()})).join(', ');
 							var sScopesAfter = ($.map($.grep($('#ns1blankspaceMainMembership' + iMembershipId + ' .nsFreshcareScopeList'), function (a) {return $(a).css('text-decoration').indexOf('line-through') === -1}), function(b) {return $(b).html().replace('<br>','')})).join(', ');
-							if (sScopesBefore != sScopesAfter) {
-
+							if (sScopesBefore != sScopesAfter) 
+							{
+								aChangedFields.push('Certificate Scope');
 								aMembershipHTML.push(nsFreshcare.external.grower.save.addToEmail({label: 'Certificate Scope',
 											oldValue: sScopesBefore, newValue:sScopesAfter,
 											 freshcareUpdate: true}));
@@ -3382,6 +3388,7 @@ nsFreshcare.external.grower =
 							var sProductGroupsAfter = ($.map($.grep($('#ns1blankspaceMainMembership' + iMembershipId + ' .nsFreshcareProductGroupList'), function (a) {return $(a).css('text-decoration').indexOf('line-through') == -1}), function(b) {return $(b).html().replace('<br>','')})).join(', ');
 							if (sProductGroupsBefore != sProductGroupsAfter) 
 							{
+								aChangedFields.push('Product Category');
 								aMembershipHTML.push(nsFreshcare.external.grower.save.addToEmail({label: 'Categories', 
 											oldValue: sProductGroupsBefore, newValue: sProductGroupsAfter,
 											 freshcareUpdate: true}));
@@ -3406,7 +3413,7 @@ nsFreshcare.external.grower =
 						
 						if (sMembershipSitesBefore != sMembershipSitesAfter) 
 						{
-							aChangedFields.push("Modified Membership Sites");
+							aChangedFields.push("Membership Sites");
 							aMembershipHTML.push(nsFreshcare.external.grower.save.addToEmail({label: 'Membership\'s Sites', 
 										oldValue: sMembershipSitesBefore, newValue: sMembershipSitesAfter,
 										 freshcareUpdate: true}));
@@ -3455,24 +3462,27 @@ nsFreshcare.external.grower =
 				// First, check if we have any messagetoSource
 				if (oParam.messagetoSourceHTML.length > 0)
 				{
-					oEmailParam.subject = 'Grower ' + ns1blankspace.objectContextData['contactbusiness.tradename'].formatXHTML() + ' updated. Errors to be fixed.';
-					oEmailParam.updateRows = oParam.messagetoSourceHTML;
-					oEmailParam.to = ns1blankspace.user.email;
-					oEmailParam.onCompleteWhenCan = oParam.onComplete;
-					oEmailParam.onComplete = nsFreshcare.external.grower.save.constructEmail;
-					oEmailParam.messageHTML = aMessageHTML;
+					oEmailParam.subject 			= 'Grower ' 
+														+ ns1blankspace.objectContextData['contactbusiness.tradename'].formatXHTML() 
+														+ ' updated. Errors to be fixed.';
+					oEmailParam.updateRows 			= oParam.messagetoSourceHTML;
+					oEmailParam.to 					= ns1blankspace.user.email;
+					oEmailParam.onCompleteWhenCan 	= oParam.onComplete;
+					oEmailParam.onComplete 			= nsFreshcare.external.grower.save.constructEmail;
+					oEmailParam.messageHTML 		= aMessageHTML;
 				}
 				else
 				{
 				// v3.2.001 SUP022943 
 					sChangedFieldsList				= oParam.changedFields;
-					oEmailParam.subject 			= 'CB Update:(by ' + nsFreshcare.user.role + ')(of ' + ns1blankspace.objectContextData['contactbusiness.tradename'].formatXHTML() + '):[Feilds Updated](' + sChangedFieldsList + ')' ; // TODO csv list of categories
+					oEmailParam.subject 			= 'CB Update:(by ' 
+														+ nsFreshcare.user.role + ')(of ' 
+														+ ns1blankspace.objectContextData['contactbusiness.tradename'].formatXHTML() 
+														+ '):[Feilds Updated](' + sChangedFieldsList + ')' ; 
 					oEmailParam.updateRows 			= aMessageHTML;
 					oEmailParam.to 					= sMessageTo;
 					oEmailParam.onComplete 			= oParam.onComplete;
-
 				}
-
 
 				nsFreshcare.external.grower.save.sendEmail(oEmailParam);
 			}

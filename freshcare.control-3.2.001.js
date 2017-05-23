@@ -110,20 +110,20 @@ nsFreshcare.data.jasanzDateId = '2094';					// dev
 nsFreshcare.structureElementCrops = '2091';				// dev
 nsFreshcare.data.structureMembershipFees = 256;			// dev
 
-nsFreshcare.data.emailToAdmin 		= "tony.carter@infinitydata.com.au" //3.2.001 SUP022943 (tc) //"admin@freshcare.com.au";
-nsFreshcare.data.emailToAuditor 	= "tony.carter@infinitydata.com.au" //3.2.001 SUP022943 (tc) //"auditors@freshcare.com.au";
-nsFreshcare.data.emailToCustomer 	= "tony.carter@infinitydata.com.au" //3.2.001 SUP022943 (tc) //"customers@freshcare.com.au";
-nsFreshcare.data.emailToGrower 		= "tony.carter@infinitydata.com.au" //3.2.001 SUP022943 (tc) //"growers@freshcare.com.au";
-nsFreshcare.data.emailToTrainer 	= "tony.carter@infinitydata.com.au" //3.2.001 SUP022943 (tc) //"trainers@freshcare.com.au";	// 1.020 Changed from emailTrainer
+nsFreshcare.data.emailToAdmin 		= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943 (tc) //"admin@freshcare.com.au";
+nsFreshcare.data.emailToAuditor 	= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943 (tc) //"auditors@freshcare.com.au";
+nsFreshcare.data.emailToCustomer 	= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943 (tc) //"customers@freshcare.com.au";
+nsFreshcare.data.emailToGrower 		= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943 (tc) //"growers@freshcare.com.au";
+nsFreshcare.data.emailToTrainer 	= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943 (tc) //"trainers@freshcare.com.au";	// 1.020 Changed from emailTrainer
 nsFreshcare.data.emailFromAdmin 	= "admin@freshcare.com.au";
 //nsFreshcare.data.emailFromAuditor = 'cb.updates@freshcare.com.au';
 //nsFreshcare.data.emailFromCustomer = 'customer.updates@freshcare.com.au';
 //nsFreshcare.data.emailFromTrainer = 'trainer.updates@freshcare.com.au';
 //nsFreshcare.data.emailFromGrower = 'grower.updates@freshcare.com.au';
-nsFreshcare.data.emailFromAuditor = 'admin@freshcare.com.au';
-nsFreshcare.data.emailFromCustomer = 'admin@freshcare.com.au';
-nsFreshcare.data.emailFromTrainer = 'admin@freshcare.com.au';
-nsFreshcare.data.emailFromGrower = 'admin@freshcare.com.au';
+nsFreshcare.data.emailFromAuditor 	= 'admin@freshcare.com.au';
+nsFreshcare.data.emailFromCustomer 	= 'admin@freshcare.com.au';
+nsFreshcare.data.emailFromTrainer 	= 'admin@freshcare.com.au';
+nsFreshcare.data.emailFromGrower 	= 'admin@freshcare.com.au';
 nsFreshcare.data.saveError = [];
 nsFreshcare.data.stateDistanceEducation = '9';
 nsFreshcare.data.membershipFSQ = '5';
@@ -2838,11 +2838,11 @@ nsFreshcare.app =
 			//nsFreshcare.data.emailToCustomer = "cassandra.buono@alt-designit.com.au" + ((nsFreshcare.site === 313) ? ";jacinta@freshcare.com.au" : '');
 			//nsFreshcare.data.emailToGrower = "cassandra.buono@alt-designit.com.au" + ((nsFreshcare.site === 313) ? ";jacinta@freshcare.com.au" : '');
 			//nsFreshcare.data.emailToTrainer = "cassandra.buono@alt-designit.com.au" + ((nsFreshcare.site === 313) ? ";jacinta@freshcare.com.au" : '');
-			nsFreshcare.data.emailToAdmin 		= "tony.carter@infinitydata.com.au" //3.2.001 SUP022943 (tc)"cassandra.buono@alt-designit.com.au";
-			nsFreshcare.data.emailToAuditor 	= "tony.carter@infinitydata.com.au" //3.2.001 SUP022943 (tc) "cassandra.buono@alt-designit.com.au" //;katie@freshcare.com.au";
-			nsFreshcare.data.emailToCustomer 	= "tony.carter@infinitydata.com.au" //3.2.001 SUP022943 (tc)"cassandra.buono@alt-designit.com.au" //;katie@freshcare.com.au";
-			nsFreshcare.data.emailToGrower 		= "tony.carter@infinitydata.com.au" //3.2.001 SUP022943 (tc)"cassandra.buono@alt-designit.com.au" //;katie@freshcare.com.au";
-			nsFreshcare.data.emailToTrainer 	= "tony.carter@infinitydata.com.au" //3.2.001 SUP022943 (tc)"cassandra.buono@alt-designit.com.au" //;katie@freshcare.com.au";
+			nsFreshcare.data.emailToAdmin 		= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943 
+			nsFreshcare.data.emailToAuditor 	= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943  //;katie@freshcare.com.au";
+			nsFreshcare.data.emailToCustomer 	= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943  //;katie@freshcare.com.au";
+			nsFreshcare.data.emailToGrower 		= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943  //;katie@freshcare.com.au";
+			nsFreshcare.data.emailToTrainer 	= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943  //;katie@freshcare.com.au";
 			nsFreshcare.data.emailFromAuditor 	= "cassandra.buono@alt-designit.com.au";
 			nsFreshcare.data.emailFromCustomer 	= "cassandra.buono@alt-designit.com.au";
 			nsFreshcare.data.emailFromGrower 	= "cassandra.buono@alt-designit.com.au";
@@ -5369,8 +5369,12 @@ ns1blankspace.logon.show = function(oParam)
 					'Logon Name' +
 					'</td>')
 
+	// SUP022047 - Fogotten Logon (Username)
+	//aHTML.push('<td class="ns1blankspaceLogonSub" style="padding-right:2px;">' +
+	//				'remember (tc) <input style="margin:0px; padding:0px; border: 0px;" type="checkbox" id="ns1blankspaceLogonRemember"/></td></tr>');
 	aHTML.push('<td class="ns1blankspaceLogonSub" style="padding-right:2px;">' +
-					'remember <input style="margin:0px; padding:0px; border: 0px;" type="checkbox" id="ns1blankspaceLogonRemember"/></td></tr>');
+					'<span id="ns1blankspaceLogonFind" style="cursor: pointer;">forgotten (UID)</span>' +
+					'</td></tr>');
 
 	aHTML.push('<tr><td colspan=2 style="padding-bottom: 10px;">' +
 					'<input id="ns1blankspaceLogonLogonName" class="ns1blankspaceLogon">' +
@@ -5382,7 +5386,7 @@ ns1blankspace.logon.show = function(oParam)
 					'</td>')
 
 	aHTML.push('<td class="ns1blankspaceLogonSub" style="padding-right:2px;">' +
-					'<span id="ns1blankspacePasswordSend" style="cursor: pointer;">forgotten</span>' +
+					'<span id="ns1blankspacePasswordSend" style="cursor: pointer;">forgotten (PWD)</span>' +
 					'</td></tr>');
 
 	aHTML.push('<tr><td class="ns1blankspaceLogonText" colspan=2 style="padding-bottom: 15px;">' +
@@ -5483,6 +5487,14 @@ ns1blankspace.logon.show = function(oParam)
 	        ns1blankspace.logon.init();
 	    }
 	});
+
+	// SUP022047 - Fogotten Logon (Username) 
+	$('#ns1blankspaceLogonFind').click(function()
+	{
+		alert('Function in development. Available 19.05.2017. Call JS Guru(TC) for any questions');
+		//ns1blankspace.logon.getLogon.show();
+	});
+
 
 	$('#ns1blankspacePasswordSend').click(function()
 	{

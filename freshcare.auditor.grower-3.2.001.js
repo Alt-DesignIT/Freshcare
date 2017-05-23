@@ -1703,7 +1703,6 @@ nsFreshcare.auditor.grower =
 
 								if ($.trim(sNewAddress) != "") 
 								{
-									
 									if (index === 0) 	// First one in the list - default address for the business also needs to be stored against ContactBusiness
 									{
 										// First, update the primary business and default site data
@@ -1715,6 +1714,7 @@ nsFreshcare.auditor.grower =
 
 										if (sNewAddress != sOldAddress) 
 										{
+											aChangedFields.push("Site Address Modified");
 											bChanged = true;
 											sDataBusiness += '&streetaddress1=' + ns1blankspace.util.fs($('#ns1blankspaceSiteValue_streetAddress1-' + sAddressId).html().formatXHTML());
 											sDataBusiness += '&streetaddress2=' + ns1blankspace.util.fs($('#ns1blankspaceSiteValue_streetAddress2-' + sAddressId).html().formatXHTML());
@@ -1774,16 +1774,15 @@ nsFreshcare.auditor.grower =
 																	 'new': bNew
 																	});
 												
-											if (bRemoved) {sNewAddress = "Site " + sOldAddress + " removed.";} 
-											else if (bInactivate) {sNewAddress = "Site " + sOldAddress + " inactivated.";} 
-											else if (bReactivate) {sOldAddress = 'Site reactivated'}
-											else if (bNew) {sOldAddress = '[New Site added]';}
+											if 		(bRemoved) 		{sNewAddress = "Site " + sOldAddress + " removed."; aChangedFields.push("Site Address Removed");} 
+											else if (bInactivate) 	{sNewAddress = "Site " + sOldAddress + " inactivated."; aChangedFields.push("Site Address Inactivated");}
+											else if (bReactivate) 	{sOldAddress = "Site reactivated"; aChangedFields.push("Site Address Reactivated");}
+											else if (bNew) 			{sOldAddress = '[New Site added]'; aChangedFields.push("New Site Address");}
 										} 
 									}
 
 									if (bChanged) 
 									{
-										aChangedFields.push("Site Address");
 										aMessageHTML.push(nsFreshcare.external.grower.save.addToEmail({label: 'Site Address', 
 												oldValue: sOldAddress , newValue: sNewAddress, freshcareUpdate: false }));
 									}
@@ -1871,6 +1870,7 @@ nsFreshcare.auditor.grower =
 
 									if (sCropsAfter != this['agrisubscription.crop'].formatXHTML()) 
 									{
+										aChangedFields.push("Crops");
 										// We want to store and email the sorted values, displaying erroroneous values where applicable
 										var aCropsSorted = $.map($('#ns1blankspaceMembership' + this.id + 'CropsUpdate_SelectRows .ns1blankspaceMultiSelect'), 
 																function(x) 
@@ -1899,6 +1899,7 @@ nsFreshcare.auditor.grower =
 									if (nsFreshcare.admin.grower.membership.harvestMonths.store({xhtmlElementId: 'ns1blankspaceMembership' + iMembershipId + 'HarvestMonthsUpdate'}) 
 										!= nsFreshcare.admin.grower.membership.harvestMonths.store({xhtmlElementId: 'ns1blankspaceMembership' + iMembershipId + 'HarvestMonths'})) 
 									{
+										aChangedFields.push("Harvest Months");
 										sData += '&harvestmonth=' + ns1blankspace.util.fs(nsFreshcare.admin.grower.membership.harvestMonths.store({xhtmlElementId: 'ns1blankspaceMembership' + iMembershipId + 'HarvestMonthsUpdate'})); 
 										
 										aMembershipHTML.push(nsFreshcare.external.grower.save.addToEmail({label: 'Harvest Months',
@@ -1923,6 +1924,7 @@ nsFreshcare.auditor.grower =
 									
 									if (sScopesBefore != sScopesAfter) {
 
+										aChangedFields.push("Certificate Scope");
 										$('#ns1blankspaceMainMembership' + iMembershipId + ' .nsFreshcareScopeList').each(function() 
 										{
 											if ($(this).attr('data-rowID') && $(this).attr('data-rowID') != '') {
@@ -1957,6 +1959,7 @@ nsFreshcare.auditor.grower =
 																.join(', ');
 									if (sProductGroupsBefore != sProductGroupsAfter) 
 									{
+										aChangedFields.push("Product Category");
 										$('#ns1blankspaceMainMembership' + iMembershipId + ' .nsFreshcareProductGroupList').each(function() 
 										{
 											// If existing, see if we need to remove it
@@ -2002,7 +2005,7 @@ nsFreshcare.auditor.grower =
 									
 									if (sMembershipSitesBefore != sMembershipSitesAfter) 
 									{
-
+										aChangedFields.push("Membership Sites");
 										$('#ns1blankspaceMainMembership' + iMembershipId + ' .nsFreshcareMembershipSiteList').each(function() 
 										{
 											// If existing, see if we need to remove it
@@ -2550,11 +2553,10 @@ nsFreshcare.auditor.grower =
 
 						// v3.2.001 SUP022943
 						sChangedFieldsList	= 	oParam.changedFields;
-						var sSubject 		= 	'CB Update:(by ' + nsFreshcare.user.role + ')(of ' + 
-												ns1blankspace.objectContextData['contactbusiness.tradename'].formatXHTML() + 
-												'):[Feilds Updated](' + sChangedFieldsList + ')' ; 
-
-
+						var sSubject 		= 	'CB Update:(by ' 
+													+ nsFreshcare.user.role + ')(of ' 
+													+ ns1blankspace.objectContextData['contactbusiness.tradename'].formatXHTML() 
+													+ '):[Feilds Updated](' + sChangedFieldsList + ')' ; 
 						delete(oParam.step);
 						delete(oParam.increment);
 						delete(oParam.dataPerson);
@@ -2586,8 +2588,8 @@ nsFreshcare.auditor.grower =
 						{
 							oEmailParam.onComplete = nsFreshcare.auditor.grower.home;	
 						}
+						
 						nsFreshcare.external.grower.save.sendEmail(oEmailParam);
-
 					}
 					else 
 					{
