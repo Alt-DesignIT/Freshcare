@@ -3012,6 +3012,7 @@ nsFreshcare.external.grower =
 			//3.2.001 SUP022943 (tc) , new variables to store each data feild updated
 			var aChangedFields 			= ns1blankspace.util.getParam(oParam, 'changedFields', {'default': []}).value;;
 			var sChangedFieldsList 		= '';
+			var bSiteAddressChanges		= 0	// 0 = false, 1 = true 
 
 			if (aMessageHTML.length == 0)
 			{
@@ -3229,7 +3230,8 @@ nsFreshcare.external.grower =
 								if (sNewAddress != sOldAddress) 
 								{
 									bChanged = true;
-									aChangedFields.push("Site Address Modified");
+									bSiteAddressChanges = 1;
+									//aChangedFields.push("Site Address Modified");
 								}
 
 							}
@@ -3265,7 +3267,8 @@ nsFreshcare.external.grower =
 								else 
 								{
 									// This is a new site that's been added
-									aChangedFields.push("New Site Address");
+									bSiteAddressChanges = 1;
+									//aChangedFields.push("New Site Address");
 									bChanged 	= true;
 									sOldAddress = '[New Site added]';
 								}
@@ -3281,10 +3284,17 @@ nsFreshcare.external.grower =
 
 						if (bRemoved)	
 						{
-							aChangedFields.push("Site Address Removed");
+							bSiteAddressChanges = 1;
+							//aChangedFields.push("Site Address Removed");
 						}
-						
+
 					});
+
+					if (bSiteAddressChanges)
+					{
+						aChangedFields.push("Site Address Changes");
+					}
+
 				}
 
 				//Loop through all of the Memberships to see if anything has changed on them.
@@ -3475,10 +3485,11 @@ nsFreshcare.external.grower =
 				{
 				// v3.2.001 SUP022943 
 					sChangedFieldsList				= oParam.changedFields;
-					oEmailParam.subject 			= 'CB Update:(by ' 
-														+ nsFreshcare.user.role + ')(of ' 
-														+ ns1blankspace.objectContextData['contactbusiness.tradename'].formatXHTML() 
-														+ '):[Feilds Updated](' + sChangedFieldsList + ')' ; 
+					//oEmailParam.subject 			= 'CB Update:(by ' 
+					//									+ nsFreshcare.user.role + ')(of ' 
+					//									+ ns1blankspace.objectContextData['contactbusiness.tradename'].formatXHTML() 
+					//									+ '):[Fields Updated] ' + sChangedFieldsList + '' ; 
+					oEmailParam.subject 			= 'CB Update : [Fields Updated] ' +  sChangedFieldsList ;						
 					oEmailParam.updateRows 			= aMessageHTML;
 					oEmailParam.to 					= sMessageTo;
 					oEmailParam.onComplete 			= oParam.onComplete;
@@ -3530,6 +3541,7 @@ nsFreshcare.external.grower =
 			// Add in the details of the changes - needs to be preceded by a table element as this hasn't been added yet
 			if (sMessageOverride === '') 
 			{
+				
 				aHTMLBefore.push('<table class="ns1blankspaceSearchMedium" style="width:800px;">');
 				aHTMLBefore.push('<tr><td>' + sSubject + '. Details are:</td></tr>');
 				aHTMLBefore.push('<tr><td>&nbsp;</td></tr>');
@@ -3673,8 +3685,13 @@ nsFreshcare.external.grower =
 			// Add in the details of the changes - needs to be preceded by a table element as this hasn't been added yet
 			if (sMessageOverride === '') 
 			{
+				var sUpdatedBy = ''
+				sUpdatedBy	= 	nsFreshcare.user.role + ', ' + ns1blankspace.user.contactBusinessText + 
+								', has updated the grower record for ' + 
+								ns1blankspace.objectContextData['contactbusiness.tradename'].formatXHTML();
+
 				aHTMLBefore.push('<table class="ns1blankspaceSearchMedium" style="width:800px;">');
-				aHTMLBefore.push('<tr><td>' + sSubject + '. Details are:</td></tr>');
+				aHTMLBefore.push('<tr><td>' + sUpdatedBy + '. Details are:</td></tr>');
 				aHTMLBefore.push('<tr><td>&nbsp;</td></tr>');
 
 				aHTMLBefore.push('<tr><td>');

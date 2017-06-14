@@ -1298,6 +1298,7 @@ nsFreshcare.auditor.grower =
 			//3.2.001 SUP022943 (tc) , new variables to store each data feild updated
 			var aChangedFields 			= ns1blankspace.util.getParam(oParam, 'changedFields', {'default': []}).value;;
 			var sChangedFieldsList 		= '';
+			var bSiteAddressChanges		= 0 ; // 0 = false 1 = true
 
 			if (oParam) 
 			{
@@ -1714,7 +1715,7 @@ nsFreshcare.auditor.grower =
 
 										if (sNewAddress != sOldAddress) 
 										{
-											aChangedFields.push("Site Address Modified");
+											bSiteAddressChanges = 1;
 											bChanged = true;
 											sDataBusiness += '&streetaddress1=' + ns1blankspace.util.fs($('#ns1blankspaceSiteValue_streetAddress1-' + sAddressId).html().formatXHTML());
 											sDataBusiness += '&streetaddress2=' + ns1blankspace.util.fs($('#ns1blankspaceSiteValue_streetAddress2-' + sAddressId).html().formatXHTML());
@@ -1774,10 +1775,15 @@ nsFreshcare.auditor.grower =
 																	 'new': bNew
 																	});
 												
-											if 		(bRemoved) 		{sNewAddress = "Site " + sOldAddress + " removed."; aChangedFields.push("Site Address Removed");} 
-											else if (bInactivate) 	{sNewAddress = "Site " + sOldAddress + " inactivated."; aChangedFields.push("Site Address Inactivated");}
-											else if (bReactivate) 	{sOldAddress = "Site reactivated"; aChangedFields.push("Site Address Reactivated");}
-											else if (bNew) 			{sOldAddress = '[New Site added]'; aChangedFields.push("New Site Address");}
+											if 		(bRemoved) 		{sNewAddress = "Site " + sOldAddress + " removed."; } 
+											else if (bInactivate) 	{sNewAddress = "Site " + sOldAddress + " inactivated."; } 
+											else if (bReactivate) 	{sOldAddress = "Site reactivated"; }
+											else if (bNew) 			{sOldAddress = '[New Site added]'; }
+
+											if ( bNew || bChanged || bRemoved || bReactivate || bInactivate ) 
+											{
+												bSiteAddressChanges = 1;
+											}
 										} 
 									}
 
@@ -1788,6 +1794,13 @@ nsFreshcare.auditor.grower =
 									}
 								}		// New address is not blank
 							});
+
+							if (bSiteAddressChanges)
+							{
+								aChangedFields.push("Site Address Changes");
+							}
+
+
 						}
 
 
@@ -2553,10 +2566,7 @@ nsFreshcare.auditor.grower =
 
 						// v3.2.001 SUP022943
 						sChangedFieldsList	= 	oParam.changedFields;
-						var sSubject 		= 	'CB Update:(by ' 
-													+ nsFreshcare.user.role + ')(of ' 
-													+ ns1blankspace.objectContextData['contactbusiness.tradename'].formatXHTML() 
-													+ '):[Feilds Updated](' + sChangedFieldsList + ')' ; 
+						var sSubject 		= 	'CB Update : [Fields Updated] ' +  sChangedFieldsList;
 						delete(oParam.step);
 						delete(oParam.increment);
 						delete(oParam.dataPerson);
