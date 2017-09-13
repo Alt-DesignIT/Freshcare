@@ -2099,7 +2099,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.admin.auditcar',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.auditcar-3.1.209.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.auditcar-3.1.215.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2184,7 +2184,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.auditor.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.grower-3.1.214.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.grower-3.1.215.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2319,7 +2319,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.trainer.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.trainer.grower-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.trainer.grower-3.1.215.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2341,10 +2341,6 @@ nsFreshcare.doLast = function()
 	ns1blankspace.xhtml.templates.source.invoiceschedule = '/site/' + nsFreshcare.site + '/1blankspace.setup.financial.invoiceschedule-1.0.0.html';
 	ns1blankspace.xhtml.templates.source.payment = '/site/' + nsFreshcare.site + '/1blankspace.setup.financial.payment-1.0.0.html';
 	ns1blankspace.xhtml.templates.source.action = '/site/' + nsFreshcare.site + '/1blankspace.setup.action-1.0.0.html';
-	/*
-	ns1blankspace.xhtml.templates.source.invoiceschedule = '/jscripts/1blankspace.setup.financial.invoiceschedule-1.0.0.html';
-	ns1blankspace.xhtml.templates.source.payment = '/jscripts/1blankspace.setup.financial.payment-1.0.0.html';
-	ns1blankspace.xhtml.templates.source.action = '/jscripts/1blankspace.setup.action-1.0.0.html'; */
 
 	// v3.1.0 Now add additional fields to extend object for Person if not already there
 	var oElementToAdd = 
@@ -2438,36 +2434,6 @@ nsFreshcare.doLast = function()
 	}
 
 	
-	/*if ($.grep(ns1blankspace.extend.structure, function(x) {return x.object == nsFreshcare.objectPerson}).length > 0)
-	{
-		ns1blankspace.extend.structure = $.map(ns1blankspace.extend.structure, function(x)
-		{
-			var oReturn = x;
-			var bExists = false;
-			if (x.object == nsFreshcare.objectPerson)
-			{
-				if ($.grep(x.elements, function(y) {return y.caption === "Email Signature"}).length == 0)
-				{
-					x.elements.push(oElementToAdd);
-				}
-			}
-		});
-	}
-	else
-	{
-		ns1blankspace.extend.structure.push(
-		{
-			category: "",
-			categorytext: "",
-			elements: [oElementToAdd],
-			id: "",
-			object: "32",
-			objecttext: "Person",
-			'structureobjectlink.object.prefix': "ContactPerson"
-		});
-	}
-	*/
-
 	ns1blankspace.messaging.imap.data.objects =
 	[
 		{
@@ -2725,6 +2691,10 @@ nsFreshcare.doLast = function()
 
 	}
 	
+	// v3.1.215 SUP023190Support Issue Defaults
+	ns1blankspace.supportIssue.data.defaultUser = "31";
+	ns1blankspace.supportIssue.data.defaultSeverity = "2";
+
 	if (nsFreshcare.control.doVeryLast)
 	{
 		nsFreshcare.control.doVeryLast();
@@ -3039,6 +3009,9 @@ nsFreshcare.control =
 			ns1blankspace.setup.networkGroup.users.add = nsFreshcare.admin.user.networkGroups.members.add;
 			ns1blankspace.setup.home = nsFreshcare.extend.setup.codes.home;
 			ns1blankspace.setup.messaging.summary = nsFreshcare.extend.setup.messaging.summary;		// v3.1.1 SUP022293
+			ns1blankspace.setup.messaging.search.send = nsFreshcare.extend.setup.messaging.search.send;		// v3.1.215 SUP023190
+			ns1blankspace.setup.messaging.details = nsFreshcare.extend.setup.messaging.details;		// v3.1.215 SUP023190
+			ns1blankspace.setup.messaging.save.send = nsFreshcare.extend.setup.messaging.save.send;		// v3.1.215 SUP023190
 			ns1blankspace.setup.file["import"].upload.show = nsFreshcare.extend.setup.file["import"].upload.show 	// v3.1.2 SUP022688 
 			ns1blankspace.setup.user.access.show = nsFreshcare.admin.user.access.show;		// v3.1.207 SUP023058
 			ns1blankspace.setup.networkGroup.groups.add = nsFreshcare.extend.document.networkGroup.add;		// v1.0.402

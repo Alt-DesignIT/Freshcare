@@ -11,7 +11,8 @@
 
 nsFreshcare.admin.certificate = 
 {
-	data: {},
+	data: 
+	{},
 
 	init: 	function (oParam) 
 	{ 
@@ -223,8 +224,8 @@ nsFreshcare.admin.certificate =
 			// v1.0.2 Now filters on Self Certification Date (contactbusiness.se2093) depending on whether admin or auditor
 			var dToday = new Date();
 			var sResultStatusFilter = '';
-			var dTodayLess28 = new Date();
-			dTodayLess28.setDate(dTodayLess28.getDate() - 30);
+			var dTodayLess30 = new Date();
+			dTodayLess30.setDate(dTodayLess30.getDate() - 30);
 			
 			$('.ns1blankspaceResultStatus').each(function() 
 			{
@@ -350,11 +351,11 @@ nsFreshcare.admin.certificate =
 					oSearch.addBracket(')');
 				}
 
-				// For Pending, only show audits where result status date was in last 30 days as they have 30 days to close them out
+				// For Pending, only show audits where audit date was is more than 30 days ago as they have 30 days to close them out
 				// v3.1.2 SUP022911 COmpare to Audit Date, not result status date
 				if (sResultStatusFilter === nsFreshcare.data.audit.resultStatusPending)
 				{
-					oSearch.addFilter('actualdate', 'LESS_THAN', dTodayLess28.toString('dd MMM yyyy') + ' 00:00:00');
+					oSearch.addFilter('actualdate', 'LESS_THAN', dTodayLess30.toString('dd MMM yyyy') + ' 00:00:00');
 					
 					// v3.1.2 SUP022693 ScopeExtension is a special audit type which is only processed if CE
 					oSearch.addFilter('type', 'NOT_EQUAL_TO', nsFreshcare.data.audit.typeScopeExtension);
@@ -1286,8 +1287,8 @@ nsFreshcare.admin.certificate =
 					oSearch.addFilter('audit.membershipstatus', 'EQUAL_TO', nsFreshcare.data.grower.subscriptionStatusIN);
 					
 					// IN Membership Subscription Status
-					oSearch.addFilter('audit.agrisubscription.status', 'EQUAL_TO',nsFreshcare.data.grower.subscriptionStatusIN);
-					
+					oSearch.addFilter('audit.agrisubscription.status', 'EQUAL_TO', nsFreshcare.data.grower.subscriptionStatusIN);
+					 
 					// Certificate doesn't exist or does exist if ScopeExtension audit
 					oSearch.addBracket('(');
 					oSearch.addFilter('audit.agrisubscription.agricertificate.id', 'IS_NULL');
@@ -5459,10 +5460,11 @@ nsFreshcare.admin.certificate =
 				// v2.0.4 SUP021408 Changed documentEmailTemplate to documentEmailCertificateTemplate
 				// v2.0.4e Added fromemail so that is always sent from Cert Body email address
 				// 3.0.0 SUP021713 Now shows spaceText (with 'Ltd' replaced) so that forked apps can use it as well
+				// v3.1.215 SUP023190 Now sends to contactPerson insteadl of email so that it gets correct user alias
 				var sData = 'to=' + ns1blankspace.util.fs(sGrowerEmail) +
 							'&subject=' + ns1blankspace.util.fs(sSubject) + 
 							'&save=Y' +
-							'&fromemail=' + ns1blankspace.util.fs(ns1blankspace.user.email) + 
+							'&fromemail=' + ns1blankspace.util.fs(ns1blankspace.user.contactPerson) + 
 							'&applysystemtemplate=N' +
 							'&copyattachmentsfromobject=' + ns1blankspace.util.fs(nsFreshcare.objectAction) +
 							'&copyattachmentsfromobjectcontext=' + ns1blankspace.util.fs(oParam.actionID) +

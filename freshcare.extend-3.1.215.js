@@ -5042,6 +5042,7 @@ nsFreshcare.extend =
 			sXHTMLTemplate = (sXHTMLTemplate).replace(/\[\[/g,'<span class="template">');
 			sXHTMLTemplate = (sXHTMLTemplate).replace(/\]\]/g,'</span>');
 
+			// Looks for [OBJECT]SCHEDULE TEMPLATE
 			var sXHTMLLineItemTemplate = ns1blankspace.format.templates.get({object: iObject, titleText: 'schedule'});
 			if (sXHTMLLineItemTemplate)
 			{
@@ -5051,6 +5052,7 @@ nsFreshcare.extend =
 				sXHTMLLineItemTemplate = sXHTMLLineItemTemplate.replace(/\]\]/g,'</span>');
 				sXHTMLLineItemTemplate = '<p id="pageBreak2" style="page-break-before:always;">&nbsp;</p>' + sXHTMLLineItemTemplate;
 			}
+			else (sXHTMLLineItemTemplate = '')		// v3.1.215 Added so that 'undefined' doesn't show if it doesn't exist
 
 			$(ns1blankspace.xhtml.container).html(sXHTMLTemplate + sXHTMLLineItemTemplate);
 			oXHTML = $(ns1blankspace.xhtml.container);
@@ -6677,8 +6679,86 @@ nsFreshcare.extend =
 
 		messaging:
 		{
-			summary: function()
+			search:
 			{
+				send: function(sXHTMLElementID, oParam)
+				{	// v3.1.215 SUP023190 Aliased to add Reply To Email field
+					var aSearch = sXHTMLElementID.split('-');
+					var sElementID = aSearch[0];
+					var sSearchContext = aSearch[1];
+					var iMinimumLength = 0;
+					var iSource = ns1blankspace.data.searchSource.text;
+					var sSearchText;
+					var iMaximumColumns = 1;
+					
+					if (oParam != undefined)
+					{
+						if (oParam.source != undefined) {iSource = oParam.source}
+						if (oParam.searchText != undefined) {sSearchText = oParam.searchText}
+						if (oParam.rows != undefined) {iRows = oParam.rows}
+						if (oParam.searchContext != undefined) {sSearchContext = oParam.searchContext}
+						if (oParam.minimumLength != undefined) {iMinimumLength = oParam.minimumLength}
+						if (oParam.maximumColumns != undefined) {iMaximumColumns = oParam.maximumColumns}
+					}
+														
+					if (sSearchContext != undefined && iSource != ns1blankspace.data.searchSource.browse)
+					{
+						$('#ns1blankspaceControl').html(ns1blankspace.xhtml.loading);
+						
+						ns1blankspace.objectContext = sSearchContext;
+					
+						var oSearch = new AdvancedSearch();
+						oSearch.method = 'SETUP_MESSAGING_ACCOUNT_SEARCH';
+						oSearch.addField('email,type,typetext,authtype,authtypetext,accountname,server,port,sslport,title,user,usertext,footer,' +
+											'smtpserver,smtpserverport,smtpaccountname,verification,verificationtext,replyto');
+						oSearch.addField(ns1blankspace.option.auditFields);
+						oSearch.addFilter('id', 'EQUAL_TO', ns1blankspace.objectContext);
+						oSearch.getResults(function(data) {ns1blankspace.setup.messaging.show(data)});
+					}
+					else
+					{
+						if (sSearchText == undefined)
+						{
+							sSearchText = $('#ns1blankspaceViewControlSearch').val();
+						}	
+						
+						if (iSource == ns1blankspace.data.searchSource.browse)
+						{
+							iMinimumLength = 1;
+							iMaximumColumns = 4;
+							sSearchText = aSearch[1];
+							if (sSearchText == '#') {sSearchText = '[0-9]'}
+							sElementId = 'ns1blankspace.ViewControlBrowse';
+						}
+						
+						if (sSearchText.length >= iMinimumLength || iSource == ns1blankspace.data.searchSource.browse)
+						{	
+							ns1blankspace.search.start();
+							
+							var oSearch = new AdvancedSearch();
+							oSearch.method = 'SETUP_MESSAGING_ACCOUNT_SEARCH';
+							oSearch.addField('email');
+							oSearch.addFilter('type', 'EQUAL_TO', 5);
+
+							if (iSource == ns1blankspace.data.searchSource.browse)
+							{
+								oSearch.addFilter('email', 'TEXT_STARTS_WITH', sSearchText);
+							}
+							else
+							{	
+								oSearch.addFilter('email', 'TEXT_IS_LIKE', sSearchText);
+							}	
+							
+							ns1blankspace.search.advanced.addFilters(oSearch);
+
+							oSearch.getResults(ns1blankspace.setup.messaging.search.process);
+						}
+					};	
+				}
+			},
+
+			summary: function()
+			{	
 				// 3.1.1 SUP022293 Added Ful Refresh functionality
 				var aHTML = [];
 				
@@ -6902,6 +6982,260 @@ nsFreshcare.extend =
 							}
 						}
 					});
+				}
+			},
+
+			details: function()
+			{	// v3.1.215 SUP023190 Aliased to add Reply To Email field
+				var aHTML = [];
+
+				if ($('#ns1blankspaceMainDetails').attr('data-loading') == '1')
+				{
+					$('#ns1blankspaceMainDetails').attr('data-loading', '');
+					
+					aHTML.push('<table class="ns1blankspaceContainer">' +
+									'<tr class="ns1blankspaceContainer">' +
+									'<td id="ns1blankspaceDetailsColumn1" class="ns1blankspaceColumn1"></td>' +
+									'<td id="ns1blankspaceDetailsColumn2" class="ns1blankspaceColumn2"></td>' +
+									'</tr>' + 
+									'</table>');					
+					
+					$('#ns1blankspaceMainDetails').html(aHTML.join(''));
+					
+					var aHTML = [];
+					
+					aHTML.push('<table class="ns1blankspace">');
+					
+					aHTML.push('<tr class="ns1blankspaceCaption">' +
+									'<td class="ns1blankspaceCaption">' +
+									'User' +
+									'</td></tr>' +
+									'<tr class="ns1blankspace">' +
+									'<td class="ns1blankspaceSelect">' +
+									'<input id="ns1blankspaceDetailsUser" class="ns1blankspaceSelect"' +
+										' data-method="SETUP_USER_SEARCH"' +
+										' data-columns="username">' +
+									'</td></tr>');			
+
+					aHTML.push('<tr class="ns1blankspaceCaption">' +
+									'<td class="ns1blankspaceCaption">' +
+									'Email' +
+									'</td></tr>' +
+									'<tr class="ns1blankspace">' +
+									'<td class="ns1blankspaceText">' +
+									'<input id="ns1blankspaceDetailsEmail" class="ns1blankspaceText">' +
+									'</td></tr>');	
+
+					aHTML.push('<tr class="ns1blankspaceCaption">' +
+									'<td class="ns1blankspaceCaption">' +
+									'Account Name' +
+									'</td></tr>' +
+									'<tr class="ns1blankspace">' +
+									'<td class="ns1blankspaceText">' +
+									'<input id="ns1blankspaceDetailsAccountName" class="ns1blankspaceText">' +
+									'</td></tr>');	
+
+					aHTML.push('<tr class="ns1blankspaceCaption">' +
+									'<td class="ns1blankspaceCaption">' +
+									'Account Password' +
+									'</td></tr>' +
+									'<tr class="ns1blankspace">' +
+									'<td class="ns1blankspaceText">' +
+									'<input id="ns1blankspaceDetailsAccountPassword" class="ns1blankspaceText" type="password">' +
+									'</td></tr>');	
+
+					aHTML.push('<tr class="ns1blankspaceCaption">' +
+									'<td class="ns1blankspaceCaption">' +
+									'Incoming Server (IMAP)' +
+									'</td></tr>' +
+									'<tr class="ns1blankspace">' +
+									'<td class="ns1blankspaceText">' +
+									'<input id="ns1blankspaceDetailsServer" class="ns1blankspaceText">' +
+									'</td></tr>');
+
+					aHTML.push('<tr class="ns1blankspaceCaption">' +
+									'<td class="ns1blankspaceCaption">' +
+									'Incoming Port' +
+									'</td></tr>' +
+									'<tr class="ns1blankspace">' +
+									'<td class="ns1blankspaceText">' +
+									'<input id="ns1blankspaceDetailsPort" class="ns1blankspaceText">' +
+									'</td></tr>');
+
+					aHTML.push('<tr class="ns1blankspaceCaption">' +
+									'<td class="ns1blankspaceCaption">' +
+									'Incoming SSL Port' +
+									'</td></tr>' +
+									'<tr class="ns1blankspace">' +
+									'<td class="ns1blankspaceText">' +
+									'<input id="ns1blankspaceDetailsSSLPort" class="ns1blankspaceText">' +
+									'</td></tr>');
+
+					aHTML.push('<tr class="ns1blankspaceCaption">' +
+									'<td class="ns1blankspaceCaption">' +
+									'Outgoing Server (SMTP)' +
+									'</td></tr>' +
+									'<tr class="ns1blankspace">' +
+									'<td class="ns1blankspaceText">' +
+									'<input id="ns1blankspaceDetailsSMTPServer" class="ns1blankspaceText">' +
+									'</td></tr>');
+
+					aHTML.push('<tr class="ns1blankspaceCaption">' +
+									'<td class="ns1blankspaceCaption">' +
+									'Outgoing Port' +
+									'</td></tr>' +
+									'<tr class="ns1blankspace">' +
+									'<td class="ns1blankspaceText">' +
+									'<input id="ns1blankspaceDetailsSMTPPort" class="ns1blankspaceText">' +
+									'</td></tr>');
+
+					aHTML.push('<tr class="ns1blankspaceCaption">' +
+									'<td class="ns1blankspaceCaption">' +
+									'Outgoing Account Name' +
+									'</td></tr>' +
+									'<tr class="ns1blankspace">' +
+									'<td class="ns1blankspaceText">' +
+									'<input id="ns1blankspaceDetailsSMTPAccountName" class="ns1blankspaceText">' +
+									'</td></tr>');
+
+					aHTML.push('<tr class="ns1blankspaceCaption">' +
+									'<td class="ns1blankspaceCaption">' +
+									'Outgoing Account Password' +
+									'</td></tr>' +
+									'<tr class="ns1blankspace">' +
+									'<td class="ns1blankspaceText">' +
+									'<input id="ns1blankspaceDetailsSMTPAccountPassword" class="ns1blankspaceText" type="password">' +
+									'</td></tr>');
+
+					aHTML.push('<tr><td class="ns1blankspaceSubNote">' +
+									'If you leave server details blank; defaults will be used.</td></tr>');
+	
+					aHTML.push('<tr class="ns1blankspaceCaption">' +
+									'<td class="ns1blankspaceCaption">' +
+									'Reply To Email' +
+									'</td></tr>' +
+									'<tr class="ns1blankspace">' +
+									'<td class="ns1blankspaceText">' +
+									'<input id="ns1blankspaceDetailsReplyTo" class="ns1blankspaceText">' +
+									'</td></tr>');
+
+					aHTML.push('</table>');					
+					
+					$('#ns1blankspaceDetailsColumn1').html(aHTML.join(''));
+					
+					var aHTML = [];
+					
+					aHTML.push('<table class="ns1blankspaceColumn2">');
+				
+					aHTML.push('<tr class="ns1blankspaceCaption">' +
+									'<td class="ns1blankspaceCaption">' +
+									'Type' +
+									'</td></tr>' +
+									'<tr class="ns1blankspace">' +
+									'<td class="ns1blankspaceRadio">' +
+									'<input type="radio" id="radioType5" name="radioType" value="5"/>Email' +
+									'</td></tr>');
+
+					aHTML.push('</table>');					
+					
+					$('#ns1blankspaceDetailsColumn2').html(aHTML.join(''));
+					
+					if (ns1blankspace.objectContextData != undefined)
+					{
+						$('#ns1blankspaceDetailsUser').val(ns1blankspace.objectContextData.usertext);
+						$('#ns1blankspaceDetailsUser').attr('data-id', ns1blankspace.objectContextData.user);
+						$('#ns1blankspaceDetailsEmail').val(ns1blankspace.objectContextData.email);
+						$('[name="radioType"][value="' + ns1blankspace.objectContextData.type + '"]').attr('checked', true);
+						$('#ns1blankspaceDetailsAccountName').val(ns1blankspace.objectContextData.accountname);
+						$('#ns1blankspaceDetailsServer').val(ns1blankspace.objectContextData.server);
+						$('#ns1blankspaceDetailsPort').val(ns1blankspace.objectContextData.port);
+						$('#ns1blankspaceDetailsSSLPort').val(ns1blankspace.objectContextData.sslport);
+						$('#ns1blankspaceDetailsSMTPServer').val(ns1blankspace.objectContextData.smtpserver);
+						$('#ns1blankspaceDetailsSMTPPort').val(ns1blankspace.objectContextData.smtpserverport);
+						$('#ns1blankspaceDetailsSMTPAccountName').val(ns1blankspace.objectContextData.smtpaccountname);
+						$('#ns1blankspaceDetailsReplyTo').val(ns1blankspace.objectContextData.replyto);
+					}
+					else
+					{
+						$('[name="radioType"][value="5"]').attr('checked', true);
+					}
+				}	
+			},
+			
+			save:
+			{
+				send: function()
+				{	// v3.1.215 SUP023190 Aliased to add Reply To Email field
+					ns1blankspace.status.working();
+					
+					var sData = '_=1';
+					
+					if (ns1blankspace.objectContext != -1)
+					{
+						sData += '&id=' + ns1blankspace.objectContext	
+					}	
+					
+					if ($('#ns1blankspaceMainDetails').html() != '')
+					{
+						var sServer = ns1blankspace.util.fs($('#ns1blankspaceDetailsServer').val());
+						if (sServer == '') {sServer = 'imap.gmail.com'}
+
+						var sSSLPort = $('#ns1blankspaceDetailsSSLPort').val();
+						var sPort = $('#ns1blankspaceDetailsPort').val();
+						if (sSSLPort == '' && sPort == '') {sSSLPort = '993'}	
+
+						sData += '&user=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsUser').attr("data-id"));
+						sData += '&email=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsEmail').val());
+						sData += '&title=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsEmail').val());
+						sData += '&address=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsEmail').val());
+						sData += '&type=' + ns1blankspace.util.fs($('input[name="radioType"]:checked').val());
+						sData += '&accountname=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsAccountName').val());
+						sData += '&server=' + sServer;
+						sData += '&cachetype=1';
+						sData += '&sslport=' + sSSLPort;
+						sData += '&port=' + sPort;
+						sData += '&authtype=0';
+						sData += '&smtpserver=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsSMTPServer').val());
+						sData += '&smtpserverport=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsSMTPPort').val());
+						sData += '&replyto=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsReplyTo').val());
+						
+						if ($('#ns1blankspaceDetailsAccountPassword').val() != '')
+						{
+							sData += '&accountpassword=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsAccountPassword').val());
+						}
+
+						if ($('#ns1blankspaceDetailsSMTPAccountPassword').val() != '')
+						{
+							sData += '&smtpaccountname=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsSMTPAccountName').val());
+							sData += '&smtpaccountpassword=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsSMTPAccountPassword').val());
+						}
+					};
+
+					if ($('#ns1blankspaceMainFooter').html() != '')
+					{
+						sData += '&footer=' + ns1blankspace.util.fs($('#ns1blankspaceFooterText').val());
+					}	
+
+					$.ajax(
+					{
+						type: 'POST',
+						url: ns1blankspace.util.endpointURI('SETUP_MESSAGING_ACCOUNT_MANAGE'),
+						data: sData,
+						dataType: 'json',
+						success: function(oResponse)
+						{
+							if (oResponse.status == 'OK')
+							{
+								ns1blankspace.inputDetected = false;
+								ns1blankspace.status.message('Saved');
+								ns1blankspace.setup.messaging.home();
+							}
+							else
+							{
+								ns1blankspace.status.error('Unable to save Messaging Account: ' + oResponse.error.errornotes);
+							}
+						}
+					});		
 				}
 			}
 		},

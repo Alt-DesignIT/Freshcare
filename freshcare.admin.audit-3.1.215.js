@@ -5475,10 +5475,11 @@ nsFreshcare.admin.audit =
 							}));
 
 					// v3.1.0b Since now using rpc messaging, need to send from verified account
+					// v3.1.215 SUP023190 Now sends from user.contactPerson instead of user.email
 					oParam.updateRows = aMessageHTML;
 					oParam.to = nsFreshcare.data.emailToTrainer;
 					oParam.from = ((nsFreshcare.data.switched == undefined && nsFreshcare.data.switched.id == undefined) 
-									? ns1blankspace.user.email
+									? ns1blankspace.user.contactPerson
 									: nsFreshcare.data.emailFromAuditor);
 					oParam.subject = 'Certification Body ' + ns1blankspace.user.contactBusinessText + ' has ' + 
 								((ns1blankspace.objectContext == -1) 
