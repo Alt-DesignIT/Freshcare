@@ -35,6 +35,7 @@ nsFreshcare.trainer = {};
 nsFreshcare.reviewer = {};
 nsFreshcare.external = {};
 nsFreshcare.internal = {};
+nsFreshcare.option = {};
 
 nsFreshcare.user = {};
 nsFreshcare.user.role = '';
@@ -67,15 +68,27 @@ nsFreshcare.data.groupAuditor = [];
 nsFreshcare.data.groupTrainer = [];
 nsFreshcare.data.groupCustomer = [];
 nsFreshcare.data.groupBoard = [];
+nsFreshcare.data.groupAccountsContact = '2658';
 nsFreshcare.data.businessGroupGrowerText = [];
 
 // v3.1.1i SUP022764 Added new roles
+// v3.2.001 SUP023329 Added remaining roles
 nsFreshcare.data.roles = 
 {
+	admin: '37',
 	administrator: '73',
+	auditor: '21',
+	board: '55', 
+	customer: '35',
 	financial: '70',
 	financialLimited: '71',
-	financialReadOnly: '72'
+	financialReadOnly: '72',
+	grower: '36',
+	internalAuditor: '68',
+	jasanz: '79',
+	reviewer: '65',
+	trainer: '34',
+	xeroSuperUser: '92'
 };
 
 nsFreshcare.data.relationshipParentBusiness = '311';	// lab
@@ -110,20 +123,20 @@ nsFreshcare.data.jasanzDateId = '2094';					// dev
 nsFreshcare.structureElementCrops = '2091';				// dev
 nsFreshcare.data.structureMembershipFees = 256;			// dev
 
-nsFreshcare.data.emailToAdmin 		= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943 (tc) //"admin@freshcare.com.au";
-nsFreshcare.data.emailToAuditor 	= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943 (tc) //"auditors@freshcare.com.au";
-nsFreshcare.data.emailToCustomer 	= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943 (tc) //"customers@freshcare.com.au";
-nsFreshcare.data.emailToGrower 		= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943 (tc) //"growers@freshcare.com.au";
-nsFreshcare.data.emailToTrainer 	= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943 (tc) //"trainers@freshcare.com.au";	// 1.020 Changed from emailTrainer
-nsFreshcare.data.emailFromAdmin 	= "admin@freshcare.com.au";
+nsFreshcare.data.emailToAdmin = "admin@freshcare.com.au";
+nsFreshcare.data.emailToAuditor = "auditors@freshcare.com.au";
+nsFreshcare.data.emailToCustomer = "customers@freshcare.com.au";
+nsFreshcare.data.emailToGrower = "growers@freshcare.com.au";
+nsFreshcare.data.emailToTrainer = "trainers@freshcare.com.au";	// 1.020 Changed from emailTrainer
+nsFreshcare.data.emailFromAdmin = "admin@freshcare.com.au";
 //nsFreshcare.data.emailFromAuditor = 'cb.updates@freshcare.com.au';
 //nsFreshcare.data.emailFromCustomer = 'customer.updates@freshcare.com.au';
 //nsFreshcare.data.emailFromTrainer = 'trainer.updates@freshcare.com.au';
 //nsFreshcare.data.emailFromGrower = 'grower.updates@freshcare.com.au';
-nsFreshcare.data.emailFromAuditor 	= 'admin@freshcare.com.au';
-nsFreshcare.data.emailFromCustomer 	= 'admin@freshcare.com.au';
-nsFreshcare.data.emailFromTrainer 	= 'admin@freshcare.com.au';
-nsFreshcare.data.emailFromGrower 	= 'admin@freshcare.com.au';
+nsFreshcare.data.emailFromAuditor = 'admin@freshcare.com.au';
+nsFreshcare.data.emailFromCustomer = 'admin@freshcare.com.au';
+nsFreshcare.data.emailFromTrainer = 'admin@freshcare.com.au';
+nsFreshcare.data.emailFromGrower = 'admin@freshcare.com.au';
 nsFreshcare.data.saveError = [];
 nsFreshcare.data.stateDistanceEducation = '9';
 nsFreshcare.data.membershipFSQ = '5';
@@ -133,6 +146,17 @@ nsFreshcare.data.membershipStatusActive = '2';
 
 nsFreshcare.data.attachmentTypeReviewChecklist = '74';
 nsFreshcare.data.attachmentTypeAuditReport = '73';
+
+// v3.1.209 Add options to switch on/off features in forked namespaces
+nsFreshcare.option.jasanzAccreditation = true;
+nsFreshcare.option.auditManualApprovalFlag = true;
+nsFreshcare.option.certBodySelfCertDate = true;
+nsFreshcare.option.certBodyNumber = true;
+nsFreshcare.option.certificationLevels = false;		// v3.1.209 SUP023095 Used by ECA - Levels of certification
+nsFreshcare.option.certificateTypes = false;		// v3.1.209 SUPo23095 USed by ECA - A & B certificate types
+nsFreshcare.option.carTypeReportTypes = false;		// v3.1.209 SUP023095 Used by ECA - Packing & Production report types
+nsFreshcare.option.carTypeSeverity = true;			// v3.1.209 SUP023095 Not used by ECA
+nsFreshcare.option.copJASANZDesc = true;			// v3.1.211 SUP023196 Not used by ECA
 
 nsFreshcare.data.switched = {};
 nsFreshcare.data.viewFilter = {};
@@ -215,7 +239,7 @@ ns1blankspace.xhtml.logonNotes =
 
 ns1blankspace.xhtml.header =
 	'<div id="ns1blankspaceLogo" style="width:70px; height:56px;float:left; "></div>' +
-	'<div id="ns1blankspaceHeaderText" style="float:left; padding-top:28px;"><span id="nsFreshcareOnlineHeaderRole" style="color:#80A82B;font-weight:bold;">FreshcareOnline' + 
+	'<div id="ns1blankspaceHeaderText" style="float:left; padding-top:28px;"><span id="nsFreshcareOnlineHeaderRole" style="color:#5B7F00;font-weight:bold;">FreshcareOnline' + 
 	'</span><span style="vertical-align:bottom; color:#999999; font-size:0.625em;">&nbsp;&nbsp;v' + nsFreshcare.version + '</span></div>' +
 	'<div style="float:right; margin-right:3px;">' +
 	'<div id="ns1blankspaceSpaceText" style="width:250px;"></div>' +
@@ -232,34 +256,85 @@ ns1blankspace.themes =
 
 ns1blankspace.option.initialiseSpaceTemplate = 
 	'/site/' + nsFreshcare.site + '/freshcare.setup.space-1.0.0.json';
-
 ns1blankspace.option.typeInput = 1;
 ns1blankspace.option.typeReadOnly = 2;
 ns1blankspace.option.typeButton = 3;
 ns1blankspace.option.typeFiller = 4;
 ns1blankspace.option.typeHidden = 5;
-
+ns1blankspace.option.returnToLast = false;
 ns1blankspace.option.calendarActionTypes = '4';
 ns1blankspace.option.actionTypeDefault = {id: '4', title: 'File Note'};
 ns1blankspace.option.messagingCheckURL = "https://mail.lab.ibcom.biz"; 		// v3.1.207 Enables threading on EMAIL_CACHE_CHECK
+
+ns1blankspace.option.preLoad = function()
+{
+	var oRoot = ns1blankspace.rootnamespace;
+
+	if (oRoot.site && oRoot.site != msOnDemandSiteId.toString())
+	{
+		oRoot.site = msOnDemandSiteId.toString();
+		if (ns1blankspace.rootnamespacetext != 'nsFreshcare') 
+		{
+			if (oRoot.sitesDev.indexOf(oRoot.site) > -1)
+			{	nsFreshcare.site = '313'; ns1blankspace.option.returnToLast = true;}
+			else
+			{ 	nsFreshcare.site = '1554'}
+		}
+		else
+		{
+			if (nsFreshcare.sitesDev.indexOf(nsFreshcare.site) > -1)
+			{ns1blankspace.option.returnToLast = true;}
+
+		}
+	}
+
+	ns1blankspace.scripts = 
+		$.map(ns1blankspace.scripts, function(x)
+		{
+			if (x.nameSpace === '1blankspace.supportIssue') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.supportissue-2.0.1.js';}
+			if (x.nameSpace === '1blankspace.messaging.imap') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.messaging.imap-2.0.614.js';}
+			if (x.nameSpace === '1blankspace.action') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.action-2.0.4.js';}
+			if (x.nameSpace === '1blankspace.report') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.report-2.0.310.js';}		
+			if (x.nameSpace === '1blankspace.financial') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.financial-2.0.4a.js';}
+
+			// v3.1.1 Newer version of prod files available
+			if (x.nameSpace === '1blankspace.financial.invoice') {x.source = '/jscripts/1blankspace.financial.invoice-2.0.3.js';}
+			if (x.nameSpace === '1blankspace.financial.expense') {x.source = '/jscripts/1blankspace.financial.expense-2.0.2.js';}
+			if (x.nameSpace === '1blankspace.financial.payment') {x.source = '/jscripts/1blankspace.financial.payment-2.0.2.js';}
+			if (x.nameSpace === '1blankspace.financial.receipt') {x.source = '/jscripts/1blankspace.financial.receipt-2.0.1.js';}
+			if (x.nameSpace === '1blankspace.financial.credit') {x.source = '/jscripts/1blankspace.financial.credit-2.0.1.js';}
+			if (x.nameSpace === '1blankspace.financial.bankaccount') {x.source = '/jscripts/1blankspace.financial.bankaccount-2.0.1.js';}
+			if (x.nameSpace === '1blankspace.util.local') {x.source = '/jscripts/1blankspace.util.local-2.0.2.js';}		// v3.1.207a
+			if (x.nameSpace === '1blankspace.format') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.format-2.0.9.js';}
+			if (x.nameSpace === '1blankspace.setup.file') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.setup.file-2.0.003.js';}	// v3.1.209b
+			if (x.nameSpace === '1blankspace.projectTask') {x.source = '/jscripts/1blankspace.project.task-2.0.1.js';} 
+			return x;
+		});
+	
+	// 3.0.2b Added so that budget could show in ECA
+	ns1blankspace.scripts.push({nameSpace: '1blankspace.visualise', source: (nsFreshcare.sitesDev.indexOf(nsFreshcare.site) > -1 ? '/jscripts' : '/site/' + nsFreshcare.site) + '/1blankspace.visualise-2.0.2.js'});
+	ns1blankspace.scripts.push({nameSpace: '1blankspace.financial.budget', source: '/jscripts/1blankspace.financial.budget-2.0.1.js'});
+	ns1blankspace.scripts.push({nameSpace: '1blankspace.setup.action', source: '/site/' + nsFreshcare.site + '/1blankspace.setup.action-2.0.0.js'});
+	ns1blankspace.scripts.push({nameSpace: '1blankspace.util.convert', source: '/site/' + nsFreshcare.site + '/1blankspace.util.convert-2.0.0.js'});
+	
+}
+
 
 
 // v3.1.1b SUP022566 Added to parameterise number of items on 1st & 2nd pages of invoices
 // v3.1.2 Moved to ns1blankspace.data.financial.invoice level
 ns1blankspace.data.financial = (ns1blankspace.data.financial) ? ns1blankspace.data.financial : {};
 ns1blankspace.data.financial.invoice = (ns1blankspace.data.financial.invoice) ? ns1blankspace.data.financial.invoice : {};
-ns1blankspace.data.financial.invoice.maxPage1Items = 10;
-ns1blankspace.data.financial.invoice.maxPage2Items = 40;
+ns1blankspace.data.financial.invoice.maxPage1ScheduleRows = 10;
+ns1blankspace.data.financial.invoice.maxPage2ScheduleRows = 40;
 
 ns1blankspace.board = {financialreports: {}};
-
-ns1blankspace.option.returnToLast = false;
 
 // v2.0.4 SUP021426 Added resources to external menus
 // v3.0.0 Reorganised groups and views
 nsFreshcare.setup = 
 [
-	{
+	{	/* Admin */
 		role: "Admin",
 		viewGroups:
 		[
@@ -602,6 +677,15 @@ nsFreshcare.setup =
 				parentNamespace: "admin",
 				rootnamespace: nsFreshcare,
 				endpoint: "CONTACT_RELATIONSHIP",
+				show: true,
+				group: 2,
+				type: 1
+			},
+			{
+				title: "JAS-ANZ Export",
+				namespace: "jasanzexport",
+				parentNamespace: "auditor",
+				rootnamespace: nsFreshcare,
 				show: true,
 				group: 2,
 				type: 1
@@ -982,6 +1066,7 @@ nsFreshcare.setup =
 				endpoint: "SETUP_FINANCIAL", 
 				show: true,
 				group: 8,
+				roles: ['financial', 'xeroSuperUser'],
 				type: 2
 			},
 			{
@@ -1168,7 +1253,8 @@ nsFreshcare.setup =
 			}
 		]
 	},
-	{	/* v3.1.1e SUP022638 Added new role */
+	{	/* Internal Auditor
+		v3.1.1e SUP022638 Added new role */
 		role: 'Internal Auditor',
 		viewGroups:
 		[
@@ -1251,7 +1337,8 @@ nsFreshcare.setup =
 			}
 		]
 	},
-	{	/* v3.1.2 SUP022859 Added new role */
+	{	/* JASANZ
+		v3.1.2 SUP022859 Added new role */
 		role: 'JASANZ',
 		viewGroups:
 		[
@@ -1346,7 +1433,7 @@ nsFreshcare.setup =
 			}
 		]
 	},
-	{
+	{	/* Trainer */
 		role: "Trainer",
 		viewGroups:
 		[
@@ -1419,7 +1506,7 @@ nsFreshcare.setup =
 			}
 		],
 	},
-	{
+	{	/* Auditor */
 		role: "Auditor",
 		viewGroups:
 		[
@@ -1551,6 +1638,15 @@ nsFreshcare.setup =
 				type: 1
 			},
 			{
+				title: "JAS-ANZ Export",
+				namespace: "jasanzexport",
+				parentNamespace: "auditor",
+				rootnamespace: nsFreshcare,
+				show: true,
+				group: 1,
+				type: 1
+			},
+			{
 				title: "Reporting",
 				namespace: "report",
 				parentNamespace: undefined,
@@ -1562,7 +1658,7 @@ nsFreshcare.setup =
 			}
 		]
 	},
-	{
+	{	/* Reviewer */
 		role: "Reviewer",
 		viewGroups:
 		[
@@ -1639,7 +1735,7 @@ nsFreshcare.setup =
 			}
 		]
 	},
-	{
+	{	/* Customer */
 		role: "Customer",
 		viewGroups:
 		[
@@ -1729,7 +1825,7 @@ nsFreshcare.setup =
 
 		]
 	},
-	{
+	{	/* Grower */
 		role: "Grower",
 		viewGroups:
 		[
@@ -1812,7 +1908,7 @@ nsFreshcare.setup =
 			}
 		]
 	},
-	{
+	{	/* Board Member */
 		role: "Board Member",
 		viewGroups:
 		[
@@ -1823,6 +1919,11 @@ nsFreshcare.setup =
 			{
 				id: 2,
 				name: 'Financial'
+			},
+			{
+				id: 3,
+				name: 'Xero',
+				roles: ['xeroSuperUser']
 			}
 		],
 		views:
@@ -1994,6 +2095,36 @@ nsFreshcare.setup =
 				show: true,
 				group: 2,
 				type: 1
+			},
+			{
+				title: "Financials Setup",
+				parentNamespace: "setup",
+				namespace: "financial",
+				endpoint: "SETUP_FINANCIAL", 
+				show: true,
+				group: 3,
+				roles: ['xeroSuperUser'],
+				type: 1
+			},
+			{
+				title: "Businesses",
+				namespace: "contactBusiness",
+				endpoint: "CONTACT_BUSINESS", 
+				show: true,
+				group: 3,
+				roles: ['xeroSuperUser'],
+				type: 1
+			},
+			{
+				title: "Log Files",
+				parentNamespace: "admin",
+				namespace: "xerologs",
+				rootNamespace: nsFreshcare,
+				endpoint: "ACTION", 
+				show: true,
+				group: 3,
+				roles: ['xeroSuperUser'],
+				type: 1
 			}
 		]
 	}
@@ -2008,32 +2139,32 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.util',
-		source: '/site/' + nsFreshcare.site + '/freshcare.util-3.1.201.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.util-3.1.215.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.audit',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.audit-3.1.208.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.audit-3.1.215.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.auditcar',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.auditcar-3.1.202.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.auditcar-3.1.215.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.certificationbody',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.certificationbody-3.1.2.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.certificationbody-3.1.209.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.certificate',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.certificate-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.certificate-3.1.215.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.contactPerson',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.contactperson-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.contactperson-3.1.213.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2043,7 +2174,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.admin.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.grower-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.grower-3.2.001.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2053,17 +2184,17 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.admin.newgrower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newgrower-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newgrower-3.1.210.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.newmemberships',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newmemberships-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newmemberships-3.1.210.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.newtrainee',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newtrainee-3.1.2.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newtrainee-3.1.208b.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2073,27 +2204,27 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.admin.report',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.report-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.report-3.1.209.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.trainer',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainer-3.1.2.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainer-3.1.209b.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.trainingpackage',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainingpackage-3.1.0.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainingpackage-3.1.215.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.trainingcourse',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainingcourse-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainingcourse-3.1.210.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.user',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.user-3.1.208.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.user-3.2.001.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2103,12 +2234,17 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.auditor.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.grower-3.2.001.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.grower-3.1.215.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.auditor.home',
 		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.home-3.1.207.js',
+		sourceNS: nsFreshcare
+	},
+	{
+		nameSpace: 'freshcare.auditor.jasanzexport',
+		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.jasanzexport-3.1.212.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2118,7 +2254,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.customer.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.customer.grower-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.customer.grower-3.1.215.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2128,12 +2264,12 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.external.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.external.grower-3.2.001.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.external.grower-3.1.213.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.extend',
-		source: '/site/' + nsFreshcare.site + '/freshcare.extend-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.extend-3.2.001.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2163,7 +2299,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.grower.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.grower.grower-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.grower.grower-3.1.210.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2178,7 +2314,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.internal',
-		source: '/site/' + nsFreshcare.site + '/freshcare.internal-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.internal-3.2.001.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2203,17 +2339,17 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.external.freshcareprofile',
-		source: '/site/' + nsFreshcare.site + '/freshcare.setup.freshcareprofile-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.setup.freshcareprofile-3.1.210.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.setup.membership',
-		source: '/site/' + nsFreshcare.site + '/freshcare.setup.membership-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.setup.membership-3.1.211.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.setup.cartype',
-		source: '/site/' + nsFreshcare.site + '/freshcare.setup.cartype-3.1.1f.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.setup.cartype-3.1.209.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2233,7 +2369,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.trainer.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.trainer.grower-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.trainer.grower-3.1.215.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2248,60 +2384,6 @@ $(function()
 	window.setTimeout('nsFreshcare.app.init()', 100);
 });
 
-ns1blankspace.option.preLoad = function()
-{
-	var oRoot = ns1blankspace.rootnamespace;
-
-	if (oRoot.site && oRoot.site != msOnDemandSiteId.toString())
-	{
-		oRoot.site = msOnDemandSiteId.toString();
-		if (ns1blankspace.rootnamespacetext != 'nsFreshcare') 
-		{
-			if (oRoot.sitesDev.indexOf(oRoot.site) > -1)
-			{	nsFreshcare.site = '313'; ns1blankspace.option.returnToLast = true;}
-			else
-			{ 	nsFreshcare.site = '1554'}
-		}
-		else
-		{
-			if (nsFreshcare.sitesDev.indexOf(nsFreshcare.site) > -1)
-			{ns1blankspace.option.returnToLast = true;}
-
-		}
-	}
-
-	ns1blankspace.scripts = 
-		$.map(ns1blankspace.scripts, function(x)
-		{
-			if (x.nameSpace === '1blankspace.supportIssue') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.supportissue-2.0.0b.js';}
-			if (x.nameSpace === '1blankspace.messaging.imap') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.messaging.imap-2.0.610.js';}
-			if (x.nameSpace === '1blankspace.action') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.action-2.0.4.js';}
-			if (x.nameSpace === '1blankspace.report') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.report-2.0.307a.js';}		
-			if (x.nameSpace === '1blankspace.financial') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.financial-2.0.4a.js';}
-
-			// v3.1.1 Newer version of prod files available
-			if (x.nameSpace === '1blankspace.financial.invoice') {x.source = '/jscripts/1blankspace.financial.invoice-2.0.3.js';}
-			if (x.nameSpace === '1blankspace.financial.expense') {x.source = '/jscripts/1blankspace.financial.expense-2.0.2.js';}
-			if (x.nameSpace === '1blankspace.financial.payment') {x.source = '/jscripts/1blankspace.financial.payment-2.0.2.js';}
-			if (x.nameSpace === '1blankspace.financial.receipt') {x.source = '/jscripts/1blankspace.financial.receipt-2.0.1.js';}
-			if (x.nameSpace === '1blankspace.financial.credit') {x.source = '/jscripts/1blankspace.financial.credit-2.0.1.js';}
-			if (x.nameSpace === '1blankspace.financial.bankaccount') {x.source = '/jscripts/1blankspace.financial.bankaccount-2.0.1.js';}
-			if (x.nameSpace === '1blankspace.util.local') {x.source = '/jscripts/1blankspace.util.local-2.0.2.js';}		// v3.1.207a
-			if (x.nameSpace === '1blankspace.format') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.format-2.0.8.js';}
-			//if (x.nameSpace === '1blankspace.setup.file') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.setup.file-2.0.2.js';}		// remove later!!!!!!
-			if (x.nameSpace === '1blankspace.projectTask') {x.source = '/jscripts/1blankspace.project.task-2.0.1.js';} 
-			return x;
-		});
-	
-	// 3.0.2b Added so that budget could show in ECA
-	ns1blankspace.scripts.push({nameSpace: '1blankspace.visualise', source: (nsFreshcare.sitesDev.indexOf(nsFreshcare.site) > -1 ? '/jscripts' : '/site/' + nsFreshcare.site) + '/1blankspace.visualise-2.0.2.js'});
-	ns1blankspace.scripts.push({nameSpace: '1blankspace.financial.budget', source: '/jscripts/1blankspace.financial.budget-2.0.1.js'});
-	ns1blankspace.scripts.push({nameSpace: '1blankspace.setup.action', source: '/site/' + nsFreshcare.site + '/1blankspace.setup.action-2.0.0.js'});
-	ns1blankspace.scripts.push({nameSpace: '1blankspace.util.convert', source: '/site/' + nsFreshcare.site + '/1blankspace.util.convert-2.0.0.js'});
-	
-	//ns1blankspace.control.doLast = nsFreshcare.control.doLast;
-}
-
 
 nsFreshcare.doLast = function() 
 {
@@ -2309,10 +2391,6 @@ nsFreshcare.doLast = function()
 	ns1blankspace.xhtml.templates.source.invoiceschedule = '/site/' + nsFreshcare.site + '/1blankspace.setup.financial.invoiceschedule-1.0.0.html';
 	ns1blankspace.xhtml.templates.source.payment = '/site/' + nsFreshcare.site + '/1blankspace.setup.financial.payment-1.0.0.html';
 	ns1blankspace.xhtml.templates.source.action = '/site/' + nsFreshcare.site + '/1blankspace.setup.action-1.0.0.html';
-	/*
-	ns1blankspace.xhtml.templates.source.invoiceschedule = '/jscripts/1blankspace.setup.financial.invoiceschedule-1.0.0.html';
-	ns1blankspace.xhtml.templates.source.payment = '/jscripts/1blankspace.setup.financial.payment-1.0.0.html';
-	ns1blankspace.xhtml.templates.source.action = '/jscripts/1blankspace.setup.action-1.0.0.html'; */
 
 	// v3.1.0 Now add additional fields to extend object for Person if not already there
 	var oElementToAdd = 
@@ -2406,36 +2484,6 @@ nsFreshcare.doLast = function()
 	}
 
 	
-	if ($.grep(ns1blankspace.extend.structure, function(x) {return x.object == nsFreshcare.objectPerson}).length > 0)
-	{
-		ns1blankspace.extend.structure = $.map(ns1blankspace.extend.structure, function(x)
-		{
-			var oReturn = x;
-			var bExists = false;
-			if (x.object == nsFreshcare.objectPerson)
-			{
-				if ($.grep(x.elements, function(y) {return y.caption === "Email Signature"}).length == 0)
-				{
-					x.elements.push(oElementToAdd);
-				}
-			}
-		});
-	}
-	else
-	{
-		ns1blankspace.extend.structure.push(
-		{
-			category: "",
-			categorytext: "",
-			elements: [oElementToAdd],
-			id: "",
-			object: "32",
-			objecttext: "Person",
-			'structureobjectlink.object.prefix': "ContactPerson"
-		});
-	}
-
-
 	ns1blankspace.messaging.imap.data.objects =
 	[
 		{
@@ -2503,6 +2551,9 @@ nsFreshcare.doLast = function()
 					sourceFunction: 'extend.format.itemAmountExGST',
 					sourceFunctionRootNamespace: nsFreshcare,
 					sourceFunctionRootNamespaceText: 'nsFreshcare',
+					sourceMethod: 'extend.format.itemAmountExGST',
+					sourceMethodRootNamespace: nsFreshcare,
+					sourceMethodRootNamespaceText: 'nsFreshcare',
 					sourceGroup: 'lineitem'
 				});
 		}
@@ -2529,6 +2580,9 @@ nsFreshcare.doLast = function()
 					sourceFunction: 'extend.format.personNewLine',
 					sourceFunctionRootNamespaceText: 'nsFreshcare',
 					sourceFunctionRootNamespace: nsFreshcare,
+					sourceMethod: 'extend.format.personNewLine',
+					sourceMethodRootNamespaceText: 'nsFreshcare',
+					sourceMethodRootNamespace: nsFreshcare,
 					sourceGroup: "invoice"
 				});
 
@@ -2557,6 +2611,9 @@ nsFreshcare.doLast = function()
 					sourceFunction: 'extend.format.mailingAddress',
 					sourceFunctionRootNamespace: nsFreshcare,
 					sourceFunctionRootNamespaceText: 'nsFreshcare',
+					sourceMethod: 'extend.format.mailingAddress',
+					sourceMethodRootNamespace: nsFreshcare,
+					sourceMethodRootNamespaceText: 'nsFreshcare',
 					sourceGroup: "invoice.contactbusinesssentto"
 				});
 
@@ -2568,6 +2625,9 @@ nsFreshcare.doLast = function()
 					sourceFunction: 'extend.format.mailingAddress1',
 					sourceFunctionRootNamespace: nsFreshcare,
 					sourceFunctionRootNamespaceText: 'nsFreshcare',
+					sourceMethod: 'extend.format.mailingAddress1',
+					sourceMethodRootNamespace: nsFreshcare,
+					sourceMethodRootNamespaceText: 'nsFreshcare',
 					sourceGroup: "invoice.contactbusinesssentto"
 				});
 
@@ -2579,6 +2639,9 @@ nsFreshcare.doLast = function()
 					sourceFunction: 'extend.format.mailingAddress2',
 					sourceFunctionRootNamespace: nsFreshcare,
 					sourceFunctionRootNamespaceText: 'nsFreshcare',
+					sourceMethod: 'extend.format.mailingAddress2',
+					sourceMethodRootNamespace: nsFreshcare,
+					sourceMethodRootNamespaceText: 'nsFreshcare',
 					sourceGroup: "invoice.contactbusinesssentto"
 				});
 
@@ -2590,6 +2653,9 @@ nsFreshcare.doLast = function()
 					sourceFunction: 'extend.format.mailingSuburb',
 					sourceFunctionRootNamespace: nsFreshcare,
 					sourceFunctionRootNamespaceText: 'nsFreshcare',
+					sourceMethod: 'extend.format.mailingSuburb',
+					sourceMethodRootNamespace: nsFreshcare,
+					sourceMethodRootNamespaceText: 'nsFreshcare',
 					sourceGroup: "invoice.contactbusinesssentto"
 				});
 
@@ -2601,6 +2667,9 @@ nsFreshcare.doLast = function()
 					sourceFunction: 'extend.format.mailingState',
 					sourceFunctionRootNamespace: nsFreshcare,
 					sourceFunctionRootNamespaceText: 'nsFreshcare',
+					sourceMethod: 'extend.format.mailingState',
+					sourceMethodRootNamespace: nsFreshcare,
+					sourceMethodRootNamespaceText: 'nsFreshcare',
 					sourceGroup: "invoice.contactbusinesssentto"
 				});
 
@@ -2612,6 +2681,9 @@ nsFreshcare.doLast = function()
 					sourceFunction: 'extend.format.mailingPostCode',
 					sourceFunctionRootNamespace: nsFreshcare,
 					sourceFunctionRootNamespaceText: 'nsFreshcare',
+					sourceMethod: 'extend.format.mailingPostCode',
+					sourceMethodRootNamespace: nsFreshcare,
+					sourceMethodRootNamespaceText: 'nsFreshcare',
 					sourceGroup: "invoice.contactbusinesssentto"
 				});
 
@@ -2623,6 +2695,9 @@ nsFreshcare.doLast = function()
 					sourceFunction: 'extend.format.mailingCountry',
 					sourceFunctionRootNamespace: nsFreshcare,
 					sourceFunctionRootNamespaceText: 'nsFreshcare',
+					sourceMethod: 'extend.format.mailingCountry',
+					sourceMethodRootNamespace: nsFreshcare,
+					sourceMethodRootNamespaceText: 'nsFreshcare',
 					sourceGroup: "invoice.contactbusinesssentto"
 				});
 		}
@@ -2639,7 +2714,10 @@ nsFreshcare.doLast = function()
 					source: 'calculate',
 					sourceFunction: 'extend.format.userFullName',
 					sourceFunctionRootNamespace: nsFreshcare,
-					sourceFunctionRootNamespaceText: 'nsFreshcare'
+					sourceFunctionRootNamespaceText: 'nsFreshcare',
+					sourceMethod: 'extend.format.userFullName',
+					sourceMethodRootNamespace: nsFreshcare,
+					sourceMethodRootNamespaceText: 'nsFreshcare'
 				});
 		}
 
@@ -2654,12 +2732,19 @@ nsFreshcare.doLast = function()
 					source: 'calculate',
 					sourceFunction: 'extend.format.userEmail',
 					sourceFunctionRootNamespace: nsFreshcare,
-					sourceFunctionRootNamespaceText: 'nsFreshcare'
+					sourceFunctionRootNamespaceText: 'nsFreshcare',
+					sourceMethod: 'extend.format.userEmail',
+					sourceMethodRootNamespace: nsFreshcare,
+					sourceMethodRootNamespaceText: 'nsFreshcare'
 				});
 		}
 
 	}
 	
+	// v3.1.215 SUP023190Support Issue Defaults
+	ns1blankspace.supportIssue.data.defaultUser = "31";
+	ns1blankspace.supportIssue.data.defaultSeverity = "2";
+
 	if (nsFreshcare.control.doVeryLast)
 	{
 		nsFreshcare.control.doVeryLast();
@@ -2670,7 +2755,7 @@ nsFreshcare.app =
 {
 	init: function() 
 	{
-		/// ************** Need to copy this over to other apps if this is changed **************** ///					
+		/// ************** Need to copy this over to other app's app.init function if this is changed **************** ///					
 		ns1blankspace.control.doLast = nsFreshcare.control.doLast;
 		ns1blankspace.option.postInit = 'nsFreshcare.control.init';
 
@@ -2685,6 +2770,9 @@ nsFreshcare.app =
 		
 		// Put product Groups list into memory
 		nsFreshcare.app.initCommonVariables();
+		if (ns1blankspace.option.passwordExpiry == undefined) {ns1blankspace.option.passwordExpiry = {}}
+		ns1blankspace.option.passwordExpiry.site = nsFreshcare.site;
+		ns1blankspace.option.passwordExpiry.days = 365;
 
 		// Add in tool tip div
 		$('#ns1blankspaceMultiUseDialog').after('<div id="ns1blankspaceToolTip"></div>');
@@ -2833,21 +2921,16 @@ nsFreshcare.app =
 			nsFreshcare.data.legacyCertificate.documentCertificateBackgroundOther = '5989';	
 			nsFreshcare.data.currentCertificate.documentCertificateText = '6035';		
 
-			//nsFreshcare.data.emailToAdmin = "cassandra.buono@alt-designit.com.au" + ((nsFreshcare.site === 313) ? ";jacinta@freshcare.com.au" : '');
-			//nsFreshcare.data.emailToAuditor = "cassandra.buono@alt-designit.com.au" + ((nsFreshcare.site === 313) ? ";jacinta@freshcare.com.au" : '');
-			//nsFreshcare.data.emailToCustomer = "cassandra.buono@alt-designit.com.au" + ((nsFreshcare.site === 313) ? ";jacinta@freshcare.com.au" : '');
-			//nsFreshcare.data.emailToGrower = "cassandra.buono@alt-designit.com.au" + ((nsFreshcare.site === 313) ? ";jacinta@freshcare.com.au" : '');
-			//nsFreshcare.data.emailToTrainer = "cassandra.buono@alt-designit.com.au" + ((nsFreshcare.site === 313) ? ";jacinta@freshcare.com.au" : '');
-			nsFreshcare.data.emailToAdmin 		= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943 
-			nsFreshcare.data.emailToAuditor 	= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943  //;katie@freshcare.com.au";
-			nsFreshcare.data.emailToCustomer 	= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943  //;katie@freshcare.com.au";
-			nsFreshcare.data.emailToGrower 		= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943  //;katie@freshcare.com.au";
-			nsFreshcare.data.emailToTrainer 	= "cassandra.buono@alt-designit.com.au;tony.carter@infinitydata.com.au"; //3.2.001 SUP022943  //;katie@freshcare.com.au";
-			nsFreshcare.data.emailFromAuditor 	= "cassandra.buono@alt-designit.com.au";
-			nsFreshcare.data.emailFromCustomer 	= "cassandra.buono@alt-designit.com.au";
-			nsFreshcare.data.emailFromGrower 	= "cassandra.buono@alt-designit.com.au";
-			nsFreshcare.data.emailFromTrainer 	= "cassandra.buono@alt-designit.com.au";
-			nsFreshcare.data.emailFromAdmin 	= "cassandra.buono@alt-designit.com.au";
+			nsFreshcare.data.emailToAdmin = "cassandra.buono@alt-designit.com.au;katie@freshcare.com.au";
+			nsFreshcare.data.emailToAuditor = "cassandra.buono@alt-designit.com.au;katie@freshcare.com.au" //;katie@freshcare.com.au";
+			nsFreshcare.data.emailToCustomer = "cassandra.buono@alt-designit.com.au;katie@freshcare.com.au" //;katie@freshcare.com.au";
+			nsFreshcare.data.emailToGrower = "cassandra.buono@alt-designit.com.au;katie@freshcare.com.au" //;katie@freshcare.com.au";
+			nsFreshcare.data.emailToTrainer = "cassandra.buono@alt-designit.com.au;katie@freshcare.com.au" //;katie@freshcare.com.au";
+			nsFreshcare.data.emailFromAuditor = "cassandra.buono@alt-designit.com.au";
+			nsFreshcare.data.emailFromCustomer = "cassandra.buono@alt-designit.com.au";
+			nsFreshcare.data.emailFromGrower = "cassandra.buono@alt-designit.com.au";
+			nsFreshcare.data.emailFromTrainer = "cassandra.buono@alt-designit.com.au";
+			nsFreshcare.data.emailFromAdmin = "cassandra.buono@alt-designit.com.au";
 		}
 		else 
 		{
@@ -2934,14 +3017,58 @@ nsFreshcare.app =
 			nsFreshcare.data.audit.reviewerRequiredAttachmentTypes = [];		// SUP022885 Tech Review Checklist no longer required
 
 			// v3.1.1i SUP022764 Added
+			nsFreshcare.data.roles.admin = '';
+			nsFreshcare.data.roles.auditor = '';
 			nsFreshcare.data.roles.administrator = '87';
+			nsFreshcare.data.roles.board = '';
+			nsFreshcare.data.roles.customer = '';
 			nsFreshcare.data.roles.financial = '85';
 			nsFreshcare.data.roles.financialLimited = '84';
 			nsFreshcare.data.roles.financialReadOnly = '86';
+			nsFreshcare.data.roles.grower = '';
+			nsFreshcare.data.roles.internalAuditor = '';
+			nsFreshcare.data.roles.jasanz = '';
+			nsFreshcare.data.roles.reviewer = '';
+			nsFreshcare.data.roles.trainer = '';
+			nsFreshcare.data.roles.xeroSuperUser = '98';
+
+			nsFreshcare.data.groupAccountsContact = '7498';
 
 			ns1blankspace.option.actionReminderTemplate = '95939';	// v3.1.203 Prod reminder template
 			ns1blankspace.option.messagingCheckURL = "https://api.mydigitalstructure.com/"; 		// v3.1.207
 		}
+
+		// v3.2.001 SUP023329 Common location to store id's of roles
+		nsFreshcare.app.getInternalRoles();
+		nsFreshcare.app.getExternalRoles();
+	},
+
+	getInternalRoles: function()
+	{
+		nsFreshcare.data.rolesInternal = 
+		[
+			nsFreshcare.data.roles.admin,
+			nsFreshcare.data.roles.administrator,
+			nsFreshcare.data.roles.board,
+			nsFreshcare.data.roles.financial,
+			nsFreshcare.data.roles.financialLimited,
+			nsFreshcare.data.roles.financialReadOnly,
+			nsFreshcare.data.roles.internalAuditor,
+			nsFreshcare.data.roles.jasanz,
+			nsFreshcare.data.roles.xeroSuperUser
+		];
+	},
+
+	getExternalRoles: function()
+	{
+			nsFreshcare.data.rolesExternal = 
+			[
+				nsFreshcare.data.roles.auditor,
+				nsFreshcare.data.roles.customer,
+				nsFreshcare.data.roles.grower,
+				nsFreshcare.data.roles.trainer
+			]
+
 	}
 }
 
@@ -2969,15 +3096,20 @@ nsFreshcare.control =
 			nsFreshcare.data.reportInit = true;
 		}
 
-		if (ns1blankspace.setup && ns1blankspace.setup.automation && ns1blankspace.setup.networkGroup && ns1blankspace.setup.messaging 
+		if (ns1blankspace.setup && ns1blankspace.setup.automation && ns1blankspace.setup.networkGroup && ns1blankspace.setup.messaging && ns1blankspace.setup.networkGroup
 			&& nsFreshcare.admin.user && nsFreshcare.admin.user.networkGroups && nsFreshcare.extend && nsFreshcare.data.setupInit != true)
 		{
 			ns1blankspace.setup.automation.summary = nsFreshcare.control.setup.automation.summary;
 			ns1blankspace.setup.networkGroup.users.add = nsFreshcare.admin.user.networkGroups.members.add;
 			ns1blankspace.setup.home = nsFreshcare.extend.setup.codes.home;
 			ns1blankspace.setup.messaging.summary = nsFreshcare.extend.setup.messaging.summary;		// v3.1.1 SUP022293
+			ns1blankspace.setup.messaging.search.send = nsFreshcare.extend.setup.messaging.search.send;		// v3.1.215 SUP023190
+			ns1blankspace.setup.messaging.details = nsFreshcare.extend.setup.messaging.details;		// v3.1.215 SUP023190
+			ns1blankspace.setup.messaging.save.send = nsFreshcare.extend.setup.messaging.save.send;		// v3.1.215 SUP023190
 			ns1blankspace.setup.file["import"].upload.show = nsFreshcare.extend.setup.file["import"].upload.show 	// v3.1.2 SUP022688 
 			ns1blankspace.setup.user.access.show = nsFreshcare.admin.user.access.show;		// v3.1.207 SUP023058
+			ns1blankspace.setup.networkGroup.groups.add = nsFreshcare.extend.document.networkGroup.add;		// v1.0.402
+			//ns1blankspace.setup.file['export'].saveToFile = ns1blankspace.report.saveToFile;		// 3.1.209
 			nsFreshcare.data.setupInit = true;
 		}
 			
@@ -3011,10 +3143,12 @@ nsFreshcare.control =
 			nsFreshcare.data.controlInit = true;
 		}
 
-		if (ns1blankspace.document && nsFreshcare.internal && nsFreshcare.internal.document && nsFreshcare.data.documentInit != true)
+		if (ns1blankspace.document && nsFreshcare.extend && nsFreshcare.extend.document && nsFreshcare.data.documentInit != true)
 		{
-			ns1blankspace.document.details = nsFreshcare.internal.document.details;
-			ns1blankspace.document.save.send = nsFreshcare.internal.document.save.send;
+			ns1blankspace.document.details = nsFreshcare.extend.document.details;
+			ns1blankspace.document.add = nsFreshcare.extend.document.add;		// v3.1.210
+			ns1blankspace.document.save.send = nsFreshcare.extend.document.save.send;
+			ns1blankspace.document.edit = nsFreshcare.extend.document.edit;		// v3.1.215
 			nsFreshcare.data.documentInit = true;
 		}
 
@@ -3041,7 +3175,7 @@ nsFreshcare.control =
 			ns1blankspace.financial.invoice.home = nsFreshcare.internal.financial.invoice.home;
 			// Added v3.1.0 Calls freshcare.extend.util.ondemandPDFCreate instead of 1blankspace version
 			ns1blankspace.financial.invoice.summary["default"] = nsFreshcare.extend.financial.invoice.summary["default"];
-			ns1blankspace.financial.invoice.summary.show = nsFreshcare.extend.financial.invoice.summary.show;		// v3.1.1 SUP022524
+			//ns1blankspace.financial.invoice.summary.show = nsFreshcare.extend.financial.invoice.summary.show;		// v3.1.1 SUP022524
 			ns1blankspace.financial.invoice.search.send = nsFreshcare.extend.financial.invoice.search.send;
 			ns1blankspace.financial.invoice.email.init = nsFreshcare.extend.financial.invoice.email.init;			// v3.1.1 SUP022524
 			ns1blankspace.financial.invoice.email.render = nsFreshcare.extend.financial.invoice.email.render;		// v3.1.0e SUP022278
@@ -3078,11 +3212,13 @@ nsFreshcare.control =
 			ns1blankspace.financial.item.edit = nsFreshcare.extend.financial.item.edit;
 			ns1blankspace.financial.item.save = nsFreshcare.extend.financial.item.save;
 			
+			// V3.1.209 now uses 1blanksapce setup.financial for templates
 			ns1blankspace.setup.financial.accounts.show = nsFreshcare.extend.setup.financial.accounts.show;
-			ns1blankspace.setup.financial.template.show = nsFreshcare.extend.setup.financial.template.show;
-			ns1blankspace.setup.financial.home = nsFreshcare.extend.setup.financial.home; 							//v3.1.0e SUP022234
-			ns1blankspace.setup.financial.save.send = nsFreshcare.extend.setup.financial.save.send; 				//v3.1.0e SUP022234
-			ns1blankspace.util.initTemplate = nsFreshcare.extend.util.initTemplate; 								//v3.1.0e SUP022234
+			ns1blankspace.setup.financial.home = nsFreshcare.extend.setup.financial.home;							// v3.2.001 SUP023329
+			//ns1blankspace.setup.financial.template.show = nsFreshcare.extend.setup.financial.template.show;
+			//ns1blankspace.setup.financial.home = nsFreshcare.extend.setup.financial.home; 						//v3.1.0e SUP022234
+			//ns1blankspace.setup.financial.save.send = nsFreshcare.extend.setup.financial.save.send; 				//v3.1.0e SUP022234
+			//ns1blankspace.util.initTemplate = nsFreshcare.extend.util.initTemplate; 								//v3.1.0e SUP022234
 
 			ns1blankspace.actions.show = nsFreshcare.extend.actions.show;											// v3.1.1f SUP022623 Bug in 1bs
 			ns1blankspace.actions.bind = nsFreshcare.extend.actions.bind;											// v3.1.1f SUP022623 1bs improvement
@@ -3107,7 +3243,7 @@ nsFreshcare.control =
 		{
 			ns1blankspace.format.render = nsFreshcare.extend.format.render;
 			ns1blankspace.format.process = nsFreshcare.extend.format.process;
-			ns1blankspace.format.editor.init = nsFreshcare.extend.format.editor.init;
+			ns1blankspace.format.editor.init = nsFreshcare.extend.format.editor.init;		
 			nsFreshcare.data.formatInit = true;
 		}
 
@@ -3152,7 +3288,9 @@ nsFreshcare.control =
 				var aRoles = $.map(ns1blankspace.user.roles, function(a) { return a.title});
 				
 				// v3.1.1i Added multi-role support for Admin users and now shows error in confirm as status element isn't yet in DOM
-				if (aRoles.length > 1 && $.grep(aRoles, function(x) {return x.toLowerCase() == 'admin'}).length == 0) 
+				// v3.2.001 SUP023329 Now allows multi-roles for all internal roles
+				if (ns1blankspace.user.roles.length > 1 
+					&& $.grep(ns1blankspace.user.roles, function(x) {return $.inArray(x.id, nsFreshcare.data.rolesExternal) > -1}).length > 0) 
 				{
 					ns1blankspace.container.confirm({html: 'Invalid configuration - user has more than one role. Please contact support.'});
 					return;
@@ -3165,6 +3303,9 @@ nsFreshcare.control =
 				else 
 				{
 					nsFreshcare.user.role = ($.grep(aRoles, function(x) {return x.toLowerCase() == 'admin'}).length == 0) ? aRoles[0] : 'Admin';
+					nsFreshcare.user.roleLower = nsFreshcare.user.role.toLowerCase();
+					nsFreshcare.user.roleID = $.map($.grep(ns1blankspace.user.roles, function(x) {return x.title == nsFreshcare.user.role}), function(y) {return y.id}).shift();
+
 					if (nsFreshcare.user.role != 'Admin') 
 					{
 						var sHeaderText = (nsFreshcare.user.role == "Auditor") 
@@ -3181,6 +3322,7 @@ nsFreshcare.control =
 						$('#ns1blankspaceViewControlSetupContainer').show();
 					}
 
+					// v3.1.209 Now sets ns1blanksapce.supportAdmin at the same time
 					if (1 == 0)		//(nsFreshcare.sitesDev.indexOf(nsFreshcare.site) > -1)
 					{
 						nsFreshcare.supportAdmin = true;
@@ -3189,6 +3331,8 @@ nsFreshcare.control =
 					{	
 						nsFreshcare.supportAdmin = (ns1blankspace.user.logonName.split('@').shift() === 'ibcom');
 					}
+					ns1blankspace.supportAdmin = nsFreshcare.supportAdmin;
+
 					// v3.1.1i SUP022764 Added freshcareAdministrator role
 					// v3.1.207 SUP023058 Removed the dependency on ns1blankspace.user.systemadmin
 					nsFreshcare.freshcareAdministrator = ($.grep(ns1blankspace.user.roles, function(x) {return x.id == nsFreshcare.data.roles.administrator}).length > 0);
@@ -3513,7 +3657,6 @@ nsFreshcare.control =
 			else if (nsFreshcare.user.role.toLowerCase() === "trainer") 
 			{
 				ns1blankspace.home.show = nsFreshcare.trainer.home.init;
-				//ns1blankspace.option.defaultView = 'Trainees';
 				ns1blankspace.report.initData = nsFreshcare.trainer.home.report.initData;
 				ns1blankspace.home.options.show = nsFreshcare.trainer.home.options.show;
 				
@@ -3571,15 +3714,14 @@ nsFreshcare.control =
 		else if (oParam.controlInitStep === 9)
 		{
 			// The rootnamespace isn't Freshcare and we have some other initialisation steps to do
+			oParam.controlInitStep = 10;
 			if (ns1blankspace.rootnamespacetext != 'nsFreshcare' && oRoot.control && oRoot.control.init)
 			{
-				oParam.controlInitStep = 10;
 				oParam.onComplete = nsFreshcare.control.init;
 				oRoot.control.init(oParam);
 			}
 			else 
 			{
-				oParam.controlInitStep = 10;
 				nsFreshcare.control.init(oParam);
 			}
 
@@ -3603,7 +3745,6 @@ nsFreshcare.control =
 					});
 			}
 
-			//$('#ns1blankspaceSpaceText').html(ns1blankspace.user.contactBusinessText);		// v3.0.1a SUP021876 Now done in ns1blankspace namespace
 			if (nsFreshcare.data.switched != undefined && nsFreshcare.data.switched.id != undefined)
 			{
 				$('#ns1blankspaceSpaceText').unbind('click');
@@ -4514,67 +4655,84 @@ nsFreshcare.control =
 		}
 	},
 
-	setupTrainer: 	function(oParam, oResponse) 
+	setupTrainer: 	function(oParam) 
 	{
-
 		// Get a list of Memberships that the trainer is accredited to
-		if (oParam == undefined) {
-			oParam = {setupTrainerStep: 1}
-		}
-		else if (oParam.setupTrainerStep === undefined) {
-			oParam.setupTrainerStep = 1;
-		}
+		// v1.0.209b Updated so acts differently for admin and trainer users
+		if (oParam == undefined) {oParam = {}}
+		var iTrainerBusiness = ns1blankspace.util.getParam(oParam, 'trainerBusiness', {'default': ns1blankspace.user.contactBusiness}).value;
+		var iDefaultTrainerPerson = ns1blankspace.util.getParam(oParam, 'defaultTrainerPerson', {'default': ns1blankspace.user.contactPerson}).value;
+		var sTrainerPerson = ns1blankspace.util.getParam(oParam, 'trainerPerson').value;
+		var bStateSearch = ns1blankspace.util.getParam(oParam, 'stateSearch', {'default': true}).value;
+
+		if (oParam.setupTrainerStep == undefined) {oParam.setupTrainerStep = 1}
 
 		// Setup export formats for reports & Trainee Export
-		nsFreshcare.trainer.setup.exports();
+		if (nsFreshcare.user.role.toLowerCase() == 'trainer')
+		{
+			nsFreshcare.trainer.setup.exports();
+		}
 
-		if (oParam.setupTrainerStep === 1) {
-
-			if (oResponse === undefined) {
-
-				nsFreshcare.data.trainerMemberships = {};
-				var oSearch = new AdvancedSearch();
-				oSearch.endPoint = 'agri';
-				oSearch.method = 'AGRI_MEMBERSHIP_TRAINER_SEARCH';
-				oSearch.addField('membership,membershiptext,trainercontactperson,trainercontactpersontext');
-				oSearch.addFilter('trainercontactbusiness', 'EQUAL_TO', ns1blankspace.user.contactBusiness);
-				oSearch.addFilter('agrimembershiptrainer.membership.status', 'EQUAL_TO', nsFreshcare.data.membershipStatusActive);	//v1.024
-				oSearch.rows = 50;
-				oSearch.getResults(function(oResponse) {nsFreshcare.control.setupTrainer(oParam, oResponse)});
+		if (oParam.setupTrainerStep === 1) 
+		{
+			nsFreshcare.data.trainerMemberships = [];
+			var oSearch = new AdvancedSearch();
+			oSearch.method = 'AGRI_MEMBERSHIP_TRAINER_SEARCH';
+			oSearch.addField('membership,membershiptext,trainercontactperson,trainercontactpersontext');
+			oSearch.addFilter('trainercontactbusiness', 'EQUAL_TO', iTrainerBusiness);
+			if (sTrainerPerson)		// only if explicitly passed
+			{
+				oSearch.addFilter('trainercontactperson', 'IN_LIST', sTrainerPerson);
 			}
-			else {
-
-				if (oResponse.status === 'OK') {
+			oSearch.addFilter('agrimembershiptrainer.membership.status', 'EQUAL_TO', nsFreshcare.data.membershipStatusActive);	//v1.024
+			oSearch.sort('trainercontactpersontext', 'asc');
+			oSearch.sort('membershiptext', 'asc');
+			oSearch.rows = 500;
+			oSearch.getResults(function(oResponse) 
+			{
+				if (oResponse.status === 'OK') 
+				{
 					nsFreshcare.data.trainerMemberships = oResponse.data.rows;
 				}
-
-				oResponse = undefined;
-				oParam.setupTrainerStep = 2;
-			}
-		}
-		
-		if (oParam.setupTrainerStep === 2) {
-
-			if (oResponse == undefined) {
-
-				nsFreshcare.data.trainerStates = {};
-				oSearch = new AdvancedSearch();
-				oSearch.method = 'AGRI_TRAINER_STATE_SEARCH';
-				oSearch.addField('state,statetext');
-				oSearch.addFilter('contactperson', 'EQUAL_TO', ns1blankspace.user.contactPerson);
-				oSearch.getResults(function(oResponse) {nsFreshcare.control.setupTrainer(oParam, oResponse);});
-			}
-			else {
-
-				if (oResponse.status === 'OK') {
-					nsFreshcare.data.trainerStates = oResponse.data.rows;
+				else
+				{
+					ns1blankspace.status.error('Unable to find Trainer Memberships: ' + oResponse.error.errornotes);
 				}
 
-				delete(oParam.setupTrainerStep);
-				oResponse = undefined;
-				ns1blankspace.util.onComplete(oParam);
-			}
+				oParam.setupTrainerStep = bStateSearch ? 2 : 3;
+				nsFreshcare.control.setupTrainer(oParam);
+			});
+		}
+		
+		else if (oParam.setupTrainerStep === 2) 
+		{
+			nsFreshcare.data.trainerStates = [];
+			oSearch = new AdvancedSearch();
+			oSearch.method = 'AGRI_TRAINER_STATE_SEARCH';
+			oSearch.addField('state,statetext');
+			oSearch.addFilter('contactperson', 'EQUAL_TO', iDefaultTrainerPerson);
+			oSearch.getResults(function(oResponse) 
+			{
+				if (oResponse.status === 'OK') 
+				{
+					nsFreshcare.data.trainerStates = oResponse.data.rows;
+				}
+				else
+				{
+					ns1blankspace.status.error('Unable to find Trainer States: ' + oResponse.error.errornotes);
+				}
+				oParam.setupTrainerStep = 3;
+				nsFreshcare.control.setupTrainer(oParam);
+			});
+		}
 
+		else if (oParam.setupTrainerStep == 3)
+		{
+			delete(oParam.setupTrainerStep);
+			delete(oParam.trainerBusiness);
+			delete(oParam.trainerPerson);
+			delete(oParam.stateSearch);
+			ns1blankspace.util.onComplete(oParam);
 		}
 	},
 
@@ -5369,12 +5527,8 @@ ns1blankspace.logon.show = function(oParam)
 					'Logon Name' +
 					'</td>')
 
-	// SUP022047 - Fogotten Logon (Username)
-	//aHTML.push('<td class="ns1blankspaceLogonSub" style="padding-right:2px;">' +
-	//				'remember (tc) <input style="margin:0px; padding:0px; border: 0px;" type="checkbox" id="ns1blankspaceLogonRemember"/></td></tr>');
 	aHTML.push('<td class="ns1blankspaceLogonSub" style="padding-right:2px;">' +
-					'<span id="ns1blankspaceLogonFind" style="cursor: pointer;">forgotten (UID)</span>' +
-					'</td></tr>');
+					'remember <input style="margin:0px; padding:0px; border: 0px;" type="checkbox" id="ns1blankspaceLogonRemember"/></td></tr>');
 
 	aHTML.push('<tr><td colspan=2 style="padding-bottom: 10px;">' +
 					'<input id="ns1blankspaceLogonLogonName" class="ns1blankspaceLogon">' +
@@ -5386,7 +5540,7 @@ ns1blankspace.logon.show = function(oParam)
 					'</td>')
 
 	aHTML.push('<td class="ns1blankspaceLogonSub" style="padding-right:2px;">' +
-					'<span id="ns1blankspacePasswordSend" style="cursor: pointer;">forgotten (PWD)</span>' +
+					'<span id="ns1blankspacePasswordSend" style="cursor: pointer;">forgotten</span>' +
 					'</td></tr>');
 
 	aHTML.push('<tr><td class="ns1blankspaceLogonText" colspan=2 style="padding-bottom: 15px;">' +
@@ -5487,14 +5641,6 @@ ns1blankspace.logon.show = function(oParam)
 	        ns1blankspace.logon.init();
 	    }
 	});
-
-	// SUP022047 - Fogotten Logon (Username) 
-	$('#ns1blankspaceLogonFind').click(function()
-	{
-		alert('Function in development. Available 19.05.2017. Call JS Guru(TC) for any questions');
-		//ns1blankspace.logon.getLogon.show();
-	});
-
 
 	$('#ns1blankspacePasswordSend').click(function()
 	{
