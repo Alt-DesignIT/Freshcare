@@ -91,7 +91,7 @@ nsFreshcare.admin.newgrower =
 			{
 				oSearch.addFilter(this.field, this.comparison, this.value1, this.value2, this.value3, this.applyToSubSearch);
 			});
-			oSearch.addFilter('agritemptrainee.course.trainercontactbusiness', (ns1blankspace.objectName == 'newmemberships' ? 'NOT_' : '') + 'EQUAL_TO', nsFreshcare.data.eLearningBusiness)
+			oSearch.addFilter('agritemptrainee.agritrainingcourse.trainercontactbusiness', (ns1blankspace.objectName == 'newgrower' ? 'NOT_' : '') + 'EQUAL_TO', nsFreshcare.data.eLearningBusiness)
 			oSearch.rows = 80;
 			oSearch.sort(sSortColumn, sSortDirection);
 			
@@ -277,7 +277,8 @@ nsFreshcare.admin.newgrower =
 					oSearch.addFilter('businessname', 'TEXT_IS_LIKE', sSearchText);
 					oSearch.addBracket(')');
 
-					oSearch.addFilter('agritemptrainee.course.trainercontactbusiness', (ns1blankspace.objectName == 'newmemberships' ? 'NOT_' : '') + 'EQUAL_TO', nsFreshcare.data.eLearningBusiness)
+					// v3.2.010 SUP023469 Added trainercontactbusiness filter for elearning form
+					oSearch.addFilter('agritemptrainee.agritrainingcourse.trainercontactbusiness', (ns1blankspace.objectName == 'newgrower' ? 'NOT_' : '') + 'EQUAL_TO', nsFreshcare.data.eLearningBusiness)
 
 					oSearch.sort('businessname', 'asc');
 					oSearch.getResults(function(data) {nsFreshcare.admin.newgrower.search.process(oParam, data)});

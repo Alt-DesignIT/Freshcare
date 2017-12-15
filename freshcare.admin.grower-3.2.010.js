@@ -5666,6 +5666,7 @@ nsFreshcare.admin.grower =
 									'<td class="ns1blankspaceSelect">' +
 									'<input id="ns1blankspaceMembership' + iMembership + 'StatusChangedByBusiness" class="nsFreshcareSelectGrower"' +
 										' data-method="CONTACT_BUSINESS_SEARCH"' +
+										' data-columns="legalname-space-hyphen-space-tradename"' + 
 										' data-methodFilter="contactbusiness.tradename-TEXT_IS_LIKE|contactbusiness.legalname-TEXT_IS_LIKE"' +
 										'>' +
 									'</td></tr>');		

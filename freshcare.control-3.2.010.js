@@ -163,6 +163,7 @@ nsFreshcare.option.certificateTypes = false;		// v3.1.209 SUPo23095 USed by ECA 
 nsFreshcare.option.carTypeReportTypes = false;		// v3.1.209 SUP023095 Used by ECA - Packing & Production report types
 nsFreshcare.option.carTypeSeverity = true;			// v3.1.209 SUP023095 Not used by ECA
 nsFreshcare.option.copJASANZDesc = true;			// v3.1.211 SUP023196 Not used by ECA
+nsFreshcare.option.exportToXero = true;				// v3.2.010 SUP023329 Not used by ECA
 
 nsFreshcare.data.switched = {};
 nsFreshcare.data.viewFilter = {};
@@ -330,6 +331,7 @@ ns1blankspace.option.preLoad = function()
 			if (x.nameSpace === '1blankspace.setup.file') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.setup.file-2.0.003.js';}	// v3.1.209b
 			if (x.nameSpace === '1blankspace.projectTask') {x.source = '/jscripts/1blankspace.project.task-2.0.1.js';} 
 			if (x.nameSpace === '1blankspace.setup.structure') {x.source = '/' + (nsFreshcare.sitesDev.indexOf(nsFreshcare.site) > -1 ? 'jscripts' : 'site/1433') + '/1blankspace.setup.structure-2.0.4.js';} 
+			if (x.nameSpace === '1blankspace.setup.website') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.setup.website-2.1.1.js';}
 			return x;
 		});
 		
@@ -2212,12 +2214,12 @@ nsFreshcare.scripts =
 [
 	{
 		nameSpace: 'freshcare.render',
-		source: '/site/' + nsFreshcare.site + '/freshcare.render-3.2.001.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.render-3.2.010.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.util',
-		source: '/site/' + nsFreshcare.site + '/freshcare.util-3.2.001.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.util-3.2.010.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2242,7 +2244,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.admin.contactPerson',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.contactperson-3.2.005.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.contactperson-3.2.010.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2262,7 +2264,12 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.admin.newgrower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newgrower-3.1.210.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newelearning-3.2.010.js',
+		sourceNS: nsFreshcare
+	},
+	{
+		nameSpace: 'freshcare.admin.newgrower',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newgrower-3.2.010.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2297,7 +2304,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.admin.trainingcourse',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainingcourse-3.2.005.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainingcourse-3.2.010.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2392,7 +2399,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.internal',
-		source: '/site/' + nsFreshcare.site + '/freshcare.internal-3.2.005.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.internal-3.2.010.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2402,7 +2409,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.report',
-		source: '/site/' + nsFreshcare.site + '/freshcare.report-3.2.003.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.report-3.2.010.js',
 		sourceNS: nsFreshcare
 	},
 	{

@@ -2645,9 +2645,13 @@ nsFreshcare.admin.audit =
 				$(ns1blankspace.xhtml.container).show();
 				$(ns1blankspace.xhtml.container).html(aHTML.join(''));
 
+				// v3.2.010 Was calling Freshcare's save if in forked version
 				$('td.ns1blankspaceSearch').click(function() 
 				{
 					var iPersonID = this.id.split('_').pop();
+					var fFunctionSave = (ns1blankspace.rootnamespace.admin.audit.save.send) 
+						? ns1blankspace.rootnamespace.admin.audit.save.send 
+						: nsFreshcare.admin.audit.save.send;
 
 					if (nsFreshcare.util.isNumeric(iPersonID));
 					{
@@ -2655,7 +2659,7 @@ nsFreshcare.admin.audit =
 						$(ns1blankspace.xhtml.container).html('');
 						if (iPersonID != undefined) 
 						{
-							nsFreshcare.admin.audit.save.send({reviewerID: iPersonID, reviewerName: $(this).html(), reviewerEmail: $(this).attr('data-email')});
+							fFunctionSave({reviewerID: iPersonID, reviewerName: $(this).html(), reviewerEmail: $(this).attr('data-email')});
 						}
 					}
 				});	

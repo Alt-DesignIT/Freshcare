@@ -4339,9 +4339,14 @@ nsFreshcare.extend =
 						var oSearch = new AdvancedSearch();
 						oSearch.method = 'FINANCIAL_CREDIT_NOTE_SEARCH';
 						oSearch.addField('amount,area,areatext,contactbusiness,contactbusinesstext,contactperson,contactpersontext,' +
-											'creditdate,financialaccount,financialaccounttext,notes,sexerocreditnoteid,sexerocreditnoteupdated,' +
+											'creditdate,financialaccount,financialaccounttext,notes,' +
 											'object,objectcontext,objecttext,project,projecttext,reason,reasontext,' +
 											'reference,store,storetext,tax,taxtype,taxtypeexpensetext,taxtyperevenuetext,type,typetext');
+						// v3.2.010 SUP023329 Now only adds these fields if option is true
+						if (nsFreshcare.option.exportToXero)
+						{
+							oSearch.addField('sexerocreditnoteid,sexerocreditnoteupdated');
+						}
 
 						oSearch.addField(ns1blankspace.option.auditFields);
 						
@@ -4429,8 +4434,12 @@ nsFreshcare.extend =
 					aHTML.push('<tr><td id="ns1blankspaceControlGL" class="ns1blankspaceControl">' +
 									'GL</td></tr>');
 								
-					aHTML.push('<tr><td id="ns1blankspaceControlXero" class="ns1blankspaceControl">' +
-									'Xero</td></tr>');
+					// v3.2.010 SUp023329 Now only shows if user has access
+					if (nsFreshcare.util.roleHasAccess({action: 'retrieve', tabs: ['Xero'], aAccess}))
+					{
+						aHTML.push('<tr><td id="ns1blankspaceControlXero" class="ns1blankspaceControl">' +
+										'Xero</td></tr>');
+					}
 								
 					aHTML.push('</table>');					
 				
@@ -6609,6 +6618,9 @@ nsFreshcare.extend =
 							
 				aHTML.push('<tr><td id="ns1blankspaceControlAttachments" class="ns1blankspaceControl">' +
 								'Attachments</td></tr>');
+
+				aHTML.push('<tr><td id="ns1blankspaceControlConversations" class="ns1blankspaceControl">' +
+								'Conversations</td></tr>');
 			}	
 			
 			aHTML.push('</table>');					
@@ -6624,6 +6636,7 @@ nsFreshcare.extend =
 			aHTML.push('<div id="ns1blankspaceMainActions" class="ns1blankspaceControlMain"></div>');
 			aHTML.push('<div id="ns1blankspaceMainEmails" class="ns1blankspaceControlMain"></div>');
 			aHTML.push('<div id="ns1blankspaceMainAttachments" class="ns1blankspaceControlMain"></div>');
+			aHTML.push('<div id="ns1blankspaceMainConversations" class="ns1blankspaceControlMain"></div>');
 					
 			$('#ns1blankspaceMain').html(aHTML.join(''));
 
@@ -6716,6 +6729,19 @@ nsFreshcare.extend =
 			{
 				ns1blankspace.show({selector: '#ns1blankspaceMainAttachments', refresh: true});
 				ns1blankspace.attachments.show({xhtmlElementID: 'ns1blankspaceMainAttachments'});
+			});
+
+			$('#ns1blankspaceControlConversations').click(function(event)
+			{
+				ns1blankspace.show({selector: '#ns1blankspaceMainConversations', refresh: true});
+				ns1blankspace.messaging.conversation.linkedToObject.search(
+				{
+					xhtmlElementID: 'ns1blankspaceMainConversations', 
+					object: ns1blankspace.object,
+					objectContext: ns1blankspace.objectContext,
+					subject: "Project " + ns1blankspace.objectContextData.reference,
+					description: ns1blankspace.objectContextData.title
+				});
 			});
 		}
 	},
