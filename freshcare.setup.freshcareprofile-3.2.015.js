@@ -5,8 +5,9 @@
  * 01 FEB 2010
  */
 
- // v3.1.0 Now refers to stored id of structure fields, not reference
- // v3.1.210 replaced all dialog('close') with dialog('destroy')
+// v3.1.0 Now refers to stored id of structure fields, not reference
+// v3.1.210 replaced all dialog('close') with dialog('destroy')
+// v3.2.015 SUP023421 Change 'Growers' to 'Members'
 
 nsFreshcare.external.freshcareprofile = 
 {
@@ -77,7 +78,7 @@ nsFreshcare.external.freshcareprofile =
 				
 				// v3.1.1 SUP022434 Added contactperson.reference
 				// v3.1.206 SUP023035 Now looks at business mailing address
-				// v3.2.010 Added optional fields so that still works in ECA
+				// v3.2.010 Added optional fields so that still works in forked versions
 				var oSearch = new AdvancedSearch();
 				oSearch.method = 'CONTACT_PERSON_SEARCH';
 				oSearch.addField('contactperson.firstname,contactperson.surname,contactperson.title,contactperson.titletext,contactperson.position,contactperson.reference' +
@@ -137,11 +138,10 @@ nsFreshcare.external.freshcareprofile =
 						oSearch.addFilter('contactperson.surname', 'TEXT_IS_LIKE', sSearchText);
 					}	
 					oSearch.addBracket(')');
-
-					if (nsFreshcare.user.role.toLowerCase() === 'trainer' || nsFreshcare.user.role.toLowerCase() === 'auditor') {
+					if (nsFreshcare.user.roleID === nsFreshcare.data.roles.trainer || nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor) {
 						oSearch.addFilter("contactperson.supplierstatus", "EQUAL_TO", nsFreshcare.data.contactStatusActive);
 					}
-					else if (nsFreshcare.user.role.toLowerCase() === 'grower' || nsFreshcare.user.role.toLowerCase() === 'customer') {
+					else if (nsFreshcare.user.roleID === nsFreshcare.data.roles.grower || nsFreshcare.user.roleID === nsFreshcare.data.roles.customer) {
 						oSearch.addFilter("contactperson.customerstatus", "EQUAL_TO", nsFreshcare.data.contactStatusActive);
 					}
 					
@@ -240,7 +240,7 @@ nsFreshcare.external.freshcareprofile =
 						'Details</td></tr>');
 					
 		// v3.1.2 Reviewers don't see other CB contacts
-		if (nsFreshcare.user.role.toLowerCase() != 'reviewer')
+		if (nsFreshcare.user.roleID != nsFreshcare.data.roles.reviewer)
 		{
 			aHTML.push('<tr><td id="ns1blankspaceControlContacts" class="ns1blankspaceControl">' +
 							'Other Contacts</td></tr>');
@@ -248,14 +248,14 @@ nsFreshcare.external.freshcareprofile =
 
 		aHTML.push('<tr><td id="ns1blankspaceControlAddress" class="ns1blankspaceControl">' +
 						'Address</td></tr>');
-		
-		if (nsFreshcare.user.role.toLowerCase() === 'trainer') 
+
+		if (nsFreshcare.user.roleID === nsFreshcare.data.roles.trainer) 
 		{				
 			aHTML.push('<tr><td id="ns1blankspaceControlAccreditation" class="ns1blankspaceControl">' +
 							'Training Scope / Locations</td></tr>');
 		}
 
-		if (nsFreshcare.user.role.toLowerCase() === 'auditor') 
+		if (nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor) 
 		{				
 			aHTML.push('<tr><td>&nbsp;</td></tr>');
 
@@ -311,8 +311,7 @@ nsFreshcare.external.freshcareprofile =
 		$('#ns1blankspaceControlContacts').click(function(event)
 		{
 			// v3.2.005 SUP023369 Added statusField so that correctly filters inactive contacts
-
-			var sStatusField = nsFreshcare.user.roleLower == 'auditor' || nsFreshcare.user.roleLower == 'grower' ? 'customer' : 'supplier';
+			var sStatusField = nsFreshcare.user.roleID == nsFreshcare.data.roles.auditor || nsFreshcare.user.roleID == nsFreshcare.data.roles.grower ? nsFreshcare.data.roles.customer : 'supplier';
 			ns1blankspace.show({selector: '#ns1blankspaceMainContacts', context: {new: true, actionOptions: true, inContext: false}});
 			nsFreshcare.external.grower.contacts.show({statusField: sStatusField, hideInactive: true});
 		});
@@ -381,7 +380,8 @@ nsFreshcare.external.freshcareprofile =
 				ns1blankspace.app.context({new: true, actionOptions: true, inContext: false});
 		
 				oParam.showStep = 2;
-				if (nsFreshcare.user.role.toLowerCase() === 'trainer') 
+				
+				if (nsFreshcare.user.roleID === nsFreshcare.data.roles.trainer) 
 				{
 					// Get Trainer States
 					oParam = ns1blankspace.util.setParam(oParam, "onComplete", nsFreshcare.external.freshcareprofile.show);
@@ -486,7 +486,7 @@ nsFreshcare.external.freshcareprofile =
 			}
 
 			// Certification Bodies log in as a head office so don't have a mobile
-			if (ns1blankspace.objectContextData['contactperson.mobile'] != '' && nsFreshcare.user.role.toLowerCase() != 'auditor')
+			if (ns1blankspace.objectContextData['contactperson.mobile'] != '' && nsFreshcare.user.roleID != nsFreshcare.data.roles.auditor)
 			{
 				aHTML.push('<tr><td class="ns1blankspaceSummaryCaption">Mobile</td></tr>' +
 							'<tr><td class="ns1blankspaceSummary">' +
@@ -496,7 +496,7 @@ nsFreshcare.external.freshcareprofile =
 			
 			// Trainers: List Accredited Memberships
 			// v3.1.208c SUP022867 Now only shows unique list of memberships
-			if (nsFreshcare.user.role.toLowerCase() === 'trainer') {
+			if (nsFreshcare.user.roleID === nsFreshcare.data.roles.trainer) {
 				aHTML.push('<tr><td class="ns1blankspaceSummaryCaption">Training COP</td></tr>' +
 								'<tr><td class="ns1blankspaceSummary">');
 				if (nsFreshcare.data.trainerMemberships && nsFreshcare.data.trainerMemberships.length > 0) {
@@ -518,8 +518,8 @@ nsFreshcare.external.freshcareprofile =
 				aHTML.push('</td></tr>');	
 			}
 
-			// Growers: List all Memberships			
-			if (nsFreshcare.user.role.toLowerCase() === 'grower') {
+			// Growers: List all Memberships
+			if (nsFreshcare.user.roleID === nsFreshcare.data.roles.grower) {
 				aHTML.push('<tr><td class="ns1blankspaceSummaryCaption">Memberships</td></tr>' +
 								'<tr><td class="ns1blankspaceSummary">');
 
@@ -546,9 +546,8 @@ nsFreshcare.external.freshcareprofile =
 			
 			aHTML = [];
 			aHTML.push('<table class="ns1blankspaceColumn2">');
-
 			if (ns1blankspace.rootNameSpaceText == 'nsFreshcare' 
-				&& (nsFreshcare.user.role.toLowerCase() === 'trainer' || nsFreshcare.user.role.toLowerCase() === 'auditor')) 
+				&& (nsFreshcare.user.roleID === nsFreshcare.data.roles.trainer || nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor)) 
 			{
 				aHTML.push('<tr><td><span id="ns1blankspaceGoToWebsiteProfile" class="ns1blankspaceAction">' +
 							'Please email ' + nsFreshcare.spaceText + ' if you want to update your profile</span></td></tr>');
@@ -666,7 +665,7 @@ nsFreshcare.external.freshcareprofile =
 			aHTML.push('<tr class="ns1blankspaceCaption">' +
 							'<td class="ns1blankspaceCaption">' +
 							'Phone' + 
-							((nsFreshcare.user.role.toLowerCase() === 'trainer') 
+							((nsFreshcare.user.roleID === nsFreshcare.data.roles.trainer) 
 								? '<span id="ns1blankspaceWebsiteShowPhone" style="font-size:0.75em;font-weight:normal;vertical-align:bottom;">' 
 								: '') +
 							'</td></tr>' +
@@ -678,7 +677,7 @@ nsFreshcare.external.freshcareprofile =
 			aHTML.push('<tr class="ns1blankspaceCaption">' +
 							'<td class="ns1blankspaceCaption">' +
 							'Mobile' +
-							((nsFreshcare.user.role.toLowerCase() === 'trainer') 
+							((nsFreshcare.user.roleID === nsFreshcare.data.roles.trainer) 
 								? '<span id="ns1blankspaceWebsiteShowMobile" style="font-size:0.75em;font-weight:normal;vertical-align:bottom;">' 
 								: '') +
 							'</td></tr>' +
@@ -706,7 +705,7 @@ nsFreshcare.external.freshcareprofile =
 			oElements.push('Email');
 
 			// v3.1.2 If we're an Auditor, we need to ask them for Certification Body Number
-			if (nsFreshcare.user.role.toLowerCase() === 'auditor')
+			if (nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor)
 			{	
 				aHTML.push('<tr class="ns1blankspaceCaption">' +
 								'<td class="ns1blankspaceCaption">' +
@@ -798,7 +797,7 @@ nsFreshcare.external.freshcareprofile =
 
 			aHTML.push('<tr class="ns1blankspaceCaption">' +
 							'<td class="ns1blankspaceCaption">' +
-							((nsFreshcare.user.role.toLowerCase() === 'trainer') 
+							((nsFreshcare.user.roleID === nsFreshcare.data.roles.trainer) 
 								? '<span id="ns1blankspaceWebsiteShowPhoneUpdate" style="font-size:0.75em;font-weight:normal;vertical-align:bottom;cursor:pointer;color:#A9C529;">' + 
 								  ((ns1blankspace.objectContextData['contactperson.displayphone'] != 'Y') ? 'Show' : "Don't show") + ' on website'
 								: '&nbsp;') +
@@ -810,7 +809,7 @@ nsFreshcare.external.freshcareprofile =
 
 			aHTML.push('<tr class="ns1blankspaceCaption">' +
 							'<td class="ns1blankspaceCaption">' +
-							((nsFreshcare.user.role.toLowerCase() === 'trainer') 
+							((nsFreshcare.user.roleID === nsFreshcare.data.roles.trainer) 
 								? '<span id="ns1blankspaceWebsiteShowMobileUpdate" style="font-size:0.75em;font-weight:normal;vertical-align:bottom;cursor:pointer;color:#A9C529;">' + 
 								  ((ns1blankspace.objectContextData['contactperson.displaymobile'] != 'Y') ? 'Show' : "Don't show") + ' on website'
 								: '&nbsp;') +
@@ -839,7 +838,7 @@ nsFreshcare.external.freshcareprofile =
 							'</td></tr>');
 				
 			// v3.1.2 If we're an Auditor, show Certification Body Number
-			if (nsFreshcare.user.role.toLowerCase() === 'auditor')
+			if (nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor)
 			{	
 				aHTML.push('<tr class="ns1blankspaceCaption">' +
 								'<td class="ns1blankspaceCaption">' +
@@ -898,7 +897,7 @@ nsFreshcare.external.freshcareprofile =
 
 				// If we're an auditor, show Certification Body Number
 				// v3.2.010 COnditionally shows as not used in all forked versions
-				if (nsFreshcare.user.role.toLowerCase() === 'auditor' && nsFreshcare.option.certBodyNumber)
+				if (nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor && nsFreshcare.option.certBodyNumber)
 				{
 					$('#ns1blankspaceDetailsCertificationBodyNumber').html(ns1blankspace.objectContextData["contactperson.contactbusiness.se" + nsFreshcare.data.certificationBodyNumberId].formatXHTML());
 					$('#ns1blankspaceDetailsCertificationBodyNumberUpdate').val(ns1blankspace.objectContextData["contactperson.contactbusiness.se" + nsFreshcare.data.certificationBodyNumberId].formatXHTML());
@@ -944,8 +943,8 @@ nsFreshcare.external.freshcareprofile =
 				else {
 					$('#ns1blankspaceDetailsFaxUpdate').val(ns1blankspace.objectContextData["contactperson.fax"].formatXHTML());
 				}
-
-				if (nsFreshcare.user.role.toLowerCase() === 'trainer' ) {
+				
+				if (nsFreshcare.user.roleID === nsFreshcare.data.roles.trainer ) {
 
 					if (ns1blankspace.objectContextData['contactperson.displayphone'] != 'Y') {
 					 	$('#ns1blankspaceWebsiteShowPhone')
@@ -1894,16 +1893,17 @@ nsFreshcare.external.freshcareprofile =
 
 	certificateImages: function(oParam)
 	{
-		// v3.2.010 Now uses ns1blankspace.param if oParam not passed for after attaching cert image. No longer uses forked upload code
 		// We need to display and allow user to add / change images for Email Template Logo, Certificate Logo and Certificate Signature
-		oParam = oParam || ns1blankspace.param || {};
 		var aHTML = [];
 		var oResponse;
 		var oCertificateLogo;
 		var oCertificateSignature;
 
-		if (oParam.response) {oResponse = oParam.response}
-		delete(ns1blankspace.param);
+		if (oParam) 
+		{
+			if (oParam.response) {oResponse = oParam.response}
+		}
+		else {oParam = {}}
 
 		//if ($('#ns1blankspaceMainImages').attr('data-loading') === '1')
 		//{
@@ -2016,27 +2016,21 @@ nsFreshcare.external.freshcareprofile =
 					var sAttachmentId = $(this).attr('data-attachmentid');
 					var aInputParams = (sAttachmentId) ? [{id: 'id', value: sAttachmentId}] : [];
 
-					oParam = 
-					{
-						object: nsFreshcare.objectBusiness,
-						objectContext: ns1blankspace.data.contactBusiness,
-						attachmentType: nsFreshcare.data.attachmentTypeLogo,
-						publicType: '2',
-						inputParams: aInputParams,
-						functionPostUpdate: nsFreshcare.external.freshcareprofile.certificateImages
-					};
+					$('#ns1blankspaceImagesLogoImage').html(ns1blankspace.attachments.upload.show({object: nsFreshcare.objectBusiness,
+																		objectContext: ns1blankspace.data.contactBusiness,
+																		attachmentType: nsFreshcare.data.attachmentTypeLogo,
+																		url: '/rpc/attach/?method=ATTACH_FILE&rf=TEXT',
+																		publicType: '2',
+																		inputParams: aInputParams
+																	}));
 
-					$('#ns1blankspaceImagesLogoImage').html(ns1blankspace.attachments.upload.show(oParam));
-
-					ns1blankspace.attachments.upload.submit(oParam);
-					/*$('#ns1blankspaceUpload').button(
+					$('#ns1blankspaceUpload').button(
 						{
 							label: "Upload"
 						})
 						.click(function() {
-							
-							//nsFreshcare.external.freshcareprofile.uploadImages.process({functionPostUpdate: nsFreshcare.external.freshcareprofile.certificateImages});
-						});*/
+							 nsFreshcare.external.freshcareprofile.uploadImages.process({functionPostUpdate: nsFreshcare.external.freshcareprofile.certificateImages});
+						});
 				});	
 
 				$('#ns1blankspaceImagesSignatureFilenameBrowse').click(function() 
@@ -2047,29 +2041,83 @@ nsFreshcare.external.freshcareprofile =
 					var sAttachmentId = $(this).attr('data-attachmentid');
 					var aInputParams = (sAttachmentId) ? [{id: 'id', value: sAttachmentId}] : [];
 
-					oParam = 
-					{	
-						object: nsFreshcare.objectBusiness,
-						objectContext: ns1blankspace.data.contactBusiness,
-						attachmentType: nsFreshcare.data.attachmentTypeSignature,
-						url: '/rpc/attach/?method=ATTACH_FILE&rf=JSON',
-						publicType: '2',
-						inputParams: aInputParams
-					};
-					$('#ns1blankspaceImagesSignatureImage').html(ns1blankspace.attachments.upload.show(oParam));
+					$('#ns1blankspaceImagesSignatureImage').html(ns1blankspace.attachments.upload.show({object: nsFreshcare.objectBusiness,
+																		objectContext: ns1blankspace.data.contactBusiness,
+																		attachmentType: nsFreshcare.data.attachmentTypeSignature,
+																		url: '/rpc/attach/?method=ATTACH_FILE&rf=TEXT',
+																		publicType: '2',
+																		inputParams: aInputParams
+																	}));
 
-					ns1blankspace.attachments.upload.submit(oParam);
-					/*$('#ns1blankspaceUpload').button(
+					$('#ns1blankspaceUpload').button(
 						{
 							label: "Upload"
 						})
 						.click(function() {
 							 nsFreshcare.external.freshcareprofile.uploadImages.process({functionPostUpdate: nsFreshcare.external.freshcareprofile.certificateImages});
-						});*/
+						});
 				});	
 			}	
 		//}
 
+	},
+
+	uploadImages:
+	{
+		process: function(oParam)
+		{
+				ns1blankspace.param = {};
+				if (oParam != undefined) {ns1blankspace.param = oParam};
+				
+				$('#ns1blankspaceUploadStatus').html('Uploading..');
+				var oForm = document.ns1blankspaceFileUpload;
+			  	oForm.submit();
+			 	nsFreshcare.external.freshcareprofile.uploadImages.status();
+				ns1blankspace.timer.delay = setInterval('nsFreshcare.external.freshcareprofile.uploadImages.status()', 1000);
+		},
+
+		status:		function (oParam)
+		{
+			var oDivStatus = document.getElementById('ns1blankspaceFileUploadStatus');
+			var oFrame = document.getElementById('ns1blankspaceUploadProxy');
+			var sStatus;
+			var sCurrentState;
+
+			var fFunctionPostUpdate = ns1blankspace.attachments.show;
+			
+			if (ns1blankspace.param != undefined)
+			{
+				if (ns1blankspace.param.functionPostUpdate != undefined) {fFunctionPostUpdate = ns1blankspace.param.functionPostUpdate}
+			}
+			
+			if (oFrame !== null)
+			{	
+				if (oFrame.contentDocument.body.innerHTML != '') 
+				{
+					if (oFrame.contentDocument.body.innerHTML.split('|').shift() === 'OK')
+					{	sCurrentState = 'complete';	}
+				}
+				else 
+				{
+					sCurrentState = oFrame.contentDocument.body.innerHTML;
+				}
+			}	
+		 
+			if (sCurrentState === 'complete') 
+			{
+				clearInterval(ns1blankspace.timer.delay);
+
+				if (oDivStatus != null)
+				{
+					oDivStatus.setAttribute("class", "");
+					oDivStatus.style.display = 'none';
+				}
+				
+				$('#ns1blankspaceUploadStatus').html('File Upload Complete...');
+				fFunctionPostUpdate();
+				
+			}
+		}
 	},
 
 	save: 		
@@ -2512,7 +2560,7 @@ nsFreshcare.external.freshcareprofile =
 					oElements.push({element: 'Fax', caption: 'Fax'});
 					oElements.push({element: 'Email', caption: 'Email'});
 					// If we're an Auditor, send Certification Body Number
-					if (nsFreshcare.user.role.toLowerCase() === 'auditor')
+					if (nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor)
 					{
 						oElements.push({element: 'CertificationBodyNumber', caption: 'Certification Body Number'});
 					}
@@ -2537,7 +2585,7 @@ nsFreshcare.external.freshcareprofile =
 						});
 					}
 
-					if (nsFreshcare.user.role.toLowerCase() === 'trainer') 
+					if (nsFreshcare.user.roleID === nsFreshcare.data.roles.trainer) 
 					{
 						// They can select 'show on website' fields
 						if ($('#ns1blankspaceWebsiteShowPhoneUpdate').attr('data-show') != $('#ns1blankspaceWebsiteShowPhone').attr('data-show')) {
@@ -2717,21 +2765,21 @@ nsFreshcare.external.freshcareprofile =
 					var sTo = nsFreshcare.data.emailToAdmin;
 					var sFrom = nsFreshcare.data.emailFromAdmin;
 
-					switch (nsFreshcare.user.role.toLowerCase())
+					switch (nsFreshcare.user.roleID)
 					{
-						case 'auditor':
+						case nsFreshcare.data.roles.auditor:
 							sTo = nsFreshcare.data.emailToAuditor;
 							sFrom = nsFreshcare.data.emailFromAuditor;
 							break;
-						case 'trainer':
+						case nsFreshcare.data.roles.trainer:
 							sTo = nsFreshcare.data.emailToTrainer;
 							sFrom = nsFreshcare.data.emailFromTrainer;
 							break;
-						case 'customer':
+						case nsFreshcare.data.roles.customer:
 							sTo = nsFreshcare.data.emailToCustomer;
 							sFrom = nsFreshcare.data.emailFromCustomer;
 							break;
-						case 'grower':
+						case nsFreshcare.data.roles.grower:
 							sTo = nsFreshcare.data.emailToGrower;
 							sFrom = nsFreshcare.data.emailFromGrower;
 							break;
@@ -2739,13 +2787,14 @@ nsFreshcare.external.freshcareprofile =
 
 					nsFreshcare.data.saveError = [];
 					ns1blankspace.inputDetected = false;
+
 					nsFreshcare.external.grower.save.sendEmail(
 					{
 						profileSaveStep: 6,
 						updateRows: aMessageHTML,
 						to: sTo,
 						from: sFrom,
-						subject: nsFreshcare.user.role + ' ' + ns1blankspace.data.contactPersonText.formatXHTML() + 
+						subject: nsFreshcare.user.roleID + ' ' + ns1blankspace.data.contactPersonText.formatXHTML() + 
 								' from ' + ns1blankspace.data.contactBusinessText.formatXHTML() + ' has updated their Freshcare profile',
 						onComplete: nsFreshcare.external.freshcareprofile.save.send
 					});

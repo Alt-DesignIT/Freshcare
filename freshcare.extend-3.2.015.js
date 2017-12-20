@@ -3,10 +3,11 @@
  * Licensed under the MIT license.
  * http://1blankspace.com/license
  * 01 FEB 2010
- */
+*/
 
- // v3.1.201 Changed nsFreshcare.data.roles.readOnly to financialReadOnly
+// v3.1.201 Changed nsFreshcare.data.roles.readOnly to financialReadOnly
 // v3.1.210 replaced all dialog('close') with dialog('destroy')
+// v3.2.015 SUP023421 Change 'Growers' to 'Members'
 
 nsFreshcare.extend = 
 {
@@ -18,7 +19,7 @@ nsFreshcare.extend =
 			var bReadOnly = false;
 			return (nsFreshcare.user == undefined 
 								|| (nsFreshcare.user && 
-									(nsFreshcare.user.role.toLowerCase() == 'board member' 
+									(nsFreshcare.user.roleID == nsFreshcare.data.roles.board 
 										|| $.grep(ns1blankspace.user.roles, function(x) {return x.id == nsFreshcare.data.roles.financialReadOnly}).length > 0)
 									)
 					);
@@ -6397,7 +6398,7 @@ nsFreshcare.extend =
 	},
 
 	project:
-	{
+	{	
 		layout: function()
 		{	// v3.1.1i SUP022768 Aliased as want actions & emails split
 			// v3.2.010 Added conversations

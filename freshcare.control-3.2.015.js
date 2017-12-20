@@ -20,13 +20,13 @@ var nsFreshcare = {};
 ns1blankspace.rootnamespace = nsFreshcare;
 ns1blankspace.rootnamespacetext = 'nsFreshcare';
 
-nsFreshcare.version = '3.2.010';
+nsFreshcare.version = '3.2.015';
 nsFreshcare.personContext = undefined;
 nsFreshcare.businessContext = undefined;
 nsFreshcare.supportAdmin = false;
-nsFreshcare.sitesDev = '310,313';		// lab "Test", lab "Lab"
-nsFreshcare.sitesProd = '1554,1611';	// prod,beta
-nsFreshcare.site = '1554';				// prod
+nsFreshcare.sitesDev = '310,313';
+nsFreshcare.sitesProd = '1554,1611';
+nsFreshcare.site = '1554';
 nsFreshcare.admin = {};
 nsFreshcare.grower = {};
 nsFreshcare.customer = {};
@@ -100,34 +100,36 @@ nsFreshcare.data.contactStatusPendingApproval = '9';		// lab
 nsFreshcare.data.legacyCertificate = {};
 nsFreshcare.data.currentCertificate = {};
 nsFreshcare.data.jasanzCertificate = {};
-nsFreshcare.data.attachmentTypeLogo = '47';			// lab
-nsFreshcare.data.attachmentTypeSignature = '48';	// lab
-nsFreshcare.data.attachmentTypeCertificate = '49'	// lab
-nsFreshcare.data.attachmentTypeEmailImages = '50';	// lab
-nsFreshcare.data.actionTypeCertificate = '406';			//lab
-nsFreshcare.data.actionTypeLateLoggedAudit = '407';		// lab
-nsFreshcare.data.actionTypeAuditRejected = '420';		// lab
+nsFreshcare.data.attachmentTypeLogo = '47';			// dev
+nsFreshcare.data.attachmentTypeSignature = '48';	// dev
+nsFreshcare.data.attachmentTypeCertificate = '49'	// dev
+nsFreshcare.data.attachmentTypeEmailImages = '50';	// dev
+nsFreshcare.data.actionTypeCertificate = '406';			//dev
+nsFreshcare.data.actionTypeLateLoggedAudit = '407';		// dev
+nsFreshcare.data.actionTypeAuditRejected = '420';		// dev
 nsFreshcare.data.actionTypeEmailSent = '5';
-nsFreshcare.data.actionTypeUserNotes = '413';			//lab
-nsFreshcare.data.actionTypeLogFile = '428';			//lab
+nsFreshcare.data.actionTypeUserNotes = '413';			//dev
+nsFreshcare.data.actionTypeLogFile = '428';			//dev
 nsFreshcare.data.reportingRoles = ['admin', 'auditor', 'trainer', 'customer'];
 nsFreshcare.data.userNameSuffix = 'freshcare';
-nsFreshcare.data.growerText = 'Grower';
+nsFreshcare.data.growerText = 'Member';
+nsFreshcare.data.growersmallText = 'member';
+nsFreshcare.data.growersText = 'Members';
 nsFreshcare.data.appName = 'FreshcareOnline';
 nsFreshcare.data.businessName = 'Freshcare';	// v3.2.005
 nsFreshcare.data.xeroStartDate = new Date('01 Sep 2017 00:00:01');
 ns1blankspace.data.financialsUseAccountsContact = true;
 
 // Structure Id's
-nsFreshcare.data.sendPrintedCertificatesId = '2086';	//lab
+nsFreshcare.data.sendPrintedCertificatesId = '2086';	//dev
 nsFreshcare.data.userPasswordId = '2105';		// dev
-nsFreshcare.data.userSubscriptionStart = '2106';		// lab
-nsFreshcare.data.userSubscriptionExpires = '2107';		// lab
-nsFreshcare.data.certificationBodyNumberId = '2095';	// lab
-nsFreshcare.data.selfCertificationDateId = '2093';		// lab
-nsFreshcare.data.jasanzDateId = '2094';					// lab
-nsFreshcare.structureElementCrops = '2091';				// lab
-nsFreshcare.data.structureMembershipFees = 256;			// lab
+nsFreshcare.data.userSubscriptionStart = '2106';		// dev
+nsFreshcare.data.userSubscriptionExpires = '2107';		// dev
+nsFreshcare.data.certificationBodyNumberId = '2095';	// dev
+nsFreshcare.data.selfCertificationDateId = '2093';		// dev
+nsFreshcare.data.jasanzDateId = '2094';					// dev
+nsFreshcare.structureElementCrops = '2091';				// dev
+nsFreshcare.data.structureMembershipFees = 256;			// dev
 
 nsFreshcare.data.emailToAdmin = "admin@freshcare.com.au";
 nsFreshcare.data.emailToAuditor = "auditors@freshcare.com.au";
@@ -179,10 +181,10 @@ nsFreshcare.data.audit.statusCancelled = '3';
 nsFreshcare.data.audit.resultStatusNoResult = '1';
 nsFreshcare.data.audit.resultStatusPending = '2';
 nsFreshcare.data.audit.resultStatusCompleted = '3';
-nsFreshcare.data.audit.resultStatusConducted = '23';		//lab
-nsFreshcare.data.audit.resultStatusAwaitingReview = '24';	//lab
-nsFreshcare.data.audit.resultStatusApproved = '25';		//lab
-nsFreshcare.data.audit.resultStatusRejected = '26';		//lab
+nsFreshcare.data.audit.resultStatusConducted = '23';		//dev
+nsFreshcare.data.audit.resultStatusAwaitingReview = '24';	//dev
+nsFreshcare.data.audit.resultStatusApproved = '25';		//dev
+nsFreshcare.data.audit.resultStatusRejected = '26';		//dev
 
 nsFreshcare.data.audit.typeInitial = '3';
 nsFreshcare.data.audit.typeRecert = '1';
@@ -281,7 +283,7 @@ ns1blankspace.option.typeHidden = 5;
 ns1blankspace.option.returnToLast = false;
 ns1blankspace.option.calendarActionTypes = '4';
 ns1blankspace.option.actionTypeDefault = {id: '4', title: 'File Note'};
-delete(ns1blankspace.option.messagingCheckURL); // = "https://mail.lab.ibcom.biz"; 		// v3.2.010 removed
+delete(ns1blankspace.option.messagingCheckURL) //= "https://mail.lab.ibcom.biz"; 		// v3.1.210 removed
 ns1blankspace.option.passwordErrorMessage = '<br />Password needs to be at least 6 characters and contain at least 1 number.';
 
 ns1blankspace.option.preLoad = function()
@@ -294,9 +296,9 @@ ns1blankspace.option.preLoad = function()
 		if (ns1blankspace.rootnamespacetext != 'nsFreshcare') 
 		{
 			if (oRoot.sitesDev.indexOf(oRoot.site) > -1)
-			{	nsFreshcare.site = '313'; }	// lab site
+			{	nsFreshcare.site = '313'; /*ns1blankspace.option.returnToLast = true;*/}
 			else
-			{ 	nsFreshcare.site = '1554'}	// prod site
+			{ 	nsFreshcare.site = '1554'}
 		}
 		else
 		{
@@ -310,8 +312,8 @@ ns1blankspace.option.preLoad = function()
 		$.map(ns1blankspace.scripts, function(x)
 		{
 			if (x.nameSpace === '1blankspace.supportIssue') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.supportissue-2.0.8.js';}
-			if (x.nameSpace === '1blankspace.messaging.conversation') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.messaging.conversation-2.0.6.js';}
 			if (x.nameSpace === '1blankspace.messaging.imap') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.messaging.imap-2.0.614.js';}
+			if (x.nameSpace === '1blankspace.messaging.conversation') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.messaging.conversation-2.0.6.js';}
 			if (x.nameSpace === '1blankspace.action') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.action-2.0.4.js';}
 			if (x.nameSpace === '1blankspace.report') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.report-2.0.312.js';}		
 			if (x.nameSpace === '1blankspace.financial') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.financial-2.0.4a.js';}
@@ -334,14 +336,16 @@ ns1blankspace.option.preLoad = function()
 			if (x.nameSpace === '1blankspace.setup.website') {x.source = '/site/1433/1blankspace.setup.website-2.1.1.js';}
 			return x;
 		});
-		
-		// v3.2.006 timezone & saml not yet on prod server
-		ns1blankspace.scripts = $.grep(ns1blankspace.scripts, function(x) 
-								{
-									return x.nameSpace != '1blankspace.util.timezone' &&
-										   x.nameSpace != 'ns1blankspace.util.saml'
-								});
 	
+		
+	// v3.2.006 timezone & saml not yet on prod server
+	ns1blankspace.scripts = $.grep(ns1blankspace.scripts, function(x) 
+							{
+								return x.nameSpace != '1blankspace.util.timezone' &&
+									   x.nameSpace != 'ns1blankspace.util.saml'
+							});
+
+
 	// 3.0.2b Added so that budget could show in ECA
 	ns1blankspace.scripts.push({nameSpace: '1blankspace.visualise', source: (nsFreshcare.sitesDev.indexOf(nsFreshcare.site) > -1 ? '/jscripts' : '/site/' + nsFreshcare.site) + '/1blankspace.visualise-2.0.2.js'});
 	ns1blankspace.scripts.push({nameSpace: '1blankspace.financial.budget', source: '/jscripts/1blankspace.financial.budget-2.0.1.js'});
@@ -426,9 +430,9 @@ nsFreshcare.setup =
 				show: true,
 				group : 1,
 				type: 1
-			},
+			},			
 			{
-				title: "Growers",
+				title: nsFreshcare.data.growersText,
 				namespace: "grower",
 				parentNamespace: "admin",
 				rootnamespace: nsFreshcare,
@@ -690,7 +694,7 @@ nsFreshcare.setup =
 				type: 1
 			},
 			{
-				title: "New Growers from Trainers",
+				title: "New " + nsFreshcare.data.growersText + " from Trainers",
 				namespace: "newgrower",
 				parentNamespace: "admin",
 				rootnamespace: nsFreshcare,
@@ -700,7 +704,7 @@ nsFreshcare.setup =
 				type: 1
 			},
 			{
-				title: "New Grower Memberships",
+				title: "New " + nsFreshcare.data.growerText + " Memberships",
 				namespace: "newmemberships",
 				parentNamespace: "admin",
 				rootnamespace: nsFreshcare,
@@ -1415,7 +1419,7 @@ nsFreshcare.setup =
 		views:
 		[
 			{
-				title: "Growers",
+				title: nsFreshcare.data.growersText,
 				namespace: "grower",
 				parentNamespace: "admin",
 				rootnamespace: nsFreshcare,
@@ -1577,7 +1581,7 @@ nsFreshcare.setup =
 		views:
 		[
 			{
-				title: "Growers",
+				title: nsFreshcare.data.growerText,
 				namespace: "grower",
 				parentNamespace: "auditor",
 				rootnamespace: nsFreshcare,
@@ -1629,7 +1633,7 @@ nsFreshcare.setup =
 					filters: 
 					[
 						{
-							caption: "Grower",
+							caption: nsFreshcare.data.growerText,
 							name: "audit.contactbusiness",
 							type: 'Select',
 							method: "CONTACT_BUSINESS_SEARCH",
@@ -1742,7 +1746,7 @@ nsFreshcare.setup =
 						filters: 
 						[
 							{
-								caption: "Grower",
+								caption: nsFreshcare.data.growerText,
 								name: "audit.contactbusiness",
 								type: 'Select',
 								method: "CONTACT_BUSINESS_SEARCH",
@@ -1885,7 +1889,7 @@ nsFreshcare.setup =
 		]
 	},
 	{	/* Grower */
-		role: "Grower",
+		role: 'Grower',	/* TODO: Change to Member */
 		viewGroups:
 		[
 			{
@@ -2204,37 +2208,37 @@ nsFreshcare.scripts =
 [
 	{
 		nameSpace: 'freshcare.render',
-		source: '/site/' + nsFreshcare.site + '/freshcare.render-3.2.010.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.render-3.2.001.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.util',
-		source: '/site/' + nsFreshcare.site + '/freshcare.util-3.2.010.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.util-3.2.001.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.audit',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.audit-3.2.010.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.audit-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.auditcar',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.auditcar-3.2.005.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.auditcar-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.certificationbody',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.certificationbody-3.2.005.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.certificationbody-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.certificate',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.certificate-3.2.005.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.certificate-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.contactPerson',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.contactperson-3.2.010.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.contactperson-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2244,7 +2248,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.admin.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.grower-3.2.010.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.grower-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2254,47 +2258,47 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.admin.newgrower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newgrower-3.1.210.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newgrower-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.newmemberships',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newmemberships-3.1.210.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newmemberships-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.newtrainee',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newtrainee-3.1.208b.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newtrainee-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.relationships',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.relationships-3.2.005.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.relationships-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.report',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.report-3.1.215.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.report-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.trainer',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainer-3.2.005.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainer-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.trainingpackage',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainingpackage-3.1.215.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainingpackage-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.trainingcourse',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainingcourse-3.2.010.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainingcourse-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.admin.user',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.user-3.2.010.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.user-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2304,17 +2308,17 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.auditor.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.grower-3.2.005.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.grower-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.auditor.home',
-		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.home-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.home-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.auditor.jasanzexport',
-		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.jasanzexport-3.1.212.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.jasanzexport-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2324,7 +2328,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.customer.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.customer.grower-3.2.007.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.customer.grower-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2334,12 +2338,12 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.external.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.external.grower-3.2.010.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.external.grower-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.extend',
-		source: '/site/' + nsFreshcare.site + '/freshcare.extend-3.2.010.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.extend-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2349,7 +2353,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: '1blankspace.grower.audit',
-		source: '/site/' + nsFreshcare.site + '/freshcare.grower.audit-3.1.205.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.grower.audit-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2364,12 +2368,12 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.grower.customer',
-		source: '/site/' + nsFreshcare.site + '/freshcare.grower.customer-3.2.005.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.grower.customer-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.grower.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.grower.grower-3.2.010.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.grower.grower-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2384,12 +2388,12 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.internal',
-		source: '/site/' + nsFreshcare.site + '/freshcare.internal-3.2.010.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.internal-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.help',
-		source: '/site/' + nsFreshcare.site + '/freshcare.help-3.0.0.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.help-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2404,12 +2408,12 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.setup.bulkupdate',
-		source: '/site/' + nsFreshcare.site + '/freshcare.setup.bulkupdate-3.1.0e.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.setup.bulkupdate-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.external.freshcareprofile',
-		source: '/site/' + nsFreshcare.site + '/freshcare.setup.freshcareprofile-3.2.010.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.setup.freshcareprofile-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2444,12 +2448,12 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.trainer.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.trainer.grower-3.2.005.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.trainer.grower-3.2.015.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.trainer.home',
-		source: '/site/' + nsFreshcare.site + '/freshcare.trainer.home-3.1.207.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.trainer.home-3.2.015.js',
 		sourceNS: nsFreshcare
 	}
 ]
@@ -3043,7 +3047,7 @@ nsFreshcare.app =
 			nsFreshcare.data.emailToCustomer = "cassandra.buono@alt-designit.com.au" //;katie@freshcare.com.au";
 			nsFreshcare.data.emailToGrower = "cassandra.buono@alt-designit.com.au" //;katie@freshcare.com.au";
 			nsFreshcare.data.emailToTrainer = "cassandra.buono@alt-designit.com.au" //;katie@freshcare.com.au";
-			nsFreshcare.data.emailFromAuditor = "cassandra.buono@alt-designit.com.au";
+			nsFreshcare.data.emailFromAuditor = "noreply@freshcare.com.au";
 			nsFreshcare.data.emailFromCustomer = "cassandra.buono@alt-designit.com.au";
 			nsFreshcare.data.emailFromGrower = "cassandra.buono@alt-designit.com.au";
 			nsFreshcare.data.emailFromTrainer = "cassandra.buono@alt-designit.com.au";
@@ -3154,7 +3158,7 @@ nsFreshcare.app =
 			nsFreshcare.data.eLearningBusiness = '1367308';		// 3.2.010SUP023469
 
 			ns1blankspace.option.actionReminderTemplate = '95939';	// v3.1.203 Prod reminder template
-			delete(ns1blankspace.option.messagingCheckURL);// = "https://api.mydigitalstructure.com/"; 		// v3.2.010 removed
+			delete(ns1blankspace.option.messagingCheckURL) //= "https://api.mydigitalstructure.com/"; 		// v3.0.010 removed
 		}
 
 		// v3.2.001 SUP023329 Common location to store id's of roles
@@ -3180,14 +3184,13 @@ nsFreshcare.app =
 
 	getExternalRoles: function()
 	{
-			nsFreshcare.data.rolesExternal = 
-			[
-				nsFreshcare.data.roles.auditor,
-				nsFreshcare.data.roles.customer,
-				nsFreshcare.data.roles.grower,
-				nsFreshcare.data.roles.trainer
-			]
-
+		nsFreshcare.data.rolesExternal = 
+		[
+			nsFreshcare.data.roles.auditor,
+			nsFreshcare.data.roles.customer,
+			nsFreshcare.data.roles.grower,
+			nsFreshcare.data.roles.trainer
+		]
 	}
 }
 
@@ -3271,7 +3274,7 @@ nsFreshcare.control =
 			nsFreshcare.data.documentInit = true;
 		}
 
-		if (ns1blankspace.contactsearch && nsFreshcare.extend && nsFreshcare.data.contactSearchInit != true)
+		if (ns1blankspace.contactsearch && ns1blankspace.extend && nsFreshcare.data.contactSearchInit != true)
 		{
 			ns1blankspace.contactsearch.businesses.bind = nsFreshcare.extend.contactsearch.businesses.bind;
 			ns1blankspace.contactsearch.people.bind = nsFreshcare.extend.contactsearch.people.bind;
@@ -3445,11 +3448,11 @@ nsFreshcare.control =
 
 					if (nsFreshcare.user.role != 'Admin') 
 					{
-						var sHeaderText = (nsFreshcare.user.role == "Auditor") 
+						var sHeaderText = (nsFreshcare.user.roleID == nsFreshcare.data.roles.auditor) 
 							 	? "Certification Bodie" 
-								: ((nsFreshcare.user.role.toLowerCase() != 'grower') ? nsFreshcare.user.role : nsFreshcare.data.growerText);
+								: ((nsFreshcare.user.roleID != nsFreshcare.data.roles.grower) ? nsFreshcare.user.role : nsFreshcare.data.growerText);
 						
-						$('#nsFreshcareOnlineHeaderRole').html(nsFreshcare.data.appName + ' for ' + sHeaderText + (nsFreshcare.user.role.toLowerCase() == 'jasanz' ? '' : 's'));		
+						$('#nsFreshcareOnlineHeaderRole').html(nsFreshcare.data.appName + ' for ' + sHeaderText + (nsFreshcare.user.roleID == nsFreshcare.data.roles.jasanz ? '' : 's'));		
 						$('#ns1blankspaceViewControlSetupContainer').hide();				
 					}
 					else
@@ -3473,10 +3476,9 @@ nsFreshcare.control =
 					// v3.1.1i SUP022764 Added freshcareAdministrator role
 					// v3.1.207 SUP023058 Removed the dependency on ns1blankspace.user.systemadmin
 					nsFreshcare.freshcareAdministrator = ($.grep(ns1blankspace.user.roles, function(x) {return x.id == nsFreshcare.data.roles.administrator}).length > 0);
-
-					ns1blankspace.report.showUpdate = (nsFreshcare.user.role.toLowerCase() === 'admin');
-					ns1blankspace.report.showEmail = (nsFreshcare.user.role.toLowerCase() === 'admin');
-					ns1blankspace.report.showSMS = (nsFreshcare.user.role.toLowerCase() === 'admin');
+					ns1blankspace.report.showUpdate = (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin);
+					ns1blankspace.report.showEmail = (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin);
+					ns1blankspace.report.showSMS = (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin);
 				}
 			}
 			else 
@@ -3601,7 +3603,8 @@ nsFreshcare.control =
 					{
 						if (this.namespace == "audit" && this.parentNamespace == "admin") 
 						{
-							if (nsFreshcare.user.role.toLowerCase() === 'auditor')
+							// v3.2.015 SUP023422 Added COP Based Training
+							if (nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor)
 							{	
 								this.search.filters.unshift(							
 									{
@@ -3616,7 +3619,8 @@ nsFreshcare.control =
 									});
 							}
 							// v3.1.1e SUP022638 Now applies also to internal auditor
-							else if (nsFreshcare.user.role.toLowerCase() === 'admin' || nsFreshcare.user.role.toLowerCase() === 'internal auditor')
+							// v3.2.015 SUP023422 Added COP Based Training
+							else if (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin || nsFreshcare.user.roleID === nsFreshcare.data.roles.internalAuditor)
 							{
 								// v3.1.204 SUP023020 Was using persongroup
 								this.search.filters.unshift(							
@@ -3635,7 +3639,7 @@ nsFreshcare.control =
 
 								this.search.filters.unshift(							
 								{
-									caption: "Grower",
+									caption: nsFreshcare.data.growerText,
 									name: "audit.contactbusiness",
 									type: 'Select',
 									method: "CONTACT_BUSINESS_SEARCH",
@@ -3679,7 +3683,7 @@ nsFreshcare.control =
 		else if (oParam.controlInitStep === 7) 
 		{
 			// v3.1.1e SUP022638 Now applies also to internal auditor
-			if (nsFreshcare.user.role.toLowerCase() === "admin" || nsFreshcare.user.role.toLowerCase() === 'internal auditor' || nsFreshcare.user.role.toLowerCase() == 'jasanz') 
+			if (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin || nsFreshcare.user.roleID === nsFreshcare.data.roles.internalAuditor || nsFreshcare.user.roleID == nsFreshcare.data.roles.jasanz) 
 			{
 				if (nsFreshcare.data.sendPrintedCertificatesOptions === undefined)
 				{
@@ -3705,7 +3709,7 @@ nsFreshcare.control =
 				}
 			}
 
-			else if (nsFreshcare.user.role.toLowerCase() === "grower") 
+			else if (nsFreshcare.user.roleID === nsFreshcare.data.roles.grower) 
 			{
 				ns1blankspace.home.show = nsFreshcare.grower.home.init;
 				ns1blankspace.home.options.show = nsFreshcare.auditor.home.options.show;
@@ -3728,7 +3732,7 @@ nsFreshcare.control =
 				}
 			}
 
-			else if (nsFreshcare.user.role.toLowerCase() === "customer") 
+			else if (nsFreshcare.user.roleID === nsFreshcare.data.roles.customer) 
 			{
 				ns1blankspace.home.show = nsFreshcare.customer.home.init;
 				ns1blankspace.home.options.show = nsFreshcare.auditor.home.options.show;
@@ -3747,7 +3751,7 @@ nsFreshcare.control =
 				}
 			}
 
-			else if (nsFreshcare.user.role.toLowerCase() === "auditor") 
+			else if (nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor) 
 			{
 
 				ns1blankspace.home.show = nsFreshcare.auditor.home.init;
@@ -3792,7 +3796,7 @@ nsFreshcare.control =
 				
 			}
 
-			else if (nsFreshcare.user.role.toLowerCase() === "trainer") 
+			else if (nsFreshcare.user.roleID === nsFreshcare.data.roles.trainer) 
 			{
 				ns1blankspace.home.show = nsFreshcare.trainer.home.init;
 				ns1blankspace.report.initData = nsFreshcare.trainer.home.report.initData;
@@ -3811,7 +3815,7 @@ nsFreshcare.control =
 				}
 			}
 
-			else if (nsFreshcare.user.role.toLowerCase() === "board member") 
+			else if (nsFreshcare.user.roleID === nsFreshcare.data.roles.board) 
 			{
 				ns1blankspace.home.show = nsFreshcare.board.home.init;
 				//ns1blankspace.report.initData = nsFreshcare.board.report.initData;
@@ -3822,7 +3826,7 @@ nsFreshcare.control =
 				nsFreshcare.control.init(oParam);
 			}
 
-			else if (nsFreshcare.user.role.toLowerCase() === "reviewer")
+			else if (nsFreshcare.user.roleID === nsFreshcare.data.roles.reviewer)
 			{
 				ns1blankspace.home.show = nsFreshcare.reviewer.home.init;
 				ns1blankspace.home.options.show = nsFreshcare.auditor.home.options.show;
@@ -3872,7 +3876,7 @@ nsFreshcare.control =
 
 			ns1blankspace.app.postInit();
 
-			if (nsFreshcare.user.role.toLowerCase() === 'admin')
+			if (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin)
 			{
 				$('#ns1blankspaceViewControlHelp')
 					.unbind('click');
@@ -3890,8 +3894,9 @@ nsFreshcare.control =
 				$('#ns1blankspaceLogonName').click(nsFreshcare.admin.user.switchBackClick);
 			}
 			
-			// v2.0.4o SUP022084 support issue button should not be visible to external users
-			if (nsFreshcare.user.role.toLowerCase() != "admin") 
+			// v2.0.40 SUP022084 support issue button should not be visible to external users
+
+			if (nsFreshcare.user.roleID != nsFreshcare.data.roles.admin) 
 			{		
 				// External logons can't switch-in to other spaces or use setup area so disable these features
 				$('#ns1blankspaceSpaceText').unbind('click');
@@ -4083,8 +4088,11 @@ nsFreshcare.control =
 
 						nsFreshcare.data.allGroups = [];
 						
+
+
 						// v3.1.1e SUP022638 Added Internal Auditor to allGroups
-						$.each(oResponse.data.rows, function() {
+						$.each(oResponse.data.rows, function() {	
+
 							switch (this.title.toUpperCase())
 							{
 								case 'ACCOUNTS CONTACT':
@@ -4186,7 +4194,7 @@ nsFreshcare.control =
 						
 						$.each(oResponse.data.rows, function() 
 						{
-							// v3.1.204 SUP023020 Removed all other groups as only Grower now required not that Scope is on Membership
+							// v3.1.204 SUP023020 Removed all other groups as only Grower now required now that Scope is on Membership
 							switch (this.title.toUpperCase())
 							{
 								case 'GROWER':
@@ -4221,6 +4229,7 @@ nsFreshcare.control =
 									break;
 								case 'BOARD MEMBER':
 									nsFreshcare.data.businessGroupBoard = this.id;
+									nsFreshcare.data.portalGroups.push({id: this.id, portal: this.title});
 									break;
 								case 'CUSTOMER':
 									nsFreshcare.data.businessGroupCustomer = this.id;
@@ -4246,6 +4255,7 @@ nsFreshcare.control =
 					ns1blankspace.util.onComplete(oParam);
 				}
 			}
+
 	},
 
 	subscriptionStatus: 	function(oParam, oResponse) 
@@ -4716,12 +4726,12 @@ nsFreshcare.control =
 							if ($('#ns1blankspaceViewControlActionStatus').is('*'))
 							{	
 								ns1blankspace.status.error('No email signature found. Please set this up via ' +
-													((nsFreshcare.user.role.toLowerCase() === 'admin') ? 'Email setup' : 'Freshcare Profile'));
+													((nsFreshcare.user.roleID === nsFreshcare.data.roles.admin) ? 'Email setup' : 'Freshcare Profile'));
 							}
 							else
 							{
 								alert('No email signature found. Please set this up via ' +
-													((nsFreshcare.user.role.toLowerCase() === 'admin') ? 'Email setup' : 'Freshcare Profile'));
+													((nsFreshcare.user.roleID === nsFreshcare.data.roles.admin) ? 'Email setup' : 'Freshcare Profile'));
 							}
 						}
 					}
@@ -4813,7 +4823,7 @@ nsFreshcare.control =
 		if (oParam.setupTrainerStep == undefined) {oParam.setupTrainerStep = 1}
 
 		// Setup export formats for reports & Trainee Export
-		if (nsFreshcare.user.role.toLowerCase() == 'trainer')
+		if (nsFreshcare.user.roleID == nsFreshcare.data.roles.trainer)
 		{
 			nsFreshcare.trainer.setup.exports();
 		}
@@ -5179,12 +5189,12 @@ nsFreshcare.control =
 				aHTML.push('<tr class="ns1blankspaceViewControl">');
 
 				// Only show reporting for roles who have access to it
-				if ($.grep(nsFreshcare.data.reportingRoles, function(x) {return x === nsFreshcare.user.role.toLowerCase()}).length > 0)
+				if ($.grep(nsFreshcare.data.reportingRoles, function(x) {return x === nsFreshcare.user.roleID}).length > 0)
 				{
 					aHTML.push('<td class="ns1blankspaceViewControl" colspan=' + ns1blankspace.viewGroups.length + 
 									' style="text-align: right; color: #999999; font-size:0.825em; padding-top:6px;">' +
 									'<span id="ns1blankspaceViewControl_report" class="ns1blankspaceViewControl">' +
-									((nsFreshcare.user.role.toLowerCase() === 'admin') ? 'Search... report, export, update, email and SMS' : 'Search & Reporting...') +
+									((nsFreshcare.user.roleID === nsFreshcare.data.roles.admin) ? 'Search... report, export, update, email and SMS' : 'Search & Reporting...') +
 									'</span></td>');
 								aHTML.push('</tr></table>');
 				}
@@ -5343,22 +5353,22 @@ nsFreshcare.control =
 	{
 		"default": 	function ()
 		{
-			if (nsFreshcare.user.role == "Admin") {
+			if (nsFreshcare.user.roleID == nsFreshcare.data.roles.admin) {
 				nsFreshcare.admin.home.show();
 			}
-			else if (nsFreshcare.user.role == "Grower") {
+			else if (nsFreshcare.user.roleID == nsFreshcare.data.roles.grower) {
 				nsFreshcare.grower.certificate.init({showHome: true});
 			}
-			else if (nsFreshcare.user.role == "Customer") {
+			else if (nsFreshcare.user.roleID == nsFreshcare.data.roles.customer) {
 				nsFreshcare.customer.grower.init({showHome: true});
 			}
-			else if (nsFreshcare.user.role == "Auditor") {
+			else if (nsFreshcare.user.roleID == nsFreshcare.data.roles.auditor) {
 				nsFreshcare.auditor.grower.init({showHome: true});
 			}
-			else if (nsFreshcare.user.role == "Trainer") {
+			else if (nsFreshcare.user.roleID == nsFreshcare.data.roles.trainer) {
 				nsFreshcare.trainer.grower.init({showHome: true});
 			}
-			else if (nsFreshcare.user.role == "Board Member") {
+			else if (nsFreshcare.user.roleID == nsFreshcare.data.roles.board) {
 				nsFreshcare.board.home.init({showHome: true});
 			}
 			$('#ns1blankspaceViewControlViewContainer').button({label: ns1blankspace.option.defaultView})
@@ -5366,11 +5376,11 @@ nsFreshcare.control =
 
 		setup:	function ()
 		{
-			if (nsFreshcare.user.role.toLowerCase() != 'admin' && ns1blankspace.util.toFunction('nsFreshcare.setup.freshcareprofile.init') !== undefined)
+			if (nsFreshcare.user.roleID != nsFreshcare.data.roles.admin && ns1blankspace.util.toFunction('nsFreshcare.setup.freshcareprofile.init') !== undefined)
 			{	
 				nsFreshcare.setup.freshcareprofile.init();
 			}
-			else if (nsFreshcare.user.role.toLowerCase() === 'admin' && ns1blankspace.util.toFunction('nsFreshcare.admin.user.init') !== undefined)
+			else if (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin && ns1blankspace.util.toFunction('nsFreshcare.admin.user.init') !== undefined)
 			{
 				nsFreshcare.admin.user.init();
 			}
@@ -5717,7 +5727,6 @@ nsFreshcare.control =
 			}
 		}
 	}
-
 }
 
 nsFreshcare.person = 
