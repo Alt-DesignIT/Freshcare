@@ -57,7 +57,7 @@ nsFreshcare.admin.contactPerson =
 				"delete": [oNS.admin]
 			},
 			{
-				// v3.2.020 SUP023422 Added COP Based Training
+				// v3.2.020 SUP023422 Added Training Tab
 				tab: 'Training',
 				create: [],
 				retrieve: [oNS.admin, oNS.internalAuditor],
@@ -437,206 +437,6 @@ nsFreshcare.admin.contactPerson =
 				}
 			}
 		});
-	},
-	training:
-	{
-
-		// v3.2.020 SUP023422 Added COP Based Training
-		show: function(oParam)
-		{
-			var oResponse = ns1blankspace.util.getParam(oParam, 'response').value;
-			var sXHTMLElementID = ns1blankspace.util.getParam(oParam, 'xhtmlElementID').value;
-			var sSortColumn = ns1blankspace.util.getParam(oParam, 'sortColumn', {'default': 'contactbusiness'}).value;
-			var sSortDirection = ns1blankspace.util.getParam(oParam, 'sortDirection', {'default': 'desc'}).value;
-			var aHTML = [];
-
-			if (oResponse === undefined)
-			{
-				var oSearch = new AdvancedSearch();
-				oSearch.method = 'AGRI_TRAINEE_ATTENDANCE_LINK_SEARCH';
-				oSearch.addField('agritraineeattendancelink.attendee.course.coursedate' +
-								',agritraineeattendancelink.attendee.course.trainercontactbusinesstext' +
-								',agritraineeattendancelink.attendee.course.trainercontactpersontext' +
-								',agritraineeattendancelink.attendee.course.package.membership.code' +
-								',agritraineeattendancelink.attendee.course.package.codeofpracticetext' +
-								',contactbusinesstext');		//,attendeecount
-				oSearch.rows = ns1blankspace.option.defaultRows;
-				oSearch.sort(sSortColumn, sSortDirection);
-				oSearch.getResults(function(oResponse)
-				{
-					if (oResponse.status === 'OK')
-					{
-						aHTML = [];
-				
-						if (oResponse.data.rows.length == 0)
-						{
-							aHTML.push('<table border="0" cellspacing="0" cellpadding="0" width="750" style="margin-top:15px); margin-bottom:15px);">');
-							aHTML.push('<tr>');
-							aHTML.push('<td class="ns1blankspaceNothing">No training.</td>');
-							aHTML.push('</tr>');
-							aHTML.push('</table>');
-
-							$('#ns1blankspaceTrainingColumn1').html(aHTML.join(''));		
-						}
-						else
-						{
-							aHTML.push('<table class="ns1blankspaceContainer">' +
-							'<tr class="ns1blankspaceContainer">' +
-							'<td id="ns1blankspaceTrainingColumn1" class="ns1blankspaceColumn1Large">' +
-							ns1blankspace.xhtml.loading +
-							'</td>' +
-							'<td id="ns1blankspaceTrainingColumn2" style="width: 100px;" class="ns1blankspaceColumn2Action">' +
-							'</td>' +
-							'</tr>' +
-							'</table>');				
-				
-							$('#' + sXHTMLElementID).html(aHTML.join(''));
-							
-							var aHTML = [];
-							
-							aHTML.push('<table class="ns1blankspaceColumn2">');
-							
-							aHTML.push('<tr><td>' +
-											'<span id="ns1blankspaceTrainingAdd" class="ns1blankspaceAction">Add</span>' +
-											'</td></tr>');
-											
-							aHTML.push('</table>');					
-							
-							$('#ns1blankspaceTrainingColumn2').html(aHTML.join(''));
-							
-							$('#ns1blankspaceTrainingAdd')
-								.button(
-								{
-									label: "Add Training"
-								})
-								.click(function() 
-								{
-									nsFreshcare.admin.trainer.addTrainingCourse();
-								});
-							
-							
-							aHTML = [];
-					
-						
-							aHTML.push('<table border="0" cellspacing="0" cellpadding="0" class="ns1blankspace">');
-							aHTML.push('<tr class="ns1blankspaceCaption">');
-							aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
-											' data-column="coursedate"' +
-											' data-sortdirection="' + ((sSortColumn == "coursedate") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
-											'>Training Date</td>');
-							aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
-											' data-column="contactbusiness"' +
-											' data-sortdirection="' + ((sSortColumn == "contactbusiness") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
-											'>Trainer Business</td>');
-							aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
-											' data-column="contactpersontext"' +
-											' data-sortdirection="' + ((sSortColumn == "contactpersontext") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
-											'>Trainer Person</td>');
-							aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
-											' data-column="membershipcode"' +
-											' data-sortdirection="' + ((sSortColumn == "membershipcode") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
-											'>Membership + COP</td>');
-							aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
-											' data-column="contactbusinesstext"' +
-											' data-sortdirection="' + ((sSortColumn == "contactbusinesstext") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
-											'>Business</td>');
-							aHTML.push('<td class="ns1blankspaceHeaderCaption">&nbsp;</td>');
-							aHTML.push('</tr>');
-							
-							$.each(oResponse.data.rows, function()
-							{
-								aHTML.push(nsFreshcare.admin.contactPerson.training.row(this));
-							});
-							
-							aHTML.push('</table>');
-							
-							ns1blankspace.render.page.show(
-							{
-								xhtmlElementID: 'ns1blankspaceTrainingColumn1',
-								xhtmlContext: 'Training',
-								xhtml: aHTML.join(''),
-								showMore: (oResponse.morerows == "true"),
-								more: oResponse.moreid,
-								rows: ns1blankspace.option.defaultRows,
-								functionShowRow: nsFreshcare.admin.contactPerson.training.row,
-								functionNewPage: 'nsFreshcare.admin.contactPerson.training.bind()',
-								type: 'json'
-							}); 	
-							
-							nsFreshcare.admin.contactPerson.training.bind();
-						}
-					}
-					else
-					{
-						ns1blankspace.status.error(oResponse.error.errornotes);
-					}
-				});
-			}
-		},
-		row: function(oRow)
-		{
-			// v3.2.020 SUP023422 Added COP Based Training
-			var aHTML = [];
-			aHTML.push('<tr id="ns1blankspaceTraining-' + oRow.id + '">');
-
-			aHTML.push('<td id="ns1blankspaceTraining_coursedate-' + oRow.id + '" class="ns1blankspaceRow">' +
-							oRow['agritraineeattendancelink.attendee.course.coursedate'] + '</td>');
-
-			aHTML.push('<td id="ns1blankspaceTraining_contactbusiness-' + oRow.id + '" class="ns1blankspaceRow">' +
-							oRow['agritraineeattendancelink.attendee.course.trainercontactbusinesstext'] + '</td>');
-
-			aHTML.push('<td id="ns1blankspaceTraining_contactpersontext-' + oRow.id + '" class="ns1blankspaceRow">' +
-							oRow['agritraineeattendancelink.attendee.course.trainercontactpersontext'] + '</td>');
-
-			aHTML.push('<td id="ns1blankspaceTraining_membershipcode-' + oRow.id + '" class="ns1blankspaceRow">' +
-							oRow['agritraineeattendancelink.attendee.course.package.membership.code'] + ' + ' + oRow['agritraineeattendancelink.attendee.course.package.codeofpracticetext'] + '</td>');
-
-			aHTML.push('<td id="ns1blankspaceTraining_contactbusinesstext-' + oRow.id + '" class="ns1blankspaceRow">' +
-							oRow['contactbusinesstext'] + '</td>');
-			aHTML.push('<td id="ns1blankspaceTraining_select-' + oRow.id + '" class="ns1blankspaceRow ns1blankspaceSelect">' +
-							'&nbsp;</td>');
-
-			aHTML.push('</tr>');
-
-			return aHTML.join('');
-		},
-		bind: function()
-		{
-			// v3.2.020 SUP023422 Added COP Based Training
-			$('.ns1blankspaceHeaderSort')
-				.on('click', function(event)
-				{
-					var oParam = 
-					{
-						xhtmlElementID: 'ns1blankspaceMainTraining',
-						sortColumn: $(this).attr('data-column'),
-						sortDirection: $(this).attr('data-sortdirection')
-					}
-
-					$(this).attr('data-sortdirection', (($(this).attr('data-sortdirection') === 'asc') ? 'desc' : 'asc'));
-					nsFreshcare.admin.contactPerson.training.show(oParam);
-				})
-				.css('cursor', 'pointer')
-
-			$('.ns1blankspaceSelect')
-				.button(
-				{
-					text: false,
-					label: 'Open',
-					icons: {primary: 'ui-icon-play'}
-				})
-				.on('click', function(event)
-				{
-					var sCourseId = this.id.split('-').pop();
-
-					if (sCourseId)
-					{
-						nsFreshcare.admin.training.init({id: sCourseId});
-					}
-				})
-				.css('height', '25px')
-				.css('width', '25px');
-		}
 	}
 }
 
@@ -726,13 +526,13 @@ nsFreshcare.admin.contactPerson.render =
 			]
 		},
 		rowParameters:
-		{	// v3.2.010 SUP023329 Only search xero fields if option is set
+		{
 			fields: "firstname,surname,contactbusiness,contactbusinesstext,title,titletext,position,workphone,fax,mobile,email," +
 					"customerstatus,customerstatustext,supplierstatus,supplierstatustext,gender,gendertext,sendnews,signature" +
 					"streetaddress1,streetaddress2,streetsuburb,streetstate,streetpostcode,streetcountry," +
 					"mailingaddress1,mailingaddress2,mailingsuburb,mailingstate,mailingpostcode,mailingcountry,notes," +
 					"dateofbirth,rating,ratingtext,numberofchildren,otherfamilydetails,etag,contactperson.user.id" +
-					(nsFreshcare.option.exportToXero ? ",sexeropersonid,sexeropersonupdated," : '') +
+					",sexeropersonid,sexeropersonupdated," +
 					ns1blankspace.option.auditFields,
 			functionShow: function(oParam, oResponse) 
 			{
@@ -1299,23 +1099,23 @@ nsFreshcare.admin.contactPerson.render =
 			]
 		},
 		{
-			// v3.2.020 SUP023422 Added COP Based Training
+			// v3.2.020 SUP023422 Added Training Tab
 			name: "Training",
 			label: 'Training',
 			showOnNew: false,
 			displayCondition: nsFreshcare.admin.contactPerson.functionCheckAccess,
-			displayConditionParams: {tabs: ['Actions']},
+			displayConditionParams: {tabs: ['Training']},
 			functionClick: function()
 			{
 				ns1blankspace.show({selector: '#ns1blankspaceMainTraining', refresh: true});
-				nsFreshcare.admin.contactPerson.training.show({xhtmlElementID: 'ns1blankspaceMainTraining'});
+				nsFreshcare.internal.entity.training.show({xhtmlElementID: 'ns1blankspaceMainTraining'});
+				
 			}
 		},
 		{
 			name: "Xero",
 			label: "Xero",
 			showOnNew: false,
-			displayCondition: function() {return nsFreshcare.option.exportToXero},		/* v3.2.010 Added */
 			breakAfter: true,
 			save: {root: true},
 			functionClick: function(oParam)
