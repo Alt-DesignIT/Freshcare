@@ -312,7 +312,7 @@ ns1blankspace.option.preLoad = function()
 		$.map(ns1blankspace.scripts, function(x)
 		{
 			if (x.nameSpace === '1blankspace.supportIssue') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.supportissue-2.0.8.js';}
-			if (x.nameSpace === '1blankspace.messaging.imap') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.messaging.imap-2.0.614.js';}
+			if (x.nameSpace === '1blankspace.messaging.imap') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.messaging.imap-2.0.614a.js';}
 			if (x.nameSpace === '1blankspace.messaging.conversation') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.messaging.conversation-2.0.6.js';}
 			if (x.nameSpace === '1blankspace.action') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.action-2.0.4.js';}
 			if (x.nameSpace === '1blankspace.report') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.report-2.0.312.js';}		
@@ -333,7 +333,7 @@ ns1blankspace.option.preLoad = function()
 			if (x.nameSpace === '1blankspace.setup.file') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.setup.file-2.0.003.js';}	// v3.1.209b
 			if (x.nameSpace === '1blankspace.projectTask') {x.source = '/jscripts/1blankspace.project.task-2.0.1.js';} 
 			if (x.nameSpace === '1blankspace.setup.structure') {x.source = '/' + (nsFreshcare.sitesDev.indexOf(nsFreshcare.site) > -1 ? 'jscripts' : 'site/1433') + '/1blankspace.setup.structure-2.0.4.js';} 
-			if (x.nameSpace === '1blankspace.setup.website') {x.source = '/site/1433/1blankspace.setup.website-2.1.1.js';}
+			if (x.nameSpace === '1blankspace.setup.website') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.setup.website-2.1.1.js';}
 			return x;
 		});
 	
@@ -1581,7 +1581,7 @@ nsFreshcare.setup =
 		views:
 		[
 			{
-				title: nsFreshcare.data.growerText,
+				title: nsFreshcare.data.growersText,
 				namespace: "grower",
 				parentNamespace: "auditor",
 				rootnamespace: nsFreshcare,
@@ -2208,12 +2208,12 @@ nsFreshcare.scripts =
 [
 	{
 		nameSpace: 'freshcare.render',
-		source: '/site/' + nsFreshcare.site + '/freshcare.render-3.2.001.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.render-3.2.010.js',
 		sourceNS: nsFreshcare
 	},
 	{
 		nameSpace: 'freshcare.util',
-		source: '/site/' + nsFreshcare.site + '/freshcare.util-3.2.001.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.util-3.2.010.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -3274,7 +3274,7 @@ nsFreshcare.control =
 			nsFreshcare.data.documentInit = true;
 		}
 
-		if (ns1blankspace.contactsearch && ns1blankspace.extend && nsFreshcare.data.contactSearchInit != true)
+		if (ns1blankspace.contactsearch && nsFreshcare.extend && nsFreshcare.data.contactSearchInit != true)
 		{
 			ns1blankspace.contactsearch.businesses.bind = nsFreshcare.extend.contactsearch.businesses.bind;
 			ns1blankspace.contactsearch.people.bind = nsFreshcare.extend.contactsearch.people.bind;

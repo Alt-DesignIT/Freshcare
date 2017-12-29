@@ -2069,7 +2069,6 @@ nsFreshcare.external.freshcareprofile =
 				});	
 			}	
 		//}
-
 	},
 
 	save: 		
