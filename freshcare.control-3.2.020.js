@@ -1887,7 +1887,7 @@ nsFreshcare.setup =
 		]
 	},
 	{	/* Grower */
-		role: 'Grower',	/* TODO: Change to Member */
+		role: 'Member',	
 		viewGroups:
 		[
 			{
@@ -4111,7 +4111,7 @@ nsFreshcare.control =
 									nsFreshcare.data.groupCustomer.push(this.id);
 									nsFreshcare.data.allGroups.push(this.id);
 									break;
-								case 'GROWER':
+								case 'MEMBER':
 									nsFreshcare.data.groupGrower.push(this.id);
 									nsFreshcare.data.groupGrowerText.push({id: this.id, title: this.title});
 									nsFreshcare.data.grower.categoryGrower = this.id;
@@ -4195,7 +4195,7 @@ nsFreshcare.control =
 							// v3.1.204 SUP023020 Removed all other groups as only Grower now required not that Scope is on Membership
 							switch (this.title.toUpperCase())
 							{
-								case 'GROWER':
+								case 'MEMBER':
 									nsFreshcare.data.businessGroupGrowerText.push({id: this.id, title: this.title});
 									nsFreshcare.data.businessGroupGrower.push(this.id);
 									nsFreshcare.data.businessGroupGrowerID = this.id;
