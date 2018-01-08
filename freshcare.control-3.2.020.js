@@ -109,7 +109,8 @@ nsFreshcare.data.actionTypeAuditRejected = '420';		// dev
 nsFreshcare.data.actionTypeEmailSent = '5';
 nsFreshcare.data.actionTypeUserNotes = '413';			//dev
 nsFreshcare.data.actionTypeLogFile = '428';			//dev
-nsFreshcare.data.reportingRoles = ['admin', 'auditor', 'trainer', 'customer'];
+nsFreshcare.data.reportingRoles = 
+	[nsFreshcare.data.roles.admin, nsFreshcare.data.roles.auditor, nsFreshcare.data.roles.trainer, nsFreshcare.data.roles.customer];	// v3.2.016
 nsFreshcare.data.userNameSuffix = 'freshcare';
 nsFreshcare.data.growerText = 'Member';
 nsFreshcare.data.growersmallText = 'member';
@@ -332,7 +333,7 @@ ns1blankspace.option.preLoad = function()
 			if (x.nameSpace === '1blankspace.setup.file') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.setup.file-2.0.003.js';}	// v3.1.209b
 			if (x.nameSpace === '1blankspace.projectTask') {x.source = '/jscripts/1blankspace.project.task-2.0.1.js';} 
 			if (x.nameSpace === '1blankspace.setup.structure') {x.source = '/' + (nsFreshcare.sitesDev.indexOf(nsFreshcare.site) > -1 ? 'jscripts' : 'site/1433') + '/1blankspace.setup.structure-2.0.4.js';} 
-			if (x.nameSpace === '1blankspace.setup.website') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.setup.website-2.1.1.js';}
+			if (x.nameSpace === '1blankspace.setup.website') {x.source = '/jscripts/1blankspace.setup.website-2.0.5.js';}
 			return x;
 		});
 	
@@ -714,6 +715,16 @@ nsFreshcare.setup =
 			{
 				title: "New Trainees",
 				namespace: "newtrainee",
+				parentNamespace: "admin",
+				rootnamespace: nsFreshcare,
+				endpoint: "AGRI_EDUCATION_TRAINING_COURSE_ATTENDEE",
+				show: true,
+				group: 2,
+				type: 1
+			},
+			{
+				title: "Attendees",
+				namespace: "attendance",
 				parentNamespace: "admin",
 				rootnamespace: nsFreshcare,
 				endpoint: "AGRI_EDUCATION_TRAINING_COURSE_ATTENDEE",
@@ -2215,8 +2226,13 @@ nsFreshcare.scripts =
 		sourceNS: nsFreshcare
 	},
 	{
+		nameSpace: 'freshcare.admin.attendance',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.attendance-3.2.020.js',
+		sourceNS: nsFreshcare
+	},
+	{
 		nameSpace: 'freshcare.admin.audit',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.audit-3.2.015.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.audit-3.2.016.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2231,7 +2247,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.admin.certificate',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.certificate-3.2.015.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.certificate-3.2.017.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2306,7 +2322,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.auditor.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.grower-3.2.015.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.grower-3.2.016.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2316,7 +2332,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.auditor.jasanzexport',
-		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.jasanzexport-3.2.015.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.auditor.jasanzexport-3.2.017.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2341,7 +2357,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.extend',
-		source: '/site/' + nsFreshcare.site + '/freshcare.extend-3.2.015.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.extend-3.2.020.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2351,7 +2367,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: '1blankspace.grower.audit',
-		source: '/site/' + nsFreshcare.site + '/freshcare.grower.audit-3.2.015.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.grower.audit-3.2.016.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2406,7 +2422,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.setup.bulkupdate',
-		source: '/site/' + nsFreshcare.site + '/freshcare.setup.bulkupdate-3.2.015.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.setup.bulkupdate-3.2.020.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -3151,6 +3167,9 @@ nsFreshcare.app =
 			nsFreshcare.data.roles.reviewer = '76';
 			nsFreshcare.data.roles.trainer = '25';
 			nsFreshcare.data.roles.xeroSuperUser = '98';
+
+			nsFreshcare.data.reportingRoles = 
+				[nsFreshcare.data.roles.admin, nsFreshcare.data.roles.auditor, nsFreshcare.data.roles.trainer, nsFreshcare.data.roles.customer];	// v3.2.016
 
 			nsFreshcare.data.groupAccountsContact = '7498';
 			nsFreshcare.data.eLearningBusiness = '1367308';		// 3.2.010SUP023469
