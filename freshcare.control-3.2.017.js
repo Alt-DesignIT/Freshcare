@@ -2345,7 +2345,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.extend',
-		source: '/site/' + nsFreshcare.site + '/freshcare.extend-3.2.015.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.extend-3.2.017.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2355,7 +2355,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: '1blankspace.grower.audit',
-		source: '/site/' + nsFreshcare.site + '/freshcare.grower.audit-3.2.015.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.grower.audit-3.2.016.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2415,7 +2415,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.external.freshcareprofile',
-		source: '/site/' + nsFreshcare.site + '/freshcare.setup.freshcareprofile-3.2.015.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.setup.freshcareprofile-3.2.017.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2450,7 +2450,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.trainer.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.trainer.grower-3.2.015.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.trainer.grower-3.2.017.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2783,6 +2783,23 @@ nsFreshcare.doLast = function()
 					sourceMethodRootNamespaceText: 'nsFreshcare',
 					sourceGroup: "invoice.contactbusinesssentto"
 				});
+
+			// v3.2.017 SUP023453 Added eWay Reference
+			ns1blankspace.format.tags.push(
+				{
+					object: 5,
+					type: 1,
+					caption: "eWay Reference",
+					source: 'calculate',
+					sourceFunction: 'extend.format.eWayReference',
+					sourceFunctionRootNamespace: nsFreshcare,
+					sourceFunctionRootNamespaceText: 'nsFreshcare',
+					sourceMethod: 'extend.format.eWayReference',
+					sourceMethodRootNamespace: nsFreshcare,
+					sourceMethodRootNamespaceText: 'nsFreshcare',
+					sourceGroup: 'invoice'
+				});
+
 		}
 
 		// v3.1.1n SUP022585 Add Sent By & Sent By Email
