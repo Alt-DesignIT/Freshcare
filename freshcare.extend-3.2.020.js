@@ -7282,6 +7282,19 @@ nsFreshcare.extend =
 			return ns1blankspace.user.email;
 		},
 
+		// v3.2.017 Added eWay Reference
+		eWayReference: function(oRow)
+		{
+			if (oRow.purchaseorder != '')
+			{
+				return '<strong>eWay Reference:</strong>&nbsp;' + oRow.purchaseorder;
+			}
+			else
+			{
+				return '';
+			}
+		},
+
 		editor: 
 		{	
 			init:	function (oParam)

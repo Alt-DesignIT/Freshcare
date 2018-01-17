@@ -430,6 +430,7 @@ nsFreshcare.setup.bulkupdate =
 							// We don't have all the rows, call CORE_SEARCH_MORE and get them all
 							if (oParam.rows < oParam.totalCount)
 							{	
+								oParam.data = [];
 								oParam.searchStep = 2;	
 								nsFreshcare.setup.bulkupdate.search(oParam);
 							}
@@ -438,6 +439,7 @@ nsFreshcare.setup.bulkupdate =
 								oParam.searchStep = 3;	
 								oParam.data = oResponse.data.rows;
 								oParam = ns1blankspace.util.setParam(oParam, 'onComplete', nsFreshcare.setup.bulkupdate.search);
+								oParam.startRow = 0;
 								fFunctionUpdate(oParam);							
 							}
 						}
@@ -482,10 +484,18 @@ nsFreshcare.setup.bulkupdate =
 						{
 							if (oResponse.data.rows.length > 0)
 							{
-								oParam.startRow = Number(oResponse.startrow);
-								oParam.data = oResponse.data.rows;
-								oParam = ns1blankspace.util.setParam(oParam, 'onComplete', nsFreshcare.setup.bulkupdate.search);
-								fFunctionUpdate(oParam);							
+								oParam.data = oParam.data.concat(oResponse.data.rows);
+								oParam.startRow = Number(oResponse.startrow) + 500;
+								if (oParam.searchStep == 2)
+								{
+									nsFreshcare.setup.bulkupdate.search(oParam)	;
+								}
+								else
+								{
+									oParam.startRow = 0;
+									oParam = ns1blankspace.util.setParam(oParam, 'onComplete', nsFreshcare.setup.bulkupdate.search);
+									fFunctionUpdate(oParam);
+								}
 							}
 							else
 							{
@@ -3384,6 +3394,7 @@ nsFreshcare.setup.bulkupdate =
 					var oThisRow = nsFreshcare.setup.bulkupdate.data.attendeeData[iDataIndex];
 					var sContactBusinessText = oThisRow['traineecontactbusinesstext'].formatXHTML();
 
+					// We only want to add a row if it has been linked to a subscription and grower
 					if (oThisRow['agritrainingcourseattendee.traineecontactbusiness.agrisubscription.id'] != '' && this.traineecontactbusinesstext != '')
 					{
 						oLinkData = 
@@ -3427,6 +3438,11 @@ nsFreshcare.setup.bulkupdate =
 										oThisRow['agritrainingcourseattendee.course.trainercontactbusinesstext'] + '</td></tr>');
 						fFunctionUpdate(oParam);
 					}
+				}
+				else
+				{
+					oParam.searchStep = 3;
+					nsFreshcare.setup.bulkupdate.search(oParam);
 				}
 			}
 		}	
