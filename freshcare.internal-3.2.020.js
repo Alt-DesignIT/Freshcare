@@ -5,11 +5,13 @@
  * 01 FEB 2010
  */
  
- // v3.1.210 replaced all dialog('close') with dialog('destroy')
+// v3.1.210 replaced all dialog('close') with dialog('destroy')
+// v3.2.015 SUP023421 Change 'Growers' to 'Members'
 
 nsFreshcare.internal = 
 {
 	data: {},
+
 	financial: 
 	{
 		data: 
@@ -138,6 +140,7 @@ nsFreshcare.internal =
 											{name: 'CertificationBody', title: 'Certification Body', values: 'certificationBodies', field: 'auditbusiness'}
 										 ];
 						// v3.1.209b SUP023219 Must pass feeTYpe for SSS to work here too
+						// v3.2.018 SUP023499 Need to pass feeTypeSecondary
 						oParam.columns = [
 											{title: 'Cert Body', name: 'CertificationBodyText', field: 'auditbusinesstext'},
 											{title: 'Membership', name: 'MembershipText', field: 'audit.agrisubscription.membership.code'},
@@ -147,7 +150,7 @@ nsFreshcare.internal =
 											{title: 'Audit Date', name: 'AuditDate', field: 'actualdate'},
 											{title: 'Invoice Amount', name: 'InvoiceAmt', 
 												functionCalculate: nsFreshcare.internal.financial.invoice.commissions.calculateLineItemAmount,
-												functionCalculateParam: {feeType: '2'}, /* Cert Renewal Fee */
+												functionCalculateParam: {feeType: '2', feeTypeSecondary: '3'}, /* Cert Renewal Fee & Secondary M/Ship fee*/
 												elementEditClass: 'nsFreshcareInvoicesBulkEdit', elementEditSave: false, elementEditMandatory: true
 											},
 											{name: 'CertificationBody', field: 'auditbusiness', hidden: true}
@@ -893,8 +896,10 @@ nsFreshcare.internal =
 
 				calculateLineItemAmount: function(oRow)
 				{
+					// v3.2.010 SUP023467 No allowing for different secondary fee for ECA
 					var sReturn;
 					var iFeeType = ns1blankspace.util.getParam(oRow, 'feeType', {'default': '2'}).value;
+					var iFeeTypeSecondary = ns1blankspace.util.getParam(oRow, 'feeTypeSecondary', {'default': '3'}).value;
 
 					if (oRow['audit.contactbusiness.agribusiness.prioritymembership'] === oRow['audit.agrisubscription.membership'])
 					{
@@ -903,7 +908,7 @@ nsFreshcare.internal =
 					}
 					else
 					{
-						oRow.feeType = '3';	// Secondary Membership Fee
+						oRow.feeType = iFeeTypeSecondary;	// Secondary Membership Fee
 						//sReturn = oRow['audit.agrisubscription.membership.secondarymembershipfee'];
 					}
 					return nsFreshcare.internal.financial.invoice.commissions.getMembershipFee(oRow);
@@ -2569,7 +2574,6 @@ nsFreshcare.internal =
 				{
 					if (bCanRemove)
 					{
-						// v3.2.015 SUP023422 Added COP Based Training
 						if (nsFreshcare.user.roleID == nsFreshcare.data.roles.admin
 							|| (nsFreshcare.user.roleID != nsFreshcare.data.roles.admin && oRow[sStatusColumn] != nsFreshcare.data.contactStatusInactive))
 						{
@@ -2904,7 +2908,6 @@ nsFreshcare.internal =
 				.css('cursor', 'pointer');
 
 				// User can remvoe contact
-				// v3.2.015 SUP023422 Added COP Based Training
 				$('#' + sXHTMLContainerID + ' .ns1blankspaceBusinessContactRemove')
 					.button(
 					{
@@ -2926,7 +2929,6 @@ nsFreshcare.internal =
 						}
 						else
 						{	// We remove if admin, otherwise, just inactivate 
-							// v3.2.015 SUP023422 Added COP Based Training
 							$.extend(true, oParam,
 							{
 								rowID: iRowID, 
@@ -3639,7 +3641,7 @@ nsFreshcare.internal =
 				aHTML.push('</table>');
 
 				$('#' + sXHTMLElementEditID).html(aHTML.join(''));
-				// v3.2.015 SUP023422 Added COP Based Training
+
 				if (nsFreshcare.user.roleID !== nsFreshcare.data.roles.admin)
 				{
 					$('.ns1blankspaceHideNonAdmin').hide();
@@ -3856,7 +3858,6 @@ nsFreshcare.internal =
 					$('#ns1blankspaceBusinessContactMailingCountry').val('Australia');
 
 					// v3.1.205 SUP023021 Auditors don't need approval to add contacts
-					// v3.2.015 SUP023422 Added COP Based Training
 					if (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin || nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor)
 					{
 						$('#ns1blankspaceBusinessContactStatus').val('Active');
@@ -4019,7 +4020,6 @@ nsFreshcare.internal =
 						{
 							oParam.savePrimaryContactStep = 4;
 							// v3.2.005 SUP023190 Added replyTo for auditors
-							// v3.2.015 SUP023422 Added COP Based Training
 							if (nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor || nsFreshcare.user.roleID === nsFreshcare.data.roles.grower || nsFreshcare.user.roleID === nsFreshcare.data.roles.trainer)
 							{
 								$.extend(oParam, false,
@@ -4046,18 +4046,15 @@ nsFreshcare.internal =
 							delete(oParam.savePrimaryContactStep);
 							// Redisplay the record as the Primary Contact is shown on the Details tab for Growers and in the Control panel for all others
 							// Work out which init function to call!
-							// v3.2.015 SUP023422 Added COP Based Training
 							// v3.2.016 Was looking at roleID instead of role
 							if (nsFreshcare.user.roleID != nsFreshcare.data.roles.admin)
 							{	// We're viewing a grower page
-								// v3.2.015 SUP023422 Added COP Based Training
 								if (oRoot[nsFreshcare.user.role.toLowerCase()] && oRoot[nsFreshcare.user.roleID].grower)
 								{
 									oRoot[nsFreshcare.user.role.toLowerCase()].grower.init({id: ns1blankspace.objectContext});
 								}
 								else
 								{
-									// v3.2.015 SUP023422 Added COP Based Training
 									nsFreshcare[nsFreshcare.user.role.toLowerCase()].grower.init({id: ns1blankspace.objectContext});
 								}
 							}
@@ -4257,7 +4254,6 @@ nsFreshcare.internal =
 									ns1blankspace.objectContextData.people = $.grep(ns1blankspace.objectContextData.people, function(x) {x.id != oParam.id});
 
 									// Need to send email notification if grower or auditor or trainer are inactivating
-									// v3.2.015 SUP023422 Added COP Based Training
 									if (iStatus == nsFreshcare.data.contactStatusInactive
 										&& (nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor 
 											|| nsFreshcare.user.roleID === nsFreshcare.data.roles.grower 
@@ -4325,7 +4321,6 @@ nsFreshcare.internal =
 							}
 						}
 						// Email, Phone or Mobile must be populated if external user updating
-						// v3.2.015 SUP023422 Added COP Based Training
 						else if (ns1blankspace.okToSave && nsFreshcare.user.roleID != nsFreshcare.data.roles.admin)
 						{
 							if ($('#ns1blankspaceBusinessContactPhone').val() == ''
@@ -4773,7 +4768,6 @@ nsFreshcare.internal =
 
 						// If external user updating grower - Work out which object save function to call and set functionPostSave
 						// v3.1.204 SUP023021 Now calls fFunctionPostSave if it exists, otherwise, call relevant grower.save.send
-						// v3.2.015 SUP023422 Added COP Based Training
 						if (fFunctionPostSave)
 						{
 							fFunctionPostSave(oParam);
@@ -4818,7 +4812,14 @@ nsFreshcare.internal =
 								',agritraineeattendancelink.attendee.phone' +
 								',agritraineeattendancelink.attendee.mobile' +
 								',agritraineeattendancelink.attendee.email' +
+								',agritraineeattendancelink.attendee.attendingtrainee' +
+								',agritraineeattendancelink.contactbusiness.tradename' +
+								',agritraineeattendancelink.contactperson.firstname' +
+								',agritraineeattendancelink.contactperson.surname,attendeetext,contactbusinesstext,contactpersontext,subscription,subscriptiontext' +
+								',agritraineeattendancelink.subscription.membershiptext,attendee' +
+								',agritraineeattendancelink.subscription.membership.code,agritraineeattendancelink.subscription.codeofpracticetext' +
 								',agritraineeattendancelink.attendee.firstname,agritraineeattendancelink.attendee.surname');		//,attendeecount
+
 			
 				if (ns1blankspace.object == nsFreshcare.objectBusiness)
 				{
@@ -4878,20 +4879,7 @@ nsFreshcare.internal =
 				else
 				{
 					aHTML = [];
-			
-					if (ns1blankspace.objectContextData.training.length == 0)
-					{
-						aHTML.push('<table border="0" cellspacing="0" cellpadding="0" width="750" style="margin-top:15px); margin-bottom:15px);">');
-						aHTML.push('<tr>');
-						aHTML.push('<td class="ns1blankspaceNothing">No training.</td>');
-						aHTML.push('</tr>');
-						aHTML.push('</table>');
-
-						$('#' + sXHTMLElementID).html(aHTML.join(''));	
-					}
-					else
-					{
-						aHTML.push('<table class="ns1blankspaceContainer">' +
+					aHTML.push('<table class="ns1blankspaceContainer">' +
 						'<tr class="ns1blankspaceContainer">' +
 						'<td id="ns1blankspaceTrainingColumn1" class="ns1blankspaceColumn1Large">' +
 						ns1blankspace.xhtml.loading +
@@ -4899,60 +4887,84 @@ nsFreshcare.internal =
 						'</tr>' +
 						'</table>');				
 			
-						$('#' + sXHTMLElementID).html(aHTML.join(''));
-						
-						
-						
-						aHTML = [];
-				
-					
-						aHTML.push('<table id="ns1blankspaceCourseTrainees" border="0" cellspacing="0" cellpadding="0" class="ns1blankspace">');
-						aHTML.push('<tr class="ns1blankspaceCaption">');
-						aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
-										' data-column="agritraineeattendancelink.attendee.course.coursedate"' +
-										' data-sortdirection="' + ((sSortColumn == "agritraineeattendancelink.attendee.course.coursedate") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
-										'>Training Date</td>');
-						aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
-										' data-column="agritraineeattendancelink.attendee.course.trainercontactbusinesstext"' +
-										' data-sortdirection="' + ((sSortColumn == "agritraineeattendancelink.attendee.course.trainercontactbusinesstext") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
-										'>Trainer Business</td>');
-						aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
-										' data-column="agritraineeattendancelink.attendee.course.trainercontactpersontext"' +
-										' data-sortdirection="' + ((sSortColumn == "agritraineeattendancelink.attendee.course.trainercontactpersontext") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
-										'>Trainer Person</td>');
-						aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
-										' data-column="agritraineeattendancelink.attendee.course.package.membership.code"' +
-										' data-sortdirection="' + ((sSortColumn == "agritraineeattendancelink.attendee.course.package.membership.code") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
-										'>Membership / COP</td>');
-						if (ns1blankspace.object == ns1blankspace.objectBusiness)
-						{
-							aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
-										' data-column="contactpersontext"' +
-										' data-sortdirection="' + ((sSortColumn == "contactpersontext") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
-										'>People</td>');
-						}
-						else if(ns1blankspace.object == nsFreshcare.objectTrainingCourseAttendee)
-						{
-							aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
-										' data-column="contactpersontext"' +
-										' data-sortdirection="' + ((sSortColumn == "contactpersontext") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
-										'>Person</td>');
+					$('#' + sXHTMLElementID).html(aHTML.join(''));
+					aHTML = [];
+					aHTML.push('<table id="ns1blankspaceAttendanceLinks" border="0" cellspacing="0" cellpadding="0" class="ns1blankspace">');
+					aHTML.push('<tr class="ns1blankspaceCaption">');
+					aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
+									' data-column="agritraineeattendancelink.attendee.course.coursedate"' +
+									' data-sortdirection="' + ((sSortColumn == "agritraineeattendancelink.attendee.course.coursedate") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
+									'>Training Date</td>');
+					aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
+									' data-column="agritraineeattendancelink.attendee.course.trainercontactbusinesstext"' +
+									' data-sortdirection="' + ((sSortColumn == "agritraineeattendancelink.attendee.course.trainercontactbusinesstext") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
+									'>Trainer Business</td>');
+					aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
+									' data-column="agritraineeattendancelink.attendee.course.trainercontactpersontext"' +
+									' data-sortdirection="' + ((sSortColumn == "agritraineeattendancelink.attendee.course.trainercontactpersontext") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
+									'>Trainer Person</td>');
+					aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
+									' data-column="agritraineeattendancelink.attendee.course.package.membership.code"' +
+									' data-sortdirection="' + ((sSortColumn == "agritraineeattendancelink.attendee.course.package.membership.code") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
+									'>Membership / COP</td>');
 
-							aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
-										' data-column="contactbusinesstext"' +
-										' data-sortdirection="' + ((sSortColumn == "contactbusinesstext") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
-										'>Business</td>');	
-						}
-						else
-						{
-							aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
-										' data-column="contactbusinesstext"' +
-										' data-sortdirection="' + ((sSortColumn == "contactbusinesstext") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
-										'>Business</td>');
-							
-						}
+					if (ns1blankspace.object == ns1blankspace.objectBusiness)
+					{
+						aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
+									' data-column="contactpersontext"' +
+									' data-sortdirection="' + ((sSortColumn == "contactpersontext") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
+									'>People</td>');
+					}
+					else if(ns1blankspace.object == nsFreshcare.objectTrainingCourseAttendee)
+					{
+						aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
+									' data-column="contactpersontext"' +
+									' data-sortdirection="' + ((sSortColumn == "contactpersontext") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
+									'>Person</td>');
+
+						aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
+									' data-column="contactbusinesstext"' +
+									' data-sortdirection="' + ((sSortColumn == "contactbusinesstext") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
+									'>Business</td>');	
+					}
+					else if(ns1blankspace.object == nsFreshcare.objectPerson)
+					{
+						aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
+									' data-column="contactbusinesstext"' +
+									' data-sortdirection="' + ((sSortColumn == "contactbusinesstext") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
+									'>Business</td>');
+					}
+					else
+					{
+						aHTML.push('<td class="ns1blankspaceHeaderCaption ns1blankspaceHeaderSort"' +
+									' data-column="contactpersontext"' +
+									' data-sortdirection="' + ((sSortColumn == "contactpersontext") ? ((sSortDirection === 'asc') ? "desc" : "asc") : 'asc') + '"' +
+									'>Person</td>');
+						
+					}
+					if(ns1blankspace.object == nsFreshcare.objectTrainingCourseAttendee && ((nsFreshcare.user.roleID === nsFreshcare.data.roles.admin) || (nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor)))
+					{
+						aHTML.push('<td class="ns1blankspaceHeaderCaption" width="65px"><span id="ns1blankspaceAttendanceLinkAdd">&nbsp;</span></td>');
+					}
+					else
+					{
 						aHTML.push('<td class="ns1blankspaceHeaderCaption">&nbsp;</td>');
+					}
+
+					aHTML.push('</tr>');
+			
+					if (ns1blankspace.objectContextData.training.length == 0)
+					{
+						aHTML.push('<tr>');
+						aHTML.push('<td class="ns1blankspaceNothing">No Links.</td>');
 						aHTML.push('</tr>');
+
+
+						$('#' + sXHTMLElementID).html(aHTML.join(''));	
+						nsFreshcare.internal.entity.training.bind();
+					}
+					else
+					{
 						
 						$.each(ns1blankspace.objectContextData.training, function()
 						{
@@ -4982,40 +4994,76 @@ nsFreshcare.internal =
 			row: function(oRow)
 			{
 				var aHTML = [];
-				aHTML.push('<tr id="ns1blankspaceTraining_' + oRow.id + '">');
+				aHTML.push('<tr id="ns1blankspaceAttendanceLink_' + oRow.id + '">');
 
-				aHTML.push('<td id="ns1blankspaceTraineeCourseDate_' + oRow.id + '" class="ns1blankspaceRow ns1blankspaceRowCourseTrainee">' +
+				aHTML.push('<td id="ns1blankspaceAttendanceLinkCourseDate_' + oRow.id + '" class="ns1blankspaceRow' +
+							((ns1blankspace.object == nsFreshcare.objectTrainingCourseAttendee) ? ' ns1blankspaceRowAttendanceLink' : '') + '">' +
 								oRow['agritraineeattendancelink.attendee.course.coursedate'] + '</td>');
 
-				aHTML.push('<td id="ns1blankspaceTraineeTrainerContactBusinesstext_' + oRow.id + '" class="ns1blankspaceRow ns1blankspaceRowCourseTrainee">' +
+				aHTML.push('<td id="ns1blankspaceAttendanceLinkContactBusinesstext_' + oRow.id + '" class="ns1blankspaceRow' +
+				((ns1blankspace.object == nsFreshcare.objectTrainingCourseAttendee) ? ' ns1blankspaceRowAttendanceLink' : '') + '">' +
 								oRow['agritraineeattendancelink.attendee.course.trainercontactbusinesstext'] + '</td>');
 
-				aHTML.push('<td id="ns1blankspaceTraineeTrainerContactPersontext_' + oRow.id + '" class="ns1blankspaceRow ns1blankspaceRowCourseTrainee">' +
+				aHTML.push('<td id="ns1blankspaceAttendanceLinkContactPersontext_' + oRow.id + '" class="ns1blankspaceRow' +
+				((ns1blankspace.object == nsFreshcare.objectTrainingCourseAttendee) ? ' ns1blankspaceRowAttendanceLink' : '') + '">' +
 								oRow['agritraineeattendancelink.attendee.course.trainercontactpersontext'] + '</td>');
 
-				aHTML.push('<td id="ns1blankspaceTraineeMembershipCode_' + oRow.id + '" class="ns1blankspaceRow ns1blankspaceRowCourseTrainee">' +
+				if(ns1blankspace.object == nsFreshcare.objectTrainingCourseAttendee)
+				{
+
+					aHTML.push('<td id="ns1blankspaceAttendanceLinkMembershipCode_' + oRow.id + '" class="ns1blankspaceRow' +
+					((ns1blankspace.object == nsFreshcare.objectTrainingCourseAttendee) ? ' ns1blankspaceRowAttendanceLink' : '') + '">' + 
+								oRow['agritraineeattendancelink.subscription.membership.code'] + ' ' + oRow['agritraineeattendancelink.subscription.codeofpracticetext'] + '</td>');
+				}
+				else
+				{
+					aHTML.push('<td id="ns1blankspaceAttendanceLinkMembershipCode_' + oRow.id + '" class="ns1blankspaceRow' +
+					((ns1blankspace.object == nsFreshcare.objectTrainingCourseAttendee) ? ' ns1blankspaceRowAttendanceLink' : '') + '">' +
 								oRow['agritraineeattendancelink.attendee.course.package.membership.code'] + ' ' + oRow['agritraineeattendancelink.attendee.course.package.codeofpracticetext'] + '</td>');
+				}
 
 				if (ns1blankspace.object == nsFreshcare.objectBusiness)
 				{
-					aHTML.push('<td id="ns1blankspaceTraineeContactPersontext_' + oRow.id + '" class="ns1blankspaceRow ns1blankspaceRowCourseTrainee">' +
+					aHTML.push('<td id="ns1blankspaceAttendanceLinkContactPersontext_' + oRow.id + '" class="ns1blankspaceRow' +
+					((ns1blankspace.object == nsFreshcare.objectTrainingCourseAttendee) ? ' ns1blankspaceRowAttendanceLink' : '') + '">' +
 								oRow['contactpersontext'] + '</td>');
 				}
 				else if(ns1blankspace.object == nsFreshcare.objectTrainingCourseAttendee)
 				{
-					aHTML.push('<td id="ns1blankspaceTraineeContactPersontext_' + oRow.id + '" class="ns1blankspaceRow ns1blankspaceRowCourseTrainee">' +
+					aHTML.push('<td id="ns1blankspaceAttendanceLinkContactPersontext_' + oRow.id + '" class="ns1blankspaceRow' +
+					((ns1blankspace.object == nsFreshcare.objectTrainingCourseAttendee) ? ' ns1blankspaceRowAttendanceLink' : '') + '">' +
 								oRow['contactpersontext'] + '</td>');
 
-					aHTML.push('<td id="ns1blankspaceTraineeContactBusinesstext_' + oRow.id + '" class="ns1blankspaceRow ns1blankspaceRowCourseTrainee">' +
+					aHTML.push('<td id="ns1blankspaceAttendanceLinkContactBusinesstext_' + oRow.id + '" class="ns1blankspaceRow' +
+					((ns1blankspace.object == nsFreshcare.objectTrainingCourseAttendee) ? ' ns1blankspaceRowAttendanceLink' : '') + '">' +
 								oRow['contactbusinesstext'] + '</td>');
 
 				}
 				else
 				{
-					aHTML.push('<td id="ns1blankspaceTraineeContactBusinesstext_' + oRow.id + '" class="ns1blankspaceRow ns1blankspaceRowCourseTrainee">' +
+					aHTML.push('<td id="ns1blankspaceAttendanceLinkContactBusinesstext_' + oRow.id + '" class="ns1blankspaceRow' +
+					((ns1blankspace.object == nsFreshcare.objectTrainingCourseAttendee) ? ' ns1blankspaceRowAttendanceLink' : '') + '">' + 
 								oRow['contactbusinesstext'] + '</td>');
 				}
-			
+
+				if(ns1blankspace.object == nsFreshcare.objectTrainingCourseAttendee)
+				{
+
+					aHTML.push('<td><span id="ns1blankspaceLinksRemove_' + oRow.id + '" ' + 
+								'class="ns1blankspaceAction ns1blankspaceLinksRemove" ' + 
+								'data-rowID="' + oRow.id + '">' +
+								'<span id="ns1blankspaceLinksOpen-' + oRow['traineecontactbusiness'] + '" ' + 
+								'class="ns1blankspaceAction ns1blankspaceLinksOpen" ' + 
+								'data-rowID="' + oRow.id + '">' +
+							'</td>');
+				}
+				else
+				{
+					aHTML.push('<td id=ns1blankspaceTrainingActions">' +
+										'<span id="' + oRow.attendee + '" ' + 
+										'class="ns1blankspaceAction ns1blankspaceTrainingShow" ' + 
+										'data-rowID="' + oRow.id + '"></span>');
+				}
 
 				aHTML.push('</tr>');
 
@@ -5024,6 +5072,9 @@ nsFreshcare.internal =
 
 			bind: function()
 			{
+
+
+
 				$('.ns1blankspaceHeaderSort')
 					.on('click', function(event)
 					{
@@ -5039,7 +5090,10 @@ nsFreshcare.internal =
 					})
 					.css('cursor', 'pointer')
 
-				$('.ns1blankspaceSelect')
+
+				if(ns1blankspace.object != nsFreshcare.objectTrainingCourseAttendee)
+				{
+					$('.ns1blankspaceSelect')
 					.button(
 					{
 						text: false,
@@ -5057,74 +5111,107 @@ nsFreshcare.internal =
 					})
 					.css('height', '25px')
 					.css('width', '25px');
+				}
 
-				// Open Training Details Trainee on the same form
-				$('.ns1blankspaceRowCourseTrainee').click(function(event) 
-				{
-					
-					var sElementId = this.id.split('_')[1];
+				if (nsFreshcare.user.roleID == nsFreshcare.data.roles.admin)
+				{	
 
-					nsFreshcare.internal.entity.training.manage({add: false, rowID: sElementId});
-					
-					if ($('#ns1blankspaceCourseTraineeActionContainer').is('*'))
+					$('.ns1blankspaceRowAttendanceLink').click(function(event) 
 					{
 						
-						
-						var oThisTrainee = $.grep(ns1blankspace.objectContextData.training, function(a) {return a.id == sElementId});
-						
-						if (oThisTrainee.length === 1) 
-						{ 
-							oThisTrainee = oThisTrainee[0];
+						var sElementId = this.id.split('_')[1];
 
-							var oParam = {
-								xhtmlContext: 'CourseTrainee',
-								xhtmlElementID: 'ns1blankspaceCourseTraineeColumn1',
-								dataTraineeID: sElementId,
-								dataCourseID: ns1blankspace.objectContext,
-								dataCourseValue: ns1blankspace.objectContextData['agritrainingcourseattendee.course.coursedate'].formatXHTML(),
-								dataTraineeReferenceValue: ns1blankspace.objectContextData['agritrainingcourseattendee.course.package.codeofpracticetext'].formatXHTML(),
-								dataTraineeBusinessID: oThisTrainee['contactbusiness'].formatXHTML(),
-								dataTraineeBusinessValue: oThisTrainee['agritraineeattendancelink.attendee.course.trainercontactbusinesstext'].formatXHTML(),
-								dataTraineePersonID: oThisTrainee['contactperson'].formatXHTML(),
-								dataTraineePersonValue: oThisTrainee['agritraineeattendancelink.attendee.course.trainercontactpersontext'].formatXHTML(),
-								dataAttendingTrainee: ns1blankspace.objectContextData['attendingtrainee'].formatXHTML(),
-								dataFirstName: oThisTrainee['agritraineeattendancelink.attendee.firstname'].formatXHTML(),
-								dataPhone: oThisTrainee['agritraineeattendancelink.attendee.phone'].formatXHTML(),
-								dataMobile: oThisTrainee['agritraineeattendancelink.attendee.mobile'].formatXHTML(),
-								dataEmail: oThisTrainee['agritraineeattendancelink.attendee.email'].formatXHTML(),
-								dataSurname: oThisTrainee['agritraineeattendancelink.attendee.surname'].formatXHTML()
+						nsFreshcare.internal.entity.training.manage({add: false, rowID: sElementId});
+						
+						if ($('#ns1blankspaceLinkAttendeeActionContainer').is('*'))
+						{
+							
+							
+							var oThisLink = $.grep(ns1blankspace.objectContextData.training, function(a) {return a.id == sElementId});
+							
+							if (oThisLink.length === 1) 
+							{ 
+								oThisLink = oThisLink[0];
+								var oParam = {
+									xhtmlContext: 'AttendanceLink',
+									xhtmlElementID: 'ns1blankspaceAttendanceLinkColumn1',
+									dataLinkID: sElementId,
+									dataLinksID: oThisLink['id']
+								}
+
+								nsFreshcare.internal.entity.training.details(oParam);
 							}
-
-							nsFreshcare.internal.entity.training.details(oParam);
 						}
-					}
-					else 
-					{
-						
-						$('#ns1blankspaceCourseTraineeColumn1').html('Trainee details not found.');
-					}
-				});
+						else 
+						{
+							
+							$('#ns1blankspaceAttendanceLinkColumn1').html('Link details not found.');
+						}
+					});
+
+					
+
+					$('.ns1blankspaceLinksRemove').button({
+						text: false,
+						label: 'Remove',
+						icons: {
+							primary: "ui-icon-close"
+						}
+					})
+					.click(function(event) {
+						nsFreshcare.internal.entity.training.remove.show(this);
+					})
+					.css('width', '15px')
+					.css('height', '20px');
+
+					$('#ns1blankspaceAttendanceLinkAdd')
+						.button(
+						{
+							text: false,
+							label: 'Add Link',
+							icons: {primary: "ui-icon-plus"}
+						})
+						.click(function() 
+						{
+							nsFreshcare.internal.entity.training.add();
+						})
+						.css('width', '20px')
+						.css('height', '20px');
+
+				}
+
+				$('.ns1blankspaceTrainingShow').click(function(event) {
+					nsFreshcare.admin.attendance.init({id: this.id});
+				})
+				.button({
+						text: false,
+						label: 'Open',
+						icons: {
+							primary: "ui-icon-play"
+						}
+				})
+				.css('width', '15px')
+				.css('height', '20px');
+			
+
+
 			},
 
 			add: 	function() 
 			{
-
-				
 				nsFreshcare.internal.entity.training.manage({add: true});
 
-				if ($('#ns1blankspaceCourseTraineeActionContainer').children().length > 0) {
-					nsFreshcare.internal.entity.training.details({dataTraineeID: -1,
-														dataCourseID: ns1blankspace.objectContext,
-														dataCourseValue: ns1blankspace.objectContextData['agritrainingcourse.title'].formatXHTML(),
-														xhtmlElementID: "ns1blankspaceCourseTraineeColumn1",
-														xhtmlContext: "CourseTrainee"});
+				if ($('#ns1blankspaceLinkAttendeeActionContainer').children().length > 0) {
+					nsFreshcare.internal.entity.training.details({dataLinkID: -1,
+														dataLinksID: ns1blankspace.objectContext,
+														xhtmlElementID: "ns1blankspaceAttendanceLinkColumn1",
+														xhtmlContext: "AttendanceLink"});
 					}
+				
 			},
 
 			manage: function(oParam) 
 			{
-				// Displays the edit directly beneath the record being edited 
-				// If a new Trainee, shows at top of list.
 				var bAdd = true;
 				var bContinue = true;
 				var sRowID;
@@ -5134,29 +5221,27 @@ nsFreshcare.internal =
 					if (oParam.rowID != undefined) {sRowID = oParam.rowID;}
 				}
 
-				// Work out if we scrap what's there already. If they're already adding a new one, don't do anything, otherwise, start again
-				if ($('#ns1blankspaceCourseTraineeActionContainer').html() != '' && $('#ns1blankspaceCourseTraineeActionContainer').html() != undefined) {
+				if ($('#ns1blankspaceLinkAttendeeActionContainer').html() != '' && $('#ns1blankspaceLinkAttendeeActionContainer').html() != undefined) {
 					
-					if ($('#ns1blankspaceCourseTrainee').attr('data-traineeID') === '-1') {
+					if ($('#ns1blankspaceAttendanceLink').attr('data-attendeeID') === '-1') {
 						
-						if (!bAdd) {		// We were adding and now we've decided to view an existing one
-							bContinue = confirm("Are you sure you want to cancel adding the Trainee?");
-							if (bContinue) {$('#ns1blankspaceCourseTraineeActionContainer').remove();}
+						if (!bAdd) {		
+							bContinue = confirm("Are you sure you want to cancel adding the Link?");
+							if (bContinue) {$('#ns1blankspaceLinkAttendeeActionContainer').remove();}
 
 						}
-						else {		// We were adding and now have clicked Add Trainee again - remove the row (essentially cancel)
+						else {		
 							
-							$('#ns1blankspaceCourseTraineeActionContainer').remove();
+							$('#ns1blankspaceLinkAttendeeActionContainer').remove();
 							bContinue = false;
 						}
 					}
 					else {
-						// If we've clicked another row, then display it, otherwise just remove the row
-						if (sRowID != undefined && $('#ns1blankspaceCourseTrainee').attr('data-traineeID') === sRowID) {
+						if (sRowID != undefined && $('#ns1blankspaceAttendanceLink').attr('data-attendeeID') === sRowID) {
 							bContinue = false;
 						}
 
-						$('#ns1blankspaceCourseTraineeActionContainer').remove();
+						$('#ns1blankspaceLinkAttendeeActionContainer').remove();
 					}
 				}  
 			
@@ -5164,24 +5249,24 @@ nsFreshcare.internal =
 				
 					var aHTML = [];
 
-					aHTML.push('<tr id="ns1blankspaceCourseTraineeActionContainer"><td id="ns1blankspaceCourseTraineeActionManage" ' + 
-								'colspan="' + $('#ns1blankspaceCourseTrainees').children().children().first().children().length + '">');
-					aHTML.push('<table id="ns1blankspaceCourseTrainee" class="ns1blankspaceContainer ns1blankspaceBorder nsFreshcareDetails"' +
-								' data-traineeID="' + ((sRowID === undefined) ? '-1' : sRowID) + '">');
+					aHTML.push('<tr id="ns1blankspaceLinkAttendeeActionContainer"><td id="ns1blankspaceAttendanceLinkActionManage" ' + 
+								'colspan="' + $('#ns1blankspaceAttendanceLinks').children().children().first().children().length + '">');
+					aHTML.push('<table id="ns1blankspaceAttendanceLink" class="ns1blankspaceContainer ns1blankspaceBorder nsFreshcareDetails"' +
+								' data-attendeeID="' + ((sRowID === undefined) ? '-1' : sRowID) + '">');
 
 					aHTML.push('<tr>' + 
-								'<td id="ns1blankspaceCourseTraineeColumn1" class="ns1blankspaceColumn1" style="width:70%;"></td>' +
-								'<td id="ns1blankspaceCourseTraineeColumn2" class="ns1blankspaceColumn2"></td>' +
+								'<td id="ns1blankspaceAttendanceLinkColumn1" class="ns1blankspaceColumn1" style="width:70%;"></td>' +
+								'<td id="ns1blankspaceAttendanceLinkColumn2" class="ns1blankspaceColumn2"></td>' +
 								'</tr>');
 
 					aHTML.push('</table>');
 					aHTML.push('</td></tr>');
 					
 					if (bAdd) {
-						$('#ns1blankspaceCourseTrainees').children().children().first().before(aHTML.join(''));
+						$('#ns1blankspaceAttendanceLinks').children().children().first().before(aHTML.join(''));
 					}
 					else {
-						$('#ns1blankspaceTraining_' + sRowID).after(aHTML.join(''));
+						$('#ns1blankspaceAttendanceLink_' + sRowID).after(aHTML.join(''));
 					}
 
 					aHTML = [];
@@ -5192,18 +5277,16 @@ nsFreshcare.internal =
 						(nsFreshcare.user.roleID  != nsFreshcare.data.roles.admin 
 							&& ns1blankspace.objectContextData['agritrainingcourse.status'] != nsFreshcare.data.trainingCourse.statusCompleted)) {
 						
-						aHTML.push('<tr><td><span id="ns1blankspaceCourseTraineeSave" class="ns1blankspaceAction">Save</span></td></tr>');
+						aHTML.push('<tr><td><span id="ns1blankspaceLinkAttendeeSave" class="ns1blankspaceAction">Save</span></td></tr>');
 					}
 
 					aHTML.push('<tr><td>&nbsp;</td></tr>');
-					if (bAdd) {
-						aHTML.push('<tr><td><span id="ns1blankspaceCourseTraineeNewGrower" class="ns1blankspaceAction">Add New Grower</span></td></tr>');
-					}
+
 					aHTML.push('</table>');
 
-					$('#ns1blankspaceCourseTraineeColumn2').html(aHTML.join(''));
+					$('#ns1blankspaceAttendanceLinkColumn2').html(aHTML.join(''));
 
-					$('#ns1blankspaceCourseTraineeSave')
+					$('#ns1blankspaceLinkAttendeeSave')
 					.button({
 						label: 'Save',
 						icons: {
@@ -5211,30 +5294,10 @@ nsFreshcare.internal =
 						}
 					})
 					.click(function(event) {
-						nsFreshcare.internal.entity.training.save.send({xhtmlContext: "CourseTrainee",
-																			id: $('#ns1blankspaceCourseTrainee').attr('data-traineeID')});
+						nsFreshcare.internal.entity.training.save.send({xhtmlContext: "AttendanceLink",
+																			id: $('#ns1blankspaceAttendanceLink').attr('data-attendeeID')});
 					});
 
-					$('#ns1blankspaceCourseTraineeNewGrower')
-					.button({
-						label: 'New Grower',
-						icons: {
-							primary: 'ui-icon-plus'
-						}
-					})
-					.click(function(event) {
-						nsFreshcare.trainer.grower.init({"new": true,
-														  trainingCourse: ns1blankspace.objectContext,
-														  trainingCourseText: ns1blankspace.objectContextData["agritrainingcourse.title"],
-														  trainingPackage: ns1blankspace.objectContextData["agritrainingcourse.package"],
-														  trainingPackageText: ns1blankspace.objectContextData["agritrainingcourse.packagetext"],
-														  membershipText: ns1blankspace.objectContextData["agritrainingcourse.package.membershiptext"],
-														  membership: ns1blankspace.objectContextData["agritrainingcourse.package.membership"],
-														  onCompleteSave: nsFreshcare.admin.trainingcourse.search.send,
-														  onCompleteSaveParam: {xhtmlElementID: '-' + ns1blankspace.objectContext}
-														});
-						nsFreshcare.external.grower.setTrainingDate({xhtmlElementID: 'ns1blankspaceDetailsTrainingCourseUpdate'});
-					});
 				}
 			},
 
@@ -5243,844 +5306,345 @@ nsFreshcare.internal =
 				
 				var aHTML = [];
 				var sXHTMLElementID = '';
-				var sCourseStatus = ns1blankspace.objectContextData['agritrainingcourse.status'];
 
-				var sTraineeDataTraineeId = -1;
-				var sTraineeDataCourseId;
-				var sTraineeDataCourseValue;
-				var sTraineeDataTraineeReferenceValue;
-				var sTraineeDataTraineeBusinessId;
-				var sTraineeDataTraineeBusinessValue;
-				var sTraineeDataTraineePersonId;
-				var sTraineeDataTraineePersonValue;
-				var sTraineeDataAttendingTrainee;
-				var sTraineeDataSurname;
-				var sTraineeDataFirstName;
-				var sTraineeDataPhone;
-				var sTraineeDataMobile;
-				var sTraineeDataEmail;
-				var oTrainee;
+				var sAttendeeDataLinkId = -1;
+				var sAttendeeDataLinksId;
+				var oLink;
+
 
 				if (oParam) 
 				{
 					if (oParam.xhtmlElementID != undefined) {sXHTMLElementID = oParam.xhtmlElementID;}
-					if (oParam.dataTraineeID != undefined) {sTraineeDataTraineeId = oParam.dataTraineeID;}
-					if (oParam.dataCourseID != undefined) {sTraineeDataCourseId = oParam.dataCourseID;}
-					if (oParam.dataCourseValue != undefined) {sTraineeDataCourseValue = oParam.dataCourseValue;}
-					if (oParam.dataTraineeReferenceValue != undefined) {sTraineeDataTraineeReferenceValue = oParam.dataTraineeReferenceValue;}
-					if (oParam.dataTraineeBusinessID != undefined) {sTraineeDataTraineeBusinessId = oParam.dataTraineeBusinessID;}
-					if (oParam.dataTraineeBusinessValue != undefined) {sTraineeDataTraineeBusinessValue = oParam.dataTraineeBusinessValue;}
-					if (oParam.dataTraineePersonID != undefined) {sTraineeDataTraineePersonId = oParam.dataTraineePersonID;}
-					if (oParam.dataTraineePersonValue != undefined) {sTraineeDataTraineePersonValue = oParam.dataTraineePersonValue;}
-					if (oParam.dataFirstName != undefined) {sTraineeDataFirstName = oParam.dataFirstName}
-					if (oParam.dataPhone != undefined) {sTraineeDataPhone = oParam.dataPhone}
-					if (oParam.dataEmail != undefined) {sTraineeDataEmail = oParam.dataEmail}
-					if (oParam.dataMobile != undefined) {sTraineeDataMobile = oParam.dataMobile}
-					if (oParam.dataAttendingTrainee != undefined) {sTraineeDataAttendingTrainee = oParam.dataAttendingTrainee;}
-					if (oParam.dataSurname != undefined) {sTraineeDataSurname = oParam.dataSurname}
+					if (oParam.dataLinkID != undefined) {sAttendeeDataLinkId = oParam.dataLinkID;}
+					if (oParam.dataLinksID != undefined) {sAttendeeDataLinksId = oParam.dataLinksID;}
+
 				}
 
-				sTraineeDataTraineeId = (sTraineeDataTraineeId === -1 && ns1blankspace.object != nsFreshcare.objectTrainingCourse) ? ns1blankspace.objectContext : sTraineeDataTraineeId;
-				sTraineeDataCourseId = (sTraineeDataCourseId === undefined) ? ns1blankspace.objectContextData['id'] : sTraineeDataCourseId;
-				sTraineeDataCourseValue = (sTraineeDataCourseValue === undefined) ? ns1blankspace.objectContextData['agritrainingcourse.title'].formatXHTML() : sTraineeDataCourseValue;
+				sAttendeeDataLinksId = (sAttendeeDataLinksId === undefined) ? ns1blankspace.objectContextData['id'] : sAttendeeDataLinksId;
 				
-				if (sTraineeDataTraineeId != -1)
+				if (sAttendeeDataLinkId != -1)
 				{
-					oTrainee = $.grep(ns1blankspace.objectContextData.training, function(x) {return x.id == sTraineeDataTraineeId}).shift();
+					oLink = $.grep(ns1blankspace.objectContextData.training, function(x) {return x.id == sAttendeeDataLinkId}).shift();
 				}
 
 				aHTML = [];
 
 				aHTML.push('<table class="ns1blankspace">');
 
-				//var aTrainerMemberships = $.map(nsFreshcare.data.trainerMemberships, function(a) { return a.membership});
-				
-				// Training Course is hidden as users are already in the context of training course
-				aHTML.push('<tr id="ns1blankspaceTraineeDetailsCourseRow">' +
-								'<td id="ns1blankspaceCourseTraineeTrainingCourse"' +
-									' data-courseID="' + sTraineeDataCourseId + '">' + sTraineeDataCourseValue + 
+
+				aHTML.push('<tr id="ns1blankspaceLinksDetailsCourseRow">' +
+								'<td id="ns1blankspaceLinksId"' +
+									' data-linkID="' + sAttendeeDataLinksId + '">' + 
 								'</td></tr>');		
-
-				// v3.1.2 SUP022744 Changed to use businessgroup filter
-				aHTML.push('<tr class="ns1blankspaceCaption">' +
-								'<td class="ns1blankspaceCaption">' +
-								'COP' +
-								'</td></tr>' +
-								'<tr class="ns1blankspace">' +
-								'<td class="ns1blankspaceSelect">' +
-								'<input id="ns1blankspaceDetailsCOP" class="nsFreshcareSelectGrower"' +
-									' data-mandatory="1" data-caption="COP"' +
-									' data-selectGrowerClear="nsFreshcare.admin.trainingcourse.trainees.hideMembershipDetails"' +
-									' data-method="CONTACT_BUSINESS_SEARCH"' +
-									' data-columns="reference-space-tradename-space-contactbusiness.addresslink.address.addresssuburb"' +
-									' data-methodFilter="reference-TEXT_IS_LIKE|' +
-														 'contactbusiness.addresslink.address.status-EQUAL_TO-1|' +
-														 'contactbusiness.businessgroup-EQUAL_TO-' + nsFreshcare.data.businessGroupGrowerID + '"' +
-									' data-click="nsFreshcare.util.defaultContactPerson">' +
-								'</td></tr>')
-
-				// v3.1.2 SUP022744 Changed to use businessgroup filter
-				aHTML.push('<tr class="ns1blankspaceCaption">' +
-								'<td class="ns1blankspaceCaption">' +
-								'Business' +
-								'</td></tr>' +
-								'<tr class="ns1blankspace">' +
-								'<td class="ns1blankspaceSelect">' +
-								'<input id="ns1blankspaceCourseTraineeTraineeBusiness" class="nsFreshcareSelectGrower"' +
-									' data-mandatory="1" data-caption="Business"' +
-									' data-selectGrowerClear="nsFreshcare.admin.trainingcourse.trainees.hideMembershipDetails"' +
-									' data-method="CONTACT_BUSINESS_SEARCH"' +
-									' data-columns="tradename-space-contactbusiness.addresslink.address.addresssuburb"' +
-									' data-methodFilter="tradename-TEXT_IS_LIKE|legalname-TEXT_IS_LIKE|contactbusiness.addresslink.address.addresssuburb-TEXT_IS_LIKE|' +
-														 'contactbusiness.addresslink.address.status-EQUAL_TO-1|' +
-														 'contactbusiness.businessgroup-EQUAL_TO-' + nsFreshcare.data.businessGroupGrowerID + '"' +
-									' data-click="nsFreshcare.util.defaultContactPerson">' +
-								'</td></tr>');			
-
-				// v3.1.1 SUP022427 Added filter to include trainee personGroups
-				// v3.1.2 SUP022744 Changed to use businessgroup filter
-				aHTML.push('<tr class="ns1blankspaceCaption">' +
-								'<td class="ns1blankspaceCaption">' +
-								'Contact Person' +
-								'</td></tr>' +
-								'<tr class="ns1blankspace">' +
-								'<td class="ns1blankspaceSelect">' +
-								'<input id="ns1blankspaceCourseTraineeTraineePerson" class="nsFreshcareSelectGrower"' +
-									' data-mandatory="1" data-caption="Contact Person"' + 
-									' data-selectGrowerClear="nsFreshcare.admin.trainingcourse.trainees.hideMembershipDetails"' +
-									' data-method="CONTACT_PERSON_SEARCH"' +
-									' data-columns="firstname-space-surname"' +
-									' data-methodfilter="firstname-TEXT_IS_LIKE|surname-TEXT_IS_LIKE|' +
-											'contactperson.contactbusiness.businessgroup-EQUAL_TO-' + nsFreshcare.data.businessGroupGrowerID + '|' +
-											'persongroup-IN_LIST-' + nsFreshcare.data.grower.categoryGrower + ',' + nsFreshcare.data.groupTrainee  + ',' + nsFreshcare.data.groupOtherContact + '"' + 
-									' data-parent="ns1blankspaceCourseTraineeTraineeBusiness"' +
-									' data-parent-search-id="contactbusiness"' +
-									' data-parent-search-text="tradename"' + 
-									' data-click="nsFreshcare.admin.trainingcourse.trainees.setMembershipValues">' +
-								'</td></tr>');			
+			
 
 				aHTML.push('<tr class="ns1blankspaceCaption">' +
-								'<td class="ns1blankspaceCaption">' +
-								'Attending Trainee First Name' +
-								'</td></tr>' +
-								'<tr class="ns1blankspace">' +
-								'<td class="ns1blankspace">' +
-								'<input id="ns1blankspaceCourseTraineeAttendingTraineeFirstName" class="ns1blankspaceText"' +
-									' data-mandatory="1" data-caption="Attending Trainee First Name">' +
-								'</td></tr>');
+							'<td class="ns1blankspaceCaption ns1blankspaceCaptionMandatory">' +
+							'Attendee</td></tr>' +
+							'<tr class="ns1blankspace">' +
+							'<td class="ns1blankspaceText">' +
+							'<input id="ns1blankspaceLinksAttendee" class="ns1blankspaceSelect nsFreshcareDisabled"' +
+								' data-mandatory="1" data-caption="Attendee"' +
+								' data-method="AGRI_EDUCATION_TRAINING_COURSE_ATTENDEE_SEARCH"' +
+								' data-columns="attendingtrainee"' +
+								' data-click="">' +
+							'</td></tr>');
+
 
 				aHTML.push('<tr class="ns1blankspaceCaption">' +
-								'<td class="ns1blankspaceCaption">' +
-								'Attending Trainee Surname' +
-								'</td></tr>' +
-								'<tr class="ns1blankspace">' +
-								'<td class="ns1blankspace">' +
-								'<input id="ns1blankspaceCourseTraineeAttendingTraineeSurname" class="ns1blankspaceText"' +
-									' data-mandatory="1" data-caption="Attending Trainee Surname">' +
-								'</td></tr>');
+							'<td class="ns1blankspaceCaption ns1blankspaceCaptionMandatory">' +
+							'Business</td></tr>' +
+							'<tr class="ns1blankspace">' +
+							'<td class="ns1blankspaceText">' +
+							'<input id="ns1blankspaceLinksBusiness" class="ns1blankspaceSelect"' +
+								' data-caption="Business"' +
+								' data-method="CONTACT_BUSINESS_SEARCH"' +
+								' data-columns="contactbusiness.tradename"' +
+								' data-methodFilter="tradename-TEXT_IS_LIKE|legalname-TEXT_IS_LIKE|' +
+													 'contactbusiness.businessgroup-EQUAL_TO-' + nsFreshcare.data.businessGroupGrowerID + '"' +
+								' data-click="">' +
+							'</td></tr>');
 
-				aHTML.push('<tr class="ns1blankspaceCaption ns1blankspaceTraineeTraineeDetails">' +
-								'<td class="ns1blankspaceCaption">' +
-								'Attending Trainee Phone' +
-								'</td></tr>' +
-								'<tr class="ns1blankspace ns1blankspaceTraineeTraineeDetails">' +
-								'<td class="ns1blankspace">' +
-								'<input id="ns1blankspaceCourseTraineeAttendingTraineePhone" class="ns1blankspaceText"' +
-									' data-caption="Attending Trainee Phone">' +
-								'</td></tr>');
-
-				aHTML.push('<tr class="ns1blankspaceCaption ns1blankspaceTraineeTraineeDetails">' +
-								'<td class="ns1blankspaceCaption">' +
-								'Attending Trainee Mobile' +
-								'</td></tr>' +
-								'<tr class="ns1blankspace ns1blankspaceTraineeTraineeDetails">' +
-								'<td class="ns1blankspace">' +
-								'<input id="ns1blankspaceCourseTraineeAttendingTraineeMobile" class="ns1blankspaceText"' +
-									' data-caption="Attending Trainee Mobile">' +
-								'</td></tr>');
-
-				aHTML.push('<tr class="ns1blankspaceCaption ns1blankspaceTraineeTraineeDetails">' +
-								'<td class="ns1blankspaceCaption">' +
-								'Attending Trainee Email' +
-								'</td></tr>' +
-								'<tr class="ns1blankspace ns1blankspaceTraineeTraineeDetails">' +
-								'<td class="ns1blankspace">' +
-								'<input id="ns1blankspaceCourseTraineeAttendingTraineeEmail" class="ns1blankspaceText"' +
-									' data-caption="Attending Trainee Email">' +
-								'</td></tr>'); 
+				aHTML.push('<tr class="ns1blankspaceCaption">' +
+							'<td class="ns1blankspaceCaption ns1blankspaceCaptionMandatory">' +
+							'Person</td></tr>' +
+							'<tr class="ns1blankspace">' +
+							'<td class="ns1blankspaceText">' +
+							'<input id="ns1blankspaceLinksPerson" class="ns1blankspaceSelect"' +
+								' data-caption="Person"' +
+								' data-method="CONTACT_PERSON_SEARCH"' +
+								' data-columns="contactperson.firstname-space-contactperson.surname-space-hyphen-space-contactbusinesstext"' +
+								' data-methodfilter="firstname-TEXT_IS_LIKE|surname-TEXT_IS_LIKE|' +
+										'contactperson.contactbusiness.businessgroup-EQUAL_TO-' + nsFreshcare.data.businessGroupGrowerID + '|' +
+										'persongroup-IN_LIST-' + nsFreshcare.data.grower.categoryGrower + ',' + nsFreshcare.data.groupTrainee  + ',' + nsFreshcare.data.groupOtherContact + '"' + 
+								' data-click="">' +
+							'</td></tr>');
 
 
-				aHTML.push('<tr class="ns1blankspaceCaption ns1blankspaceTraineeMembershipDetails">' +
-								'<td class="ns1blankspaceCaption">' +
-								'Harvest Months' +
-								'</td></tr>' +
-								'<tr class="ns1blankspace ns1blankspaceTraineeMembershipDetails">' +
-								'<td class="ns1blankspace" id="ns1blankspaceDetailsHarvestMonthsUpdate">' +
-								'</td></tr>');
+				aHTML.push('<tr class="ns1blankspaceCaption">' +
+							'<td class="ns1blankspaceCaption ns1blankspaceCaptionMandatory">' +
+							'Membership</td></tr>' +
+							'<tr class="ns1blankspace">' +
+							'<td class="ns1blankspaceText">' +
+							'<input id="ns1blankspaceLinksMembership" class="ns1blankspaceSelect"' +
+								' data-caption="Membership"' +
+								' data-method="AGRI_SUBSCRIPTION_SEARCH"' +
+								' data-columns="agrisubscription.membershiptext"' +
+								' data-parent="ns1blankspaceLinksBusiness"' +
+								' data-parent-search-id="contactbusiness"' +
+								' data-parent-search-text="tradename"' + 
+								' data-click="">' +
+							'</td></tr>');
 
-				aHTML.push('<tr class="ns1blankspaceCaption ns1blankspaceTraineeMembershipDetails">' +
-								'<td class="ns1blankspaceCaption">' +
-								'Crops' +
-								'</td></tr>' +
-								'<tr class="ns1blankspace ns1blankspaceTraineeMembershipDetails">' +
-								'<td class="ns1blankspace" id="ns1blankspaceMembershipCellCrops">' +
-								'<input id="ns1blankspaceMembershipCropsUpdate"' +
-									' class="ns1blankspaceSelect ns1blankspaceWatermark"' +
-									' data-multiselect="true"' +
-									' data-method="SETUP_STRUCTURE_ELEMENT_OPTION_SEARCH"' +
-									' data-methodFilter="title-TEXT_IS_LIKE|element-EQUAL_TO-' + nsFreshcare.structureElementCrops + '"' +
-									' maxlength="300"' +
-									' value="Search for valid Crops">' +
-								'</td></tr>');
-
-				// v3.1.2 SUP022744 Added Certificate Scopes
-				aHTML.push('<tr class="ns1blankspaceCaption ns1blankspaceTraineeMembershipDetails">' +
-								'<td class="ns1blankspaceCaption">' +
-								'Scope' +
-								'</td></tr>' +
-								'<tr class="ns1blankspace ns1blankspaceTraineeMembershipDetails">' +
-								'<td id="ns1blankspaceCourseTraineeScopeUpdate" class="ns1blankspaceText">' +
-								'<table class="ns1blankspace" style="margin-bottom:7px;">');
-
-				$.each(nsFreshcare.data.scopeOptions, function() {
-					aHTML.push('<tr><td id="ns1blankspaceCourseTraineeMembershipScopes_' + this.id + '" ' + 
-									'class="nsFreshcareScope nsFreshcareSelectable">' + this.title + '</td>' + 
-									'</tr>');
-				});
-				aHTML.push('</table>' +
-								'</td></tr>');
-
-				aHTML.push('<tr class="ns1blankspaceCaption ns1blankspaceTraineeMembershipDetails">' +
-								'<td class="ns1blankspaceCaption">' +
-								'Category' +
-								'</td></tr>' +
-								'<tr class="ns1blankspace ns1blankspaceTraineeMembershipDetails">' +
-								'<td id="ns1blankspaceCourseTraineeProductGroupUpdate" class="ns1blankspaceText">' +
-								'<table class="ns1blankspace" style="margin-bottom:7px;">');
-
-				$.each(nsFreshcare.data.productGroups, function() {
-					aHTML.push('<tr><td id="ns1blankspaceCourseTraineeMembershipProductGroups_' + this[0] + '" ' + 
-									'class="nsFreshcareProductGroup nsFreshcareSelectable">' + this[1] + '</td>' + 
-									'</tr>');
-				});
-				aHTML.push('</table>' +
-								'</td></tr>');
-
-				aHTML.push('<tr class="ns1blankspaceCaption ns1blankspaceTraineeMembershipDetails">' +
-								'<td class="ns1blankspaceCaption">' +
-								'Sites' +
-								'</td></tr>' +
-								'<tr class="ns1blankspace ns1blankspaceTraineeMembershipDetails">' +
-								'<td id="ns1blankspaceCourseTraineeMembershipSites" class="ns1blankspaceText">' +
-								'</td></tr>');
+				
 				
 				$('#' + sXHTMLElementID).html(aHTML.join(''));
 
-
-				$('#ns1blankspaceCourseTraineeAttendingTraineeFirstName').on('change', {trainee: oTrainee}, nsFreshcare.admin.trainingcourse.trainees.setTraineeValues);
-				$('#ns1blankspaceCourseTraineeAttendingTraineeSurname').on('change', {trainee: oTrainee}, nsFreshcare.admin.trainingcourse.trainees.setTraineeValues);
-				$('.ns1blankspaceTraineeMembershipDetails').hide();
-				$('.ns1blankspaceTraineeTraineeDetails').hide();
-				$('#ns1blankspaceCourseTraineeTrainingCourse').hide();
-				$('#ns1blankspaceCourseTraineeTrainingCourse').attr('data-id', sTraineeDataCourseId);
-
-				if (sTraineeDataTraineeId != -1 && sTraineeDataTraineeId != '') 
+				$('#ns1blankspaceLinksId').hide();
+				$('#ns1blankspaceLinksId').attr('data-id', sAttendeeDataLinksId);
+				$('.nsFreshcareDisabled').attr('disabled', true);
+				if (sAttendeeDataLinkId != -1) 
 				{		
-					
-					$('#ns1blankspaceDetailsCOP').val(sTraineeDataTraineeReferenceValue.formatXHTML());
-					$('#ns1blankspaceDetailsCOP').attr('data-id', sTraineeDataTraineeBusinessId);
-					$('#ns1blankspaceCourseTraineeTraineeBusiness').val(sTraineeDataTraineeBusinessValue.formatXHTML());
-					$('#ns1blankspaceCourseTraineeTraineeBusiness').attr('data-id', sTraineeDataTraineeBusinessId);
-					$('#ns1blankspaceCourseTraineeTraineePerson').val(sTraineeDataTraineePersonValue.formatXHTML());
-					$('#ns1blankspaceCourseTraineeTraineePerson').attr('data-id', sTraineeDataTraineePersonId);
-					$('#ns1blankspaceCourseTraineeTraineePerson').attr('data-firstname', oTrainee['agritrainingcourseattendee.traineecontactperson.firstname']);
-					$('#ns1blankspaceCourseTraineeTraineePerson').attr('data-surname', oTrainee['agritrainingcourseattendee.traineecontactperson.surname']);
-					$('#ns1blankspaceCourseTraineeAttendingTraineeSurname').val(sTraineeDataSurname.formatXHTML());
-					$('#ns1blankspaceCourseTraineeAttendingTraineeFirstName').val(sTraineeDataFirstName.formatXHTML());
-					$('#ns1blankspaceCourseTraineeAttendingTraineePhone').val(sTraineeDataPhone.formatXHTML());
-					$('#ns1blankspaceCourseTraineeAttendingTraineeMobile').val(sTraineeDataMobile.formatXHTML());
-					$('#ns1blankspaceCourseTraineeAttendingTraineeEmail').val(sTraineeDataEmail.formatXHTML());
+		
+					$('#ns1blankspaceLinksAttendee').val(oLink === undefined ? '' : oLink['attendeetext'].formatXHTML());
 
-					// We disable all the fields if they're not admin and the Course is Completed 
-					if (nsFreshcare.user.roleID != nsFreshcare.data.roles.admin && 
-						sCourseStatus === nsFreshcare.data.trainingCourse.statusCompleted
-					   )
-					{
-						$('input:visible').attr('disabled', true);
-						$('input:visible').addClass('nsFreshcareDisabled');
-						$('#ns1blankspaceViewControlSearch').removeClass('nsFreshcareDisabled');
-						$('#ns1blankspaceViewControlSearch').attr('disabled', false);
-					}
-					else
-					{
-						nsFreshcare.internal.entity.training.setMembershipValues(
-						{
-							courseTraineeId: sTraineeDataTraineeId, 
-							retrieve: true,
-							contactBusiness: sTraineeDataTraineeBusinessId
-						});
+					$('#ns1blankspaceLinksAttendee').attr('data-id', oLink === undefined ? '' : oLink['attendee'].formatXHTML());
 
-						if ($('#ns1blankspaceCourseTraineeTraineePerson').val() != 
-							$('#ns1blankspaceCourseTraineeAttendingTraineeSurname').val() + ', ' + $('#ns1blankspaceCourseTraineeAttendingTraineeFirstName').val())
-						{	
+					$('#ns1blankspaceLinksPerson').val(oLink === undefined ? '' : oLink['contactpersontext'].formatXHTML());
 
-							nsFreshcare.internal.entity.training.setTraineeValues({data: {trainee: oTrainee}});
-						}
-					}
-				}
-				else 
-				{
-					// Set defaults
-					// v3.1.0 added default for reference
-					if (sTraineeDataTraineeReferenceValue != undefined && sTraineeDataTraineeBusinessId != undefined) 
-					{
-						$('#ns1blankspaceDetailsCOP').val(sTraineeDataTraineeReferenceValue.formatXHTML());
-						$('#ns1blankspaceDetailsCOP').attr('data-id', sTraineeDataTraineeBusinessId);
-					}
+					$('#ns1blankspaceLinksPerson').attr('data-id', oLink === undefined ? '' : oLink['contactperson'].formatXHTML());
 
-					if (sTraineeDataTraineeBusinessValue != undefined && sTraineeDataTraineeBusinessId != undefined) 
-					{
-						$('#ns1blankspaceCourseTraineeTraineeBusiness').val(sTraineeDataTraineeBusinessValue.formatXHTML());
-						$('#ns1blankspaceCourseTraineeTraineeBusiness').attr('data-id', sTraineeDataTraineeBusinessId);
-					}
+					$('#ns1blankspaceLinksBusiness').val(oLink === undefined ? '' : oLink['contactbusinesstext'].formatXHTML());
 
-					/*if (sTraineeDataTraineePersonValue != undefined && sTraineeDataTraineePersonId != undefined) 
-					{
-						$('#ns1blankspaceCourseTraineeTraineePerson').val(sTraineeDataTraineePersonValue.formatXHTML());
-						$('#ns1blankspaceCourseTraineeTraineePerson').attr('data-id', sTraineeDataTraineePersonId);
-						$('#ns1blankspaceCourseTraineeAttendingTraineeSurname').val(aTraineePersonName.shift());
-						$('#ns1blankspaceCourseTraineeAttendingTraineeFirstName').val(aTraineePersonName.join(' '));
-					}*/
-				}
-			},
+					$('#ns1blankspaceLinksBusiness').attr('data-id', oLink === undefined ? '' : oLink['contactbusiness'].formatXHTML());
 
+					$('#ns1blankspaceLinksMembership').val(oLink === undefined ? '' : oLink['agritraineeattendancelink.subscription.membershiptext'].formatXHTML());
 
-			setTraineeValues: function(event) 
-			{
-				// If the user changes firstname or surname, they must enter phone, mobile, email 
-				var sTraineeName = $('#ns1blankspaceCourseTraineeAttendingTraineeFirstName').val() + ' ' + $('#ns1blankspaceCourseTraineeAttendingTraineeSurname').val();
-				var oTrainee = (event.data) ? event.data.trainee : undefined;
-
-				if (sTraineeName != $('#ns1blankspaceCourseTraineeTraineePerson').attr('data-firstname') + ' ' + $('#ns1blankspaceCourseTraineeTraineePerson').attr('data-surname'))
-				{
-					if (!$('.ns1blankspaceTraineeTraineeDetails').is(':visible'))
-					{
-						$('#ns1blankspaceCourseTraineeAttendingTraineePhone').val((oTrainee ? oTrainee['agritraineeattendancelink.attendee.phone'] : ''));
-						$('#ns1blankspaceCourseTraineeAttendingTraineeMobile').val((oTrainee ? oTrainee['agritraineeattendancelink.attendee.mobile'] : ''));
-						$('#ns1blankspaceCourseTraineeAttendingTraineeEmail').val((oTrainee ? oTrainee['agritraineeattendancelink.attendee.email'] : ''));
-						$('.ns1blankspaceTraineeTraineeDetails').show();
-						
-						$('#ns1blankspaceCourseTraineeAttendingTraineePhone').mask('99 9999 9999', {placeholder: " "});
-						$('#ns1blankspaceCourseTraineeAttendingTraineeMobile').mask('9999 999 999', {placeholder: " "});
-					}
+					$('#ns1blankspaceLinksMembership').attr('data-id', oLink === undefined ? '' : oLink['subscription'].formatXHTML());
 				}
 				else
 				{
-					$('.ns1blankspaceTraineeTraineeDetails').hide();
-					$('#ns1blankspaceCourseTraineeAttendingTraineePhone').val('');
-					$('#ns1blankspaceCourseTraineeAttendingTraineeMobile').val('');
-					$('#ns1blankspaceCourseTraineeAttendingTraineeEmail').val('');
+					$('#ns1blankspaceLinksAttendee').val(ns1blankspace.objectContextData.attendingtrainee.formatXHTML());
+					$('#ns1blankspaceLinksAttendee').attr('data-id', ns1blankspace.objectContextData.id.formatXHTML());
 				}
 			},
 
-			setMembershipValues: function(oParam) 
-			{
-				// Set Attending trainee and ask user to confirm/edit Crops, Harvest Months and Product Groups for the Membership 
-				//- only if they don't already have this membership
-
-				var iCourseTraineeId;
-				var bRetrieve = false;
-
-				if (oParam)
+			save:     	
+			{		
+				validate: function(oParam) 
 				{
-					if (oParam.courseTraineeId) {iCourseTraineeId = oParam.courseTraineeId}
-					if (oParam.retrieve) {bRetrieve = oParam.retrieve}
-					if (oParam.setMembershipStep === undefined) {oParam.setMembershipStep = 1}
-				}
-				else
-				{
-					oParam = {setMembershipStep: 1}
-				}
+					if (oParam.attendeeValidateStep == undefined) {oParam.attendeeValidateStep = 1}
 
-				// Set Attending Trainee to person Selected (unless bRetrieve) and get Crops / HArvest months, etc from priority Membership
-				// If bRetrieve, revert Crops, harvestMonths, etc to those values already saved (if applicable)
-				if (oParam.setMembershipStep === 1)
-				{
-					ns1blankspace.status.working();
-					$('#ns1blankspaceCourseTraineeSave').attr('disabled', true);
+					if (oParam.attendeeValidateStep == 1)
+					{	
+						ns1blankspace.okToSave = true;
+						oParam.AttendanceLinkCountInput = 0;
 
-					if (iCourseTraineeId === undefined)
-					{
-						var sXHTMLPersonID = ns1blankspace.xhtml.divID.replace('#', '');
-						var sXHTMLBusinessID = sXHTMLPersonID.replace('Person', 'Business');
-						var sXHTMLTraineeID = sXHTMLPersonID.replace('TraineePerson', 'AttendingTrainee');
-						$('#' + sXHTMLTraineeID + 'FirstName').val($('#' + sXHTMLPersonID).attr('data-firstname'));
-						$('#' + sXHTMLTraineeID + 'Surname').val($('#' + sXHTMLPersonID).attr('data-surname'));
-					}
+						$('#ns1blankspaceAttendanceLinkColumn1 input').each( function() {
 
-					if (oParam.contactBusiness === undefined) {oParam.contactBusiness = $('#' + sXHTMLBusinessID).attr('data-id');}
-
-					// Now search for and then show Membership details for the user to confirm
-					var oSearch = new AdvancedSearch();
-					oSearch.method = 'AGRI_SUBSCRIPTION_SEARCH';
-					oSearch.addField('crop,harvestmonth,membership,agrisubscription.contactbusiness.agribusiness.prioritymembership');
-					oSearch.addFilter('contactbusiness', 'EQUAL_TO', oParam.contactBusiness);
-					oSearch.sort('createddate' , 'asc');			// If we don't have a priority membership, get the first one entered
-					oSearch.getResults(function(oResponse)
-					{
-						if (oResponse.status === 'OK')
-						{
-							// We now have a list of ALL their current memberships
-							// First work out if they have the Membership for this training Course
-							// If not, we need to get the prioritymembership and get the values for it
-							// If the membership already exists, we don't need to be in here..
-							var iThisMembership = ns1blankspace.objectContextData["agritrainingcourse.package.membership"];
-
-							if ($.grep(oResponse.data.rows, function(x) {return x.membership === iThisMembership}).length === 0)
-							{
-								// This grower business doesn't already have this membership
-								// First check if this is an existing CourseTrainee and if the calling program has asked us to retrieve existing details
-								if (iCourseTraineeId != undefined && iCourseTraineeId != -1 && bRetrieve)
-								{
-									var oThisCourseTrainee = $.grep(ns1blankspace.objectContextData.training, function(x) {return x.id === iCourseTraineeId}).shift();
-									
-									
-									nsFreshcare.admin.grower.membership.harvestMonths.show({xhtmlElementId: 'ns1blankspaceDetailsHarvestMonthsUpdate',
-																							 values: ns1blankspace.objectContextData['harvestmonth'].formatXHTML(),
-																							 update: true});
-
-									nsFreshcare.admin.grower.membership.crops.show({xhtmlElementId: 'ns1blankspaceDetailsCellCrops',
-																							 values: ns1blankspace.objectContextData['crop'].formatXHTML(),
-																							 update: true});
-								}
-
-								// This is a new trainee record or we've chosen a new Grower
-								else
-								{
-									if (iThisMembership == nsFreshcare.data.membershipVIT || iThisMembership == nsFreshcare.data.membershipWIN)
-									{
-											nsFreshcare.admin.grower.membership.crops.show({xhtmlElementId: 'ns1blankspaceDetailsCellCrops',
-																							 values: 'Wine Grapes',
-																							 update: true});									
-										/*$('#ns1blankspaceMembershipCropsUpdate')
-											.val('Wine Grapes')
-											.attr('disabled', 'true')
-											.removeClass('ns1blankspaceWatermark')
-											.addClass('nsFreshcareDisabled');*/
-									}
-
-									if (oResponse.data.rows.length > 0)		// We have at least one membership
-									{
-										var oRow = oResponse.data.rows[0];
-										oParam.prioritySubscription = oRow.id;
-
-										nsFreshcare.admin.grower.membership.harvestMonths.show({xhtmlElementId: 'ns1blankspaceDetailsHarvestMonthsUpdate',
-																								 values: oRow.harvestmonth.formatXHTML(),
-																								 update: true});
-
-										if (iThisMembership != nsFreshcare.data.membershipVIT && iThisMembership != nsFreshcare.data.membershipWIN)
-										{
-											nsFreshcare.admin.grower.membership.crops.show({xhtmlElementId: 'ns1blankspaceDetailsCellCrops',
-																									 values: ((iThisMembership != nsFreshcare.data.membershipVIT && iThisMembership != nsFreshcare.data.membershipWIN) 
-																									 			? oRow.crop.formatXHTML()
-																									 			: 'Wine Grapes'),
-																									 update: true});
-										}
-									}
-									// No membership has been added yet
-									else
-									{
-										nsFreshcare.admin.grower.membership.harvestMonths.show({xhtmlElementId: 'ns1blankspaceDetailsHarvestMonthsUpdate',
-																								 values: '',
-																								 update: true});
-										nsFreshcare.admin.grower.membership.crops.show({xhtmlElementId: 'ns1blankspaceDetailsCellCrops',
-																									 values: '',
-																									 update: true});
-
-									}
-								}
-								oParam.setMembershipStep = 2;
-								nsFreshcare.internal.entity.training.setMembershipValues(oParam);
-							}
-							else
-							{
-								$('#ns1blankspaceCourseTraineeSave').attr('disabled', false);
-								ns1blankspace.status.clear();
-							}
-
-						}
-						else
-						{
-							ns1blankspace.status.error(oResponse.error.errornotes);
-						}
-					});
-				}
-
-				// Get Category (Product Groups) for default Subscription
-				else if (oParam.setMembershipStep === 2)
-				{
-					var oSearch = new AdvancedSearch();
-
-					if (iCourseTraineeId != undefined && iCourseTraineeId != -1 && bRetrieve)
-					{
-						oSearch.method = 'AGRI_EDUCATION_TRAINING_COURSE_ATTENDEE_PRODUCT_CATEGORY_SEARCH';
-						oSearch.addField('productcategory,productcategorytext');
-						oSearch.addFilter('coursetrainee', 'EQUAL_TO', iCourseTraineeId);
-						oSearch.sort('productcategorytext', 'asc');
-					}
-					else
-					{
-						oSearch.method = 'AGRI_PRODUCT_GROUP_SEARCH';
-						oSearch.addField('productcategory,productcategorytext,agriproductgroup.subscription');
-						oSearch.addFilter('agriproductgroup.subscription.contactbusiness', 'EQUAL_TO', oParam.contactBusiness);
-						oSearch.addFilter('subscription', 'EQUAL_TO', oParam.prioritySubscription);
-						oSearch.sort('subscription', 'asc');
-						oSearch.sort('productcategorytext', 'asc');
-					}
-
-					oSearch.getResults(function(oResponse)
-					{
-						if (oResponse.status === 'OK')
-						{
-							var iSubscription = (oResponse.data.rows.length > 0) ? oResponse.data.rows[0]['agriproductgroup.subscription'] : '';
-							oParam.prioritySubscription = (oParam.prioritySubscription) ? oParam.prioritySubscription : iSubscription;
-
-							if (ns1blankspace.objectContextData["agritrainingcourse.package.membership"] == nsFreshcare.data.membershipVIT 
-								|| ns1blankspace.objectContextData["agritrainingcourse.package.membership"] == nsFreshcare.data.membershipWIN)
-							{
-								// Hide all except Wine Grapes if the training Course is for Viticulture or Winery
-								var iWineGrapes = $.map($.grep(nsFreshcare.data.productGroups, function(x) {return x[1] === 'Wine Grapes'}),
-														function(y) {return y[0]}).pop();
-								$.each($('.nsFreshcareProductGroup'), function()
-								{
-									if (this.id.split('_').pop() === iWineGrapes)
-									{
-										$(this).addClass('nsFreshcareSelected');
-									}
-									else
-									{
-										$(this).parent().hide();
-									}
-								});
-							}
-							else
-							{
-								$.each($.grep(oResponse.data.rows, function(x) {return x['agriproductgroup.subscription'] == iSubscription}), function()
-								{
-									$('#ns1blankspaceCourseTraineeMembershipProductGroups_' + this.productcategory).addClass('nsFreshcareSelected');
-								});
-
-								$('.nsFreshcareProductGroup').click(function()
-								{
-									$(this).toggleClass('nsFreshcareSelected');
-								});
-
-							}
-
-							oParam.setMembershipStep = 3;
-							nsFreshcare.internal.entity.training.setMembershipValues(oParam);
-						}
-						else
-						{
-							ns1blankspace.status.error(oResponse.error.errornotes);
-						}
-					});
-				}
-
-				// v3.1.2 SUP022744 Get Scopes for default Subscription
-				else if (oParam.setMembershipStep === 3)
-				{
-					var oSearch = new AdvancedSearch();
-					oSearch.method = 'AGRI_OBJECT_SCOPE_SEARCH';
-					oSearch.addField('object,objectcontext,scope,scopetext');
-
-					if (iCourseTraineeId != undefined && iCourseTraineeId != -1 && bRetrieve)
-					{
-						oSearch.addFilter('object', 'EQUAL_TO', nsFreshcare.objectTrainingCourseAttendee);
-						oSearch.addFilter('objectcontext', 'EQUAL_TO', iCourseTraineeId);
-					}
-					else
-					{
-						oSearch.addFilter('object', 'EQUAL_TO', nsFreshcare.objectSubscription);
-						oSearch.addFilter('objectcontext', 'EQUAL_TO', oParam.prioritySubscription);
-						oSearch.sort('objectcontext', 'asc');
-					}
-					oSearch.sort('scopetext', 'asc');
-
-					oSearch.getResults(function(oResponse)
-					{
-						if (oResponse.status === 'OK')
-						{
-							var iSubscription = (oResponse.data.rows.length > 0) ? oResponse.data.rows[0].objectcontext : '';
-							oParam.prioritySubscription = (oParam.prioritySubscription) ? oParam.prioritySubscription : iSubscription;
-
-							if (ns1blankspace.objectContextData["agritrainingcourse.package.membership"] == nsFreshcare.data.membershipVIT 
-								|| ns1blankspace.objectContextData["agritrainingcourse.package.membership"] == nsFreshcare.data.membershipWIN)
-							{
-								// Hide all except Winery if the training Course is for Viticulture or Winery
-								var iWinery = $.map($.grep(nsFreshcare.data.scopeOptions, function(x) {return x.title == 'Winery'}),
-													function(y) {return y.id}).shift();
-
-								$.each($('.nsFreshcareScope'), function()
-								{
-									if (this.id.split('_').pop() === iWinery)
-									{
-										$(this).addClass('nsFreshcareSelected');
-									}
-									else
-									{
-										$(this).parent().hide();
-									}
-								});
-							}
-							else
-							{
-								$.each($.grep(oResponse.data.rows, function(x) {return x.objectcontext == iSubscription}), function()
-								{
-									$('#ns1blankspaceCourseTraineeMembershipScopes_' + this.scope).addClass('nsFreshcareSelected');
-								});
-
-								$('.nsFreshcareScope').click(function()
-								{
-									$(this).toggleClass('nsFreshcareSelected');
-								});
-
-							}
-
-							oParam.setMembershipStep = 4;
-							nsFreshcare.internal.entity.training.setMembershipValues(oParam);
-						}
-						else
-						{
-							ns1blankspace.status.error(oResponse.error.errornotes);
-						}
-					});
-				}
-
-				// Now get list of sites linked to default membership
-				else if (oParam.setMembershipStep === 4)
-				{
-					var oSearch = new AdvancedSearch();
-					oSearch.method = 'CORE_LOCATION_ADDRESS_SEARCH';
-					oSearch.addField('status,address1,address2,addresssuburb,addressstate,addresspostcode' +
-									 ',address.addresslink.object,address.addresslink.objectcontext,address.addresslink.id');
-					oSearch.addFilter('status', 'NOT_EQUAL_TO', '3')	// Onlt want active addresses
-					oSearch.addBracket('(');
-						oSearch.addBracket('(');
-						oSearch.addFilter('address.addresslink.object', 'EQUAL_TO', nsFreshcare.objectBusiness);
-						oSearch.addFilter('address.addresslink.objectContext', 'EQUAL_TO', oParam.contactBusiness);
-						oSearch.addBracket(')');
-					if (iCourseTraineeId != undefined && iCourseTraineeId != -1 && bRetrieve)
-					{
-						oSearch.addOperator('or');
-						oSearch.addBracket('(');
-						oSearch.addFilter('address.addresslink.object', 'EQUAL_TO', nsFreshcare.objectTrainingCourseAttendee);
-						oSearch.addFilter('address.addresslink.objectContext', 'EQUAL_TO', iCourseTraineeId);
-						oSearch.addBracket(')');
-					}
-					else if (oParam.prioritySubscription && oParam.prioritySubscription != '')
-					{
-						oSearch.addOperator('or');
-						oSearch.addBracket('(');
-						oSearch.addFilter('address.addresslink.object', 'EQUAL_TO', nsFreshcare.objectSubscription);
-						oSearch.addFilter('address.addresslink.objectContext', 'EQUAL_TO', oParam.prioritySubscription);
-						oSearch.addBracket(')');
-					}
-					oSearch.addBracket(')');
-					oSearch.addFilter('type', 'EQUAL_TO', '1');
-					oSearch.sort('address.addresslink.object', 'asc');
-					oSearch.sort('status', 'asc');
-					oSearch.sort('addresssuburb', 'asc');
-					oSearch.getResults(function(oResponse)
-					{
-						if (oResponse.status === 'OK')
-						{
-							var aHTML = [];
-							var iCompareObject = (iCourseTraineeId != undefined && iCourseTraineeId != -1 && bRetrieve) 
-								? nsFreshcare.objectTrainingCourseAttendee 
-								: nsFreshcare.objectSubscription;
-
-							aHTML.push('<table class="ns1blankspace" style="margin-bottom:7px;">');
-
-							$.each($.grep(oResponse.data.rows, function(x) {return x["address.addresslink.object"] == nsFreshcare.objectBusiness}), function() 
-							{
-								var sAddress = (this.address1 + ((this.address2 != '') ? ' ' + this.address2 : '') + ' ' +
-											   this.addresssuburb + ' ' + this.addressstate + ' ' + this.addresspostcode).formatXHTML();
+							if ($(this).attr('data-mandatory') === '1' 
+								&& ($(this).val() === ''
+								   	|| ($(this).attr('data-method') != undefined && $(this).attr('data-id') === undefined))) {
 
 								
-								aHTML.push('<tr><td id="ns1blankspaceCourseTraineeSite_' + this.id + '" ' + 
-												'class="nsFreshcareMembershipSite nsFreshcareSelectable">' + sAddress + '</td>' + 
-												'</tr>');
-							});
-							aHTML.push('</table>');
-							$('#ns1blankspaceCourseTraineeMembershipSites').html(aHTML.join(''));
-
-							$.each($.grep(oResponse.data.rows, function(x) {return x["address.addresslink.object"] == iCompareObject}), function() 
-							{
-								$('#ns1blankspaceCourseTraineeSite_' + this.id).addClass('nsFreshcareSelected');
-							});
-
-							$('.nsFreshcareMembershipSite').click(function()
-							{
-								$(this).toggleClass('nsFreshcareSelected');
-							});
-
-							oParam.setMembershipStep = 5;
-							nsFreshcare.internal.entity.training.setMembershipValues(oParam);
-						}
-						else
-						{
-							ns1blankspace.status.error(oResponse.error.errornotes);
-						}
-					});
-				}
-
-				else if (oParam.setMembershipStep === 5)
-				{
-					$('.ns1blankspaceTraineeMembershipDetails').show();
-					$('#ns1blankspaceCourseTraineeSave').attr('disabled', false);
-					ns1blankspace.status.clear();
-				}
-
-			},
-
-			hideMembershipDetails: function()
-			{
-
-				if ($('.ns1blankspaceTraineeMembershipDetails').is(':visible'))
-				{
-
-					$('.ns1blankspaceTraineeMembershipDetails').hide();
-					$('#ns1blankspaceCourseTraineeMembershipSites').html('');
-					$.each($('.nsFreshcareProductGroup'), function()
-					{
-						$(this).removeClass('nsFreshcareSelected');
-					});
-					$('#ns1blankspaceMembershipCropsUpdate_SelectRows').remove('');
-					$('#ns1blankspaceMembershipCropsUpdate').addClass('ns1blankspaceWatermark');
-					$('#ns1blankspaceMembershipCropsUpdate').attr('disabled', false);
-					$('#ns1blankspaceCourseTraineeHarvestMonths').html('');
-					$('#ns1blankspaceCourseTraineeAttendingTraineeFirstName').val('');
-					$('#ns1blankspaceCourseTraineeAttendingTraineeSurname').val('');
-				}
-			},
-
-			"export":  function(oResponse, oParam) 
-			{
-
-				var aHTML = [];
-				if (oResponse === undefined) {
-
-					// First, make export div visible and show loading image
-
-					ns1blankspace.show({selector: '#ns1blankspaceMainTraineesExport', refresh: true});
-
-					// v2.0.4j SUP021746 Addresses all now coming from addresslink & startrow set to 0 on CORE_SEARCH_MORE
-					var oSearch = new AdvancedSearch();
-					oSearch.method = 'AGRI_EDUCATION_TRAINING_COURSE_ATTENDEE_SEARCH';
-					oSearch.addField('attendingtrainee,firstname,surname,coursetext,agritrainingcourseattendee.traineecontactbusinesstext,agritrainingcourseattendee.traineecontactbusiness.reference' +
-									',agritrainingcourseattendee.traineecontactbusiness.addresslink.address.address1,agritrainingcourseattendee.traineecontactbusiness.addresslink.address.address2' +
-									',agritrainingcourseattendee.traineecontactbusiness.addresslink.address.addresssuburb,agritrainingcourseattendee.traineecontactbusiness.addresslink.address.addressstate' +
-									',agritrainingcourseattendee.traineecontactbusiness.addresslink.address.addresspostcode,agritrainingcourseattendee.traineecontactbusiness.addresslink.address.addresscountry' +
-									',agritrainingcourseattendee.course.trainercontactperson.firstname,agritrainingcourseattendee.course.trainercontactperson.surname,agritrainingcourseattendee.course.coursedate');
-					oSearch.addFilter('course', 'EQUAL_TO', ns1blankspace.objectContext);
-					oSearch.addSummaryField('count(*) trainees')
-					oSearch.sort("traineecontactbusinesstext", "asc");
-					oSearch.rows = 1;
-					oSearch.getResults(function(oResponse) {
-
-						if (oResponse.status === 'OK' && oResponse.data.rows.length > 0) {
-
-							var iCount = oResponse.summary.trainees;
-							var sData = 'id=' + oResponse.moreid +
-							'&startrow=0' + 
-							'&rows=' + iCount;
-
-							$.ajax({
-								type: 'GET',
-								url: ns1blankspace.util.endpointURI('CORE_SEARCH_MORE'),
-								data: sData,
-								dataType: 'JSON',
-								success: function(oResponse) {
-									nsFreshcare.admin.trainingcourse.trainees["export"](oResponse, {count: iCount});
+								var sCaption = $(this).attr('data-caption');
+								if (sCaption === undefined) {
+									sCaption = $(this).attr('id').substr('ns1blankspaceAttendanceLinkColumn1'.length);
 								}
-							});
-							
-						}
-						else {
+								if (sCaption === undefined) { sCaption = $(this).attr('id');}
 
-							aHTML.push('<table class="ns1blankspace">');
-							aHTML.push('<tr>');
-							if (oResponse.data.rows.length === 0) {
-								aHTML.push('No rows to export. Please add trainees to the training course before exporting.');
+								ns1blankspace.status.message(sCaption + ' is mandatory.');
+								ns1blankspace.okToSave = false;
+								return false;		
 							}
-							else {
-								aHTML.push('<td class="ns1blankspaceSub">Error creating file. Please try again or contact Support.</td></tr>');
+							if($(this).val()=='')
+							{
+								oParam.AttendanceLinkCountInput = oParam.AttendanceLinkCountInput + 1;
 							}
-							aHTML.push('</table>');
-							
-							$('#ns1blankspaceMainTraineesExport').html(aHTML.join(''));
-						}
-					});
-				}
-				else {
+						});
 
-					if (oResponse.status == 'OK') {
-
-						var oItems = oResponse.data.rows;
-						var iCount = oParam.count;
-
-						ns1blankspace.status.working('Creating file...');
-
-						aHTML.push('<table style="margin: 10px; font-size:0.875em;">');
-						aHTML.push('<tr>');
-						aHTML.push('<td class="ns1blankspaceTextMulti">' +
-										'<div id="ns1blankspaceFileContents" class="ns1blankspaceTextMulti" style="background-color:#F3F3F3; width:100%; font-family:Courier New; font-size:0.865em; white-space:pre; overflow:auto;">' +
-											'</div>' +
-										'</td></tr>' +
-										'<tr>' +
-										'<td class="ns1blankspaceTextMulti" id="ns1blankspaceFileDownload" style="padding-top:8px;"' +
-										'</td></tr></table>');
-
-						oParam.totalRows = iCount;
-						oParam.name = 'Export Trainees';
-						// v3.1.1 Added as didn't have export format when in admon login
-						if ($.grep(ns1blankspace.setup.file["export"].formats, function (a) {return a.name == oParam.name}).length == 0)
+						if(oParam.AttendanceLinkCountInput > 2)
 						{
-							nsFreshcare.trainer.setup.exports();
+							ns1blankspace.status.message('At least Business, Person or Membership must be selected.');
+							ns1blankspace.okToSave = false;
+							return false;
 						}
-						oParam.items = oItems;
-						oParam.saveToFile = true;
-						oParam.fileName = ns1blankspace.objectContextData['agritrainingcourse.reference'] + '_Trainees.csv';
-						oParam.xhtmlElementID = 'ns1blankspaceFileDownload';
 
-						$('#ns1blankspaceMainTraineesExport').html(aHTML.join(''));
+						if (ns1blankspace.okToSave == true)
+						{
+							oParam.attendeeValidateStep = 10;
+							nsFreshcare.internal.entity.training.save.validate(oParam);
+						}
+					}
+					else if (oParam.attendeeValidateStep == 10)
+					{
+						if (oParam && oParam.onComplete)
+						{
+							oParam.linkSaveStep = 2;
+							ns1blankspace.util.onComplete(oParam);
+						}
+					}
+				},
+
+				send: 	function(oParam) 
+				{
+					var oData = {};
+
+					if (oParam)
+					{
+						if (oParam.linkSaveStep === undefined) {oParam.linkSaveStep = 1;}
+					}
+					else
+					{ 	oParam = {linkSaveStep: 1}}
+
+					if (oParam.linkSaveStep === 1)
+					{
+						ns1blankspace.status.working();
+						oParam.onComplete = nsFreshcare.internal.entity.training.save.send;
+						nsFreshcare.data.saveError = [];
+						nsFreshcare.internal.entity.training.save.validate(oParam);
+					}
+
+					else if (oParam.linkSaveStep === 2 && ns1blankspace.okToSave) 
+					{
+				
+						if (oParam.id != -1)
+						{ 	oData.id = $('#ns1blankspaceLinksId').attr('data-linkID'); }
+
+
+						if (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin) 
+						{
+							oData.attendee = $('#ns1blankspaceLinksAttendee').attr('data-id');
 						
-						var sFile = ns1blankspace.setup.file["export"].process(oParam);
-
-						//$('#ns1blankspaceFileContents').html(sFile);
-
-					}
-					else {
-						aHTML.push('<table class="ns1blankspace">');
-						aHTML.push('<tr>');
-						aHTML.push('<td class="ns1blankspaceSub">Error creating file. Please try again or contact Support.</td></tr>');
-						aHTML.push('</table>');
-
-						$('#ns1blankspaceMainTraineesExport').html(aHTML.join(''));
-					}
-
-					$('#ns1blankspaceBackToTrainees').button({
-						label: "Back",
-						icons: {
-							primary: 'ui-icon-triangle-1-w'
 						}
-					})
-					.click(function() {
-						ns1blankspace.show({selector: '#ns1blankspaceMainTrainees'});
-					})
+						
+				
+						oData.contactbusiness = $('#ns1blankspaceLinksBusiness').attr('data-id');
+
+					
+						oData.contactperson = $('#ns1blankspaceLinksPerson').attr('data-id');
+						
+				
+						oData.subscription = $('#ns1blankspaceLinksMembership').attr('data-id');
+
+						oParam.data = oData;
+						$.ajax(
+						{
+							type: 'POST',
+							url: ns1blankspace.util.endpointURI('AGRI_TRAINEE_ATTENDANCE_LINK_MANAGE'),
+							data: oData,
+							dataType: 'JSON',
+							success: function(oResponse) 
+							{
+								if(oResponse.status == 'OK')
+								{
+									oParam.onComplete = nsFreshcare.internal.entity.training.show;
+									nsFreshcare.admin.attendance.links.search(oParam, oResponse);
+									ns1blankspace.status.message(oResponse.notes);
+								}
+								else
+								{
+									ns1blankspace.status.error(oResponse.error.errornotes);
+								}
+							}
+						});
+					}
+
+				}
+			},
+
+			remove:
+			{ 
+				show: 	function(oElement) 
+				{
+				
+					if (ns1blankspace.xhtml.divID === oElement.id) 
+					{
+						$(ns1blankspace.xhtml.container).html('');
+						$(ns1blankspace.xhtml.container).hide();
+						ns1blankspace.xhtml.divID = '';
+					}
+					else 
+					{
+						ns1blankspace.xhtml.divID = oElement.id;
+
+						var iRowID = ($(oElement).attr("data-rowID")) ? $(oElement).attr("data-rowID") : 'New';
+						
+						var aHTML = [];
+						aHTML.push('<table class="ns1blankspaceSearchMedium" style="width:100px;"><tr>' +
+									'<td><span id="ns1blankspaceLinksDelete_' + iRowID + '" class="ns1blankspaceSearch" style="font-size:0.625em;">Remove</span></td>' +
+									'</tr></table>');
+
+						$(ns1blankspace.xhtml.container).html(aHTML.join(''));
+						$(ns1blankspace.xhtml.container).show();
+						$(ns1blankspace.xhtml.container).offset(
+						{ 
+							top: $(oElement).offset().top,
+							left: $(oElement).offset().left + $(oElement).width()
+						});
+
+						$('#ns1blankspaceLinksDelete_' + iRowID)
+						.css('cursor', 'pointer')
+						.click(function(event) {
+							nsFreshcare.internal.entity.training.remove.process({element: oElement})
+						});
+
+					}
+				},
+
+				process: 	function(oParam)
+				{
+
+					var oElement;
+					var sID;
+					var iContactBusiness;
+					var iCourseId;
+					var bOtherLink = false;
+					if (oParam)
+					{
+						if (oParam.removeAttendingLinksStep === undefined) {oParam.removeAttendingLinksStep = 1}
+						if (oParam.element) {oElement = oParam.element}
+						if (oParam.otherLinkExists) {bOtherLink = oParam.otherLinkExists}
+					}
+					sID = $(oElement).attr('id').split('_')[1];
+					$(ns1blankspace.xhtml.container).html('');
+					$(ns1blankspace.xhtml.container).hide();
+							
+					
+					// First, remove trainee from training course
+					if (oParam.removeAttendingLinksStep === 1)
+					{
+						ns1blankspace.status.working();
+
+						oParam.removeAttendingLinksStep = 2;
+						$.ajax({
+							type: 'POST',
+							url: ns1blankspace.util.endpointURI('AGRI_TRAINEE_ATTENDANCE_LINK_MANAGE'),
+							data: 'remove=1&id=' + sID,
+							success: function(oResponse) {
+
+								if (oResponse.status === 'OK') {
+									oParam.removeAttendingLinksStep = 10;
+									nsFreshcare.internal.entity.training.remove.process(oParam);
+									
+
+								}
+								else {
+									ns1blankspace.status.error('Error: Cannot delete!');
+								}
+							}
+						});
+					}
+
+					else if (oParam.removeAttendingLinksStep === 10)
+					{
+						ns1blankspace.status.clear();
+						$('#ns1blankspaceAttendanceLink_' + sID).hide();
+						ns1blankspace.status.message('Link removed.');
+					}
 				}
 			}
+
 		},
 
 		groups:
@@ -6758,7 +6322,7 @@ nsFreshcare.internal =
 				aHTML.push('<table id="ns1blankspaceActions" class="ns1blankspace">');
 			
 				aHTML.push('<tr class="ns1blankspaceCaption">');
-				// v3.2.015 SUP023422 Added COP Based Training
+
 				if (bEmailsOnly && nsFreshcare.user.roleID === nsFreshcare.data.roles.admin)		// Column for incoming / outgoing icons
 				{
 					aHTML.push('<td class="ns1blankspaceHeaderCaption" style="font-size:0.875em;">&nbsp;</td>');
@@ -7299,7 +6863,6 @@ nsFreshcare.internal =
 			{
 				var aHTML = [];
 				var sClass = (oRow.priority === '3') ? ' nsFreshcareImportant' : '';
-				// v3.2.015 SUP023422 Added COP Based Training
 				var sClassEdit = (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin 
 									|| (nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor && oRow.actionbytext === ns1blankspace.user.logonName)) 
 								? ' nsFreshcareNoteEdit' 
@@ -7326,7 +6889,7 @@ nsFreshcare.internal =
 				aHTML.push('<td id="ns1blankspaceNote_description-' + oRow.id + '" class="ns1blankspaceRow' + sClass + sClassEdit + '"' +
 								' data-fieldname="description">' +
 								oRow.description.formatXHTML() + '</td>');
-				// v3.2.015 SUP023422 Added COP Based Training
+
 				aHTML.push('<td class="ns1blankspaceRow">' +
 								'<span id="ns1blankspaceNote_priority-' + oRow.id + '" class="ns1blankspaceRow ns1blankspaceRowPriority"' +
 									' data-priority="' + oRow.priority + '">' +
@@ -7674,7 +7237,6 @@ nsFreshcare.internal =
 
 			row: function(oRow, oParam)
 			{	// v3.1.1f Moved from grower.admin.emails
-				// v3.2.015 SUP023422 Added COP Based Training
 				var aHTML = [];
 				var bAdmin = (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin);
 
@@ -9083,6 +8645,11 @@ nsFreshcare.internal =
 										',notes,primarycontactperson,modifieddate' +
 										',directdebitaccountname,directdebitaccountnumber,directdebitbank,directdebitbranchnumber');
 
+					// v3.2.010 SUP023329 Now responds to option as ECA don't use it
+					if (nsFreshcare.option.exportToXero)
+					{
+						oSearch.addField('sexerocontactid,sexerocontactupdated');
+					}
 					oSearch.addField(ns1blankspace.option.auditFields);
 					
 					//oSearch.addField(ns1blankspace.extend.elements());
@@ -9269,7 +8836,7 @@ nsFreshcare.internal =
 			$('#ns1blankspaceControlFinancial').click(function(event)
 			{
 				ns1blankspace.show({selector: '#ns1blankspaceMainFinancials', refresh: true});
-				ns1blankspace.contactBusiness.financials();
+				ns1blankspace.contactBusiness.financials.show();
 			});
 			
 			$('#ns1blankspaceControlXero').click(function(event)

@@ -51,8 +51,8 @@ nsFreshcare.admin.attendance =
 			$(ns1blankspace.xhtml.container).hide(ns1blankspace.option.hideSpeedOptions);
 			
 			var oSearch = new AdvancedSearch();
-			oSearch.method = 'AGRI_EDUCATION_TRAINING_COURSE_ATTENDEE_SEARCH';		
-			oSearch.addField('agritrainingcourseattendee.course.trainercontactbusinesstext,agritrainingcourseattendee.course.trainercontactpersontext,traineecontactbusinesstext,attendingtrainee,agritrainingcourseattendee.course.coursedate');
+			oSearch.method = 'AGRI_EDUCATION_TRAINING_COURSE_ATTENDEE_SEARCH';	
+			oSearch.addField('agritrainingcourseattendee.course.trainercontactbusinesstext,agritrainingcourseattendee.course.trainercontactpersontext,traineecontactbusinesstext,traineecontactbusiness,attendingtrainee,agritrainingcourseattendee.course.coursedate');
 			oSearch.sort('modifieddate', 'desc');
 
 			oSearch.rows = 40;
@@ -126,7 +126,7 @@ nsFreshcare.admin.attendance =
 				oParam = sXHTMLElementId;
 				if (oParam.xhtmlElementID) {sXHTMLElementId = oParam.xhtmlElementID}
 			}
-
+		
 			var aSearch = sXHTMLElementId.split('-');
 			var sElementId = aSearch[0];
 			var sSearchContext = aSearch[1];
@@ -157,8 +157,8 @@ nsFreshcare.admin.attendance =
 				var oSearch = new AdvancedSearch();
 				oSearch.endPoint = 'agri';
 				oSearch.method = 'AGRI_EDUCATION_TRAINING_COURSE_ATTENDEE_SEARCH';
-				oSearch.addField('agritrainingcourseattendee.course.trainercontactbusinesstext,agritrainingcourseattendee.course.trainercontactpersontext,traineecontactbusinesstext,attendingtrainee,agritrainingcourseattendee.course.coursedate' +
-				',traineecontactpersontext,agritrainingcourseattendee.course.package.membership.code,agritrainingcourseattendee.course.package.codeofpracticetext,firstname,surname,mobile,phone,email,crop,harvestmonth,agritrainingcourseattendee.coursetext,agritrainingcourseattendee.course');
+				oSearch.addField('agritrainingcourseattendee.course.trainercontactbusinesstext,agritrainingcourseattendee.course.trainercontactpersontext,traineecontactbusinesstext,traineecontactbusiness,attendingtrainee,agritrainingcourseattendee.course.coursedate' +
+				',traineecontactpersontext,traineecontactperson,agritrainingcourseattendee.course.package.membership.code,agritrainingcourseattendee.course.package.codeofpracticetext,firstname,surname,mobile,phone,email,crop,harvestmonth,agritrainingcourseattendee.coursetext,agritrainingcourseattendee.course');
 
 				oSearch.addFilter('id', 'EQUAL_TO', sSearchContext);
 				oSearch.getResults(function(data) {nsFreshcare.admin.attendance.show(oParam, data)});
@@ -190,7 +190,7 @@ nsFreshcare.admin.attendance =
 					var dSearchDate = Date.parse(sSearchText);	
 					var oSearch = new AdvancedSearch();
 					oSearch.method = 'AGRI_EDUCATION_TRAINING_COURSE_ATTENDEE_SEARCH';
-					oSearch.addField('agritrainingcourseattendee.course.coursedate,traineecontactbusinesstext,attendingtrainee,agritrainingcourseattendee.coursetext,agritrainingcourseattendee.course');
+					oSearch.addField('agritrainingcourseattendee.course.coursedate,traineecontactbusinesstext,traineecontactbusiness,attendingtrainee,agritrainingcourseattendee.coursetext,agritrainingcourseattendee.course');
 
 					oSearch.addBracket("(");
 					oSearch.addFilter('firstname', 'TEXT_IS_LIKE', sFirstName);
@@ -299,6 +299,16 @@ nsFreshcare.admin.attendance =
 	{
 		var aHTML = [];
 
+
+		if (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin)
+		{
+			var oContext = {inContext: false, 'new': true, action: false, actionOptions: true};
+		}
+		else
+		{
+			var oContext = {inContext: false, 'new': true, action: true, actionOptions: true};
+		}
+	
 		aHTML.push('<div id="ns1blankspaceControlContext" class="ns1blankspaceControlContext"></div>');
 		
 		aHTML.push('<table class="ns1blankspaceControl">');
@@ -337,19 +347,20 @@ nsFreshcare.admin.attendance =
 		// context now set to true if admin
 		$('#ns1blankspaceControlSummary').click(function(event)
 		{
-			ns1blankspace.show({selector: '#ns1blankspaceMainSummary', context: {inContext: (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin)}});
+			ns1blankspace.show({selector: '#ns1blankspaceMainSummary', context: oContext});
 			nsFreshcare.admin.attendance.summary();
 		});
 		
 		$('#ns1blankspaceControlDetails').click(function(event)
 		{
-			ns1blankspace.show({selector: '#ns1blankspaceMainDetails', context: {inContext: (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin)}});
+			console.log(oContext);
+			ns1blankspace.show({selector: '#ns1blankspaceMainDetails', context: oContext});
 			nsFreshcare.admin.attendance.details();
 		});
 		
 		$('#ns1blankspaceControlCourses').click(function(event)
 		{
-			ns1blankspace.show({selector: '#ns1blankspaceMainCourses', context: {inContext: (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin)}});
+			ns1blankspace.show({selector: '#ns1blankspaceMainCourses', context:  {inContext: false, 'new': true, action: true, actionOptions: true}});
 			nsFreshcare.internal.entity.training.show({xhtmlElementID: 'ns1blankspaceMainCourses'});
 		});
 		
@@ -385,7 +396,8 @@ nsFreshcare.admin.attendance =
 				$('#ns1blankspaceViewControlAction').button({disabled: false});
 				$('#ns1blankspaceViewControlActionOptions').button({disabled: false});
 			}
-		
+
+			$('#ns1blankspaceViewControlNew').button({disabled: true});
 			$('#ns1blankspaceControlContext').html(ns1blankspace.objectContextData["agritrainingpackage.title"]);
 			ns1blankspace.history.view({
 				newDestination: 'nsFreshcare.admin.attendance.init({id: ' + ns1blankspace.objectContext + ')',
@@ -460,38 +472,43 @@ nsFreshcare.admin.attendance =
 			aHTML = [];
 			aHTML.push('<table class="ns1blankspaceColumn2">');
 
-			aHTML.push('<tr><td><span id="ns1blankspacePackageAddCourse" class="ns1blankspaceAction">' +
-						'Add Training Course</span></td></tr>');
+			aHTML.push('<tr><td><span id="ns1blankspaceGoToTrainingCourse" class="ns1blankspaceAction">' +
+						'Go to Training Course</span></td></tr>');
+
+			aHTML.push('<tr><td><span id="ns1blankspaceGoToGrowerText" class="ns1blankspaceAction">' +
+						'Go To ' + nsFreshcare.data.growerText + '</span></td></tr>');
+
 
 			aHTML.push('</table>');					
 		
 			$('#ns1blankspaceSummaryColumn2').html(aHTML.join(''));	
 
-			$('#ns1blankspacePackageAddCourse').button(
+			$('#ns1blankspaceGoToTrainingCourse').button(
 			{
-				label: 'Add Training Course',
+				label: 'Go to Training Course',
 				icons:
 				{
 					primary: "ui-icon-clipboard"
 				}
 			})
 			.click(function()
-			{
-				var oParam = 
-				{
-					"new": true,
-					trainingPackageText: ns1blankspace.objectContextData["agritrainingpackage.title"],
-					attendance: ns1blankspace.objectContext,
-					trainingPackageMembership: ns1blankspace.objectContextData['agritrainingpackage.membership']
-				};
+			{	
+				nsFreshcare.admin.trainingcourse.init({id: ns1blankspace.objectContextData["agritrainingcourseattendee.course"]}); 
 
-				if (nsFreshcare.user.roleID != nsFreshcare.data.roles.admin) {
-					oParam.trainerContactBusiness = ns1blankspace.user.contactBusiness;
-					oParam.trainerContactPerson = ns1blankspace.user.contactPerson;												
-					oParam.trainerContactBusinessText = ns1blankspace.user.contactBusinessText;
-					oParam.trainerContactPersonText = ns1blankspace.user.commonName;												
+			});
+
+
+			$('#ns1blankspaceGoToGrowerText').button(
+			{
+				label: 'Go To ' + nsFreshcare.data.growerText,
+				icons:
+				{
+					primary: "ui-icon-clipboard"
 				}
-				nsFreshcare.admin.trainingcourse.init(oParam);
+			})
+			.click(function()
+			{			
+				nsFreshcare[nsFreshcare.user.roleLower].grower.init({id: ns1blankspace.objectContextData.traineecontactbusiness});
 			});
 		}	
 	},
@@ -547,12 +564,14 @@ nsFreshcare.admin.attendance =
 			
 			aHTML.push('<table class="ns1blankspace">');
 
+			
 			aHTML.push('<tr class="ns1blankspaceCaption">' +
 							'<td class="ns1blankspaceCaption ns1blankspaceCaptionMandatory">' +
 							'Training Course</td></tr>' +
 							'<tr class="ns1blankspace" id="ns1blankspaceDetailsRowTrainingCourseUpdate">' +
 							'<td class="ns1blankspaceText">' +
-							'<input id="ns1blankspaceDetailsTrainingCourse" class="ns1blankspaceSelect"' +
+							'<input id="ns1blankspaceDetailsTrainingCourse" class="ns1blankspaceSelect' +
+								((nsFreshcare.user.roleID != nsFreshcare.data.roles.admin) ? ' nsFreshcareDisabled' : '') + '"' +
 								' data-mandatory="1" data-caption="Training Course"' +
 								' data-method="AGRI_EDUCATION_TRAINING_COURSE_SEARCH"' +
 								' data-methodFilter="title-TEXT_IS_LIKE|location-TEXT_IS_LIKE' + 
@@ -618,8 +637,10 @@ nsFreshcare.admin.attendance =
 							'</td></tr>' +
 							'<tr class="ns1blankspace">' +
 							'<td class="ns1blankspaceSelect">' +
-							'<input id="ns1blankspaceDetailTraineeBusiness" class="nsFreshcareSelectGrower"' +
-								' data-mandatory="1" data-caption="Business"' +
+							'<input id="ns1blankspaceDetailTraineeBusiness" class="nsFreshcareSelectGrower' +
+								((nsFreshcare.user.roleID != nsFreshcare.data.roles.admin) ? ' nsFreshcareDisabled' : '') + '"' +
+								' data-caption="Business"' +
+								((nsFreshcare.user.roleID != nsFreshcare.data.roles.admin) ? ' data-mandatory="1"' : '') + '"' +
 								' data-method="CONTACT_BUSINESS_SEARCH"' +
 								' data-columns="tradename-space-contactbusiness.addresslink.address.addresssuburb"' +
 								' data-methodFilter="tradename-TEXT_IS_LIKE|legalname-TEXT_IS_LIKE|contactbusiness.addresslink.address.addresssuburb-TEXT_IS_LIKE|' +
@@ -637,7 +658,8 @@ nsFreshcare.admin.attendance =
 							'</td></tr>' +
 							'<tr class="ns1blankspace">' +
 							'<td class="ns1blankspaceSelect">' +
-							'<input id="ns1blankspaceDetailTraineePerson" class="nsFreshcareSelectGrower"' +
+							'<input id="ns1blankspaceDetailTraineePerson" class="nsFreshcareSelectGrower' +
+								((nsFreshcare.user.roleID != nsFreshcare.data.roles.admin) ? ' nsFreshcareDisabled' : '') + '"' +
 								' data-mandatory="1" data-caption="Contact Person"' + 
 								' data-method="CONTACT_PERSON_SEARCH"' +
 								' data-columns="firstname-space-surname"' +
@@ -672,69 +694,6 @@ nsFreshcare.admin.attendance =
 								' data-mandatory="1" data-caption="Surname">' +
 							'</td></tr>');
 
-			aHTML.push('<tr class="ns1blankspaceCaption">' +
-							'<td class="ns1blankspaceCaption">' +
-							'Mobile' +
-							'</td></tr>' +
-							'<tr class="ns1blankspaceText">' +
-							'<td class="ns1blankspaceText">' +
-							'<input id="ns1blankspaceDetailsMobile" class="ns1blankspaceText' + 
-								((nsFreshcare.user.roleID != nsFreshcare.data.roles.admin) ? ' nsFreshcareDisabled' : '') + '"' +
-								' data-mandatory="1" data-caption="Mobile">' +
-							'</td></tr>');
-
-			aHTML.push('<tr class="ns1blankspaceCaption">' +
-							'<td class="ns1blankspaceCaption">' +
-							'Phone' +
-							'</td></tr>' +
-							'<tr class="ns1blankspaceText">' +
-							'<td class="ns1blankspaceText">' +
-							'<input id="ns1blankspaceDetailsPhone" class="ns1blankspaceText' + 
-								((nsFreshcare.user.roleID != nsFreshcare.data.roles.admin) ? ' nsFreshcareDisabled' : '') + '"' +
-								' data-mandatory="1" data-caption="Phone">' +
-							'</td></tr>');
-
-			aHTML.push('<tr class="ns1blankspaceCaption">' +
-							'<td class="ns1blankspaceCaption">' +
-							'Email' +
-							'</td></tr>' +
-							'<tr class="ns1blankspaceText">' +
-							'<td class="ns1blankspaceText">' +
-							'<input id="ns1blankspaceDetailsEmail" class="ns1blankspaceText' + 
-								((nsFreshcare.user.roleID != nsFreshcare.data.roles.admin) ? ' nsFreshcareDisabled' : '') + '"' +
-								' data-mandatory="1" data-caption="Email">' +
-							'</td></tr>');
-
-
-			
-
-			aHTML.push('<tr class="ns1blankspace">' +
-									'<td class="ns1blankspaceCaption" style="text-align:left;">' +
-										'<span style="text-align:left;">Harvest Months</span>&nbsp; ' + 
-										'<span style="font-size:0.825em;text-align:right;">' + 
-											'<a href="#" id="nsFreshcareDetailsHarvestMonthsAll">[ All ]</a></span>' +
-									'</td></tr>' +
-									'<tr id="ns1blankspaceDetailsRowHarvestMonths" class="nsFreshcareReadOnly">' +
-									'<td class="ns1blankspaceText" id="ns1blankspaceDetailsHarvestMonthsUpdate">' +
-									'</td>' + 
-									'</tr>');	
-
-			aHTML.push('<tr class="ns1blankspace">' +
-							'<td class="ns1blankspaceCaption">' +
-							'Crops' +
-							'</td></tr>' +
-							'<tr><td id="ns1blankspaceDetailsCellCrops" class="ns1blankspaceText">' +
-							'<input id="ns1blankspaceDetailsCropsUpdate"' +
-								' class="ns1blankspaceSelect ns1blankspaceWatermark"' +
-								' data-multiselect="true"' +
-								' data-method="SETUP_STRUCTURE_ELEMENT_OPTION_SEARCH"' +
-								' data-methodFilter="title-TEXT_IS_LIKE|element-EQUAL_TO-' + nsFreshcare.structureElementCrops + '"' +
-								' data-membership="' + ns1blankspace.objectContextData['id'] + '"' +
-								' maxlength="300"' +
-								' value="Search for valid Crops">' +
-							'</td>' + 
-							'</tr>' );
-
 
 			aHTML.push('</table>');					
 			
@@ -743,13 +702,6 @@ nsFreshcare.admin.attendance =
 			$('.nsFreshcareDisabled').attr('disabled', true);
 			$('input.ns1blankspaceDate').datepicker({dateFormat: 'dd M yy'});
 
-			$('#ns1blankspaceDetailsMobile').mask('9999 999 999', {placeholder: " "});
-			$('#ns1blankspaceDetailsPhone').mask('99 9999 9999', {placeholder: " "});
-
-			nsFreshcare.admin.grower.membership.harvestMonths.show({xhtmlElementId: 'ns1blankspaceDetailsHarvestMonthsUpdate',
-																	 values: '',
-																	 update: true,
-																	 context: 'Update'});
 
 			if (ns1blankspace.objectContextData != undefined)
 			{
@@ -761,73 +713,13 @@ nsFreshcare.admin.attendance =
 				$('#ns1blankspaceDetailsTrainerPerson').val(ns1blankspace.objectContextData["agritrainingcourseattendee.course.trainercontactpersontext"].formatXHTML());
 				$('#ns1blankspaceDetailsFirst').val(ns1blankspace.objectContextData['firstname'].formatXHTML());
 				$('#ns1blankspaceDetailsSurname').val(ns1blankspace.objectContextData['surname'].formatXHTML());
-				$('#ns1blankspaceDetailsMobile').val(ns1blankspace.objectContextData['mobile'].formatXHTML());
-				$('#ns1blankspaceDetailsPhone').val(ns1blankspace.objectContextData['phone'].formatXHTML());
-				$('#ns1blankspaceDetailsEmail').val(ns1blankspace.objectContextData['email'].formatXHTML());
+				
 				$('#ns1blankspaceDetailsTrainingCourse').val(ns1blankspace.objectContextData['agritrainingcourseattendee.coursetext'].formatXHTML());
 				$('#ns1blankspaceDetailsTrainingCourse').attr('data-id', ns1blankspace.objectContextData['agritrainingcourseattendee.course'].formatXHTML());
 				$('#ns1blankspaceDetailTraineeBusiness').val(ns1blankspace.objectContextData['traineecontactbusinesstext'].formatXHTML());
+				$('#ns1blankspaceDetailTraineeBusiness').attr('data-id', ns1blankspace.objectContextData['traineecontactbusiness'].formatXHTML());
 				$('#ns1blankspaceDetailTraineePerson').val(ns1blankspace.objectContextData['traineecontactpersontext'].formatXHTML());
-
-				//Mask Mobile
-				if (ns1blankspace.objectContextData["mobile"].length > 0 && ns1blankspace.objectContextData["mobile"].indexOf(' ') === -1) 
-				{
-					$('#ns1blankspaceDetailsMobile').val(ns1blankspace.objectContextData["mobile"].substr(0,4) + ' ' +
-															   ns1blankspace.objectContextData["mobile"].substr(4,3) + ' ' +
-															   ns1blankspace.objectContextData["mobile"].substr(7));
-				}
-				else 
-				{
-					$('#ns1blankspaceDetailsMobile').val(ns1blankspace.objectContextData["mobile"].formatXHTML());
-				}
-
-				// Mask work phone
-				if (ns1blankspace.objectContextData["phone"].length > 0 && ns1blankspace.objectContextData["phone"].indexOf(' ') === -1) 
-				{
-					$('#ns1blankspaceDetailsPhone').val(ns1blankspace.objectContextData["phone"].substr(0,2) + ' ' + 
-															  ns1blankspace.objectContextData["phone"].substr(2,4) + ' ' +
-															  ns1blankspace.objectContextData["phone"].substr(6));
-				}
-				else 
-				{
-					$('#ns1blankspaceDetailsPhone').val(ns1blankspace.objectContextData["phone"].formatXHTML());
-				}
-				
-				
-				nsFreshcare.admin.grower.membership.harvestMonths.show({xhtmlElementId: 'ns1blankspaceDetailsHarvestMonthsUpdate',
-																			 values: ns1blankspace.objectContextData['harvestmonth'].formatXHTML(),
-																			 update: !(nsFreshcare.admin.grower.readOnly == true),
-																			 context: 'Update' + ns1blankspace.objectContextData['id']});
-
-				nsFreshcare.admin.grower.membership.crops.show({xhtmlElementId: 'ns1blankspaceDetailsCellCrops',
-																			 values: ns1blankspace.objectContextData['crop'].formatXHTML(),
-																			 update: !(nsFreshcare.admin.grower.readOnly == true)});
-				
-
-				// Bind the Harvest Months All button
-				$('#nsFreshcareDetailsHarvestMonthsAll')
-					.click(function(event)
-					{
-						if ($(this).html() === '[ All ]')
-						{
-							$.each($('.nsFreshcareHarvestMonthsUpdate'), function()
-							{
-								$(this).addClass('nsFreshcareHarvestMonthsSelected');
-								$(this).removeClass('nsFreshcareHarvestMonths');
-							});
-							$(this).html('[ None ]');
-						}
-						else
-						{
-							$.each($('.nsFreshcareHarvestMonthsUpdate'), function()
-							{
-								$(this).addClass('nsFreshcareHarvestMonths');
-								$(this).removeClass('nsFreshcareHarvestMonthsSelected');
-							});
-							$(this).html('[ All ]');
-						}
-					});
-
+				$('#ns1blankspaceDetailTraineePerson').attr('data-id', ns1blankspace.objectContextData['traineecontactperson'].formatXHTML());
 
 			}
 			else {
@@ -879,7 +771,6 @@ nsFreshcare.admin.attendance =
 		{
 			var dFrom;
 			var dTo;
-
 			// Validate Mandatory fields, plus that From is less than To
 			$('input[data-mandatory]').each(function() 
 			{										
@@ -898,27 +789,13 @@ nsFreshcare.admin.attendance =
 
 			if (ns1blankspace.okToSave)
 			{
-				if (isValidDate($('#ns1blankspaceDetailsAvailableFrom').val()) && isValidDate($('#ns1blankspaceDetailsAvailableTo').val()) )
-				{
-					dFrom = new Date($('#ns1blankspaceDetailsAvailableFrom').val());
-					dTo = new Date($('#ns1blankspaceDetailsAvailableTo').val());
-					
-					ns1blankspace.okToSave = (dFrom < dTo);
-					if (!ns1blankspace.okToSave)
-					{
-						ns1blankspace.status.error('Available From must be before Available To');
-					}
-				}
-			}
-
-			if (ns1blankspace.okToSave)
-			{
 				nsFreshcare.admin.attendance.save.send(oParam);
 			}
 		},
 
 		send: 	function(oParam) 
 		{
+			
 			var sData = 'id=';
 
 			if (oParam === undefined) {oParam = {savePackageStep: 1}}
@@ -935,19 +812,17 @@ nsFreshcare.admin.attendance =
 			else if (oParam.savePackageStep === 2)
 			{
 				sData += ((ns1blankspace.objectContext != -1) 
-							? ns1blankspace.objectContext + '&reference=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsReference').val())
+							? ns1blankspace.objectContext + '&course=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsTrainingCourse').attr('data-id'))
 							: '');
-				sData += '&title=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsFirst').val()) +
-						 '&availablefrom=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsAvailableFrom').val()) +
-						 '&availableto=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsAvailableTo').val()) +
-						 '&membership=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsMembership').attr('data-id')) +
-						 '&codeofpractice=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsCOP').attr('data-id')) +
-						 '&details=' + ns1blankspace.util.fs($('#ns1blankspaceDetailsDetails').val());
+				sData += '&traineecontactbusiness=' + ns1blankspace.util.fs($('#ns1blankspaceDetailTraineeBusiness').attr('data-id')) +
+						 '&traineecontactperson=' + ns1blankspace.util.fs($('#ns1blankspaceDetailTraineePerson').attr('data-id'));
+
+				console.log(sData);
 
 				$.ajax(
 				{
 					type: 'POST',
-					url: ns1blankspace.util.endpointURI('AGRI_EDUCATION_TRAINING_PACKAGE_MANAGE'),
+					url: ns1blankspace.util.endpointURI('AGRI_EDUCATION_TRAINING_COURSE_ATTENDEE_MANAGE'),
 					data: sData,
 					success: nsFreshcare.admin.attendance.save.process 
 				});
@@ -959,18 +834,4 @@ nsFreshcare.admin.attendance =
 			var bNew = (ns1blankspace.objectContext === -1);
 			if (oResponse.status === 'OK')
 			{
-				ns1blankspace.inputDetected = false;
-				ns1blankspace.status.message('Package Saved');
-				if (bNew)
-				{
-					ns1blankspace.objectContext = oResponse.id;
-					nsFreshcare.admin.attendance.search.send({xhtmlElementID: '-' + ns1blankspace.objectContext});
-				}
-			}
-			else
-			{
-				ns1blankspace.status.error('Error saving Package:' + oResponse.error.errornotes);
-			}
-		}
-	}
-}
+	

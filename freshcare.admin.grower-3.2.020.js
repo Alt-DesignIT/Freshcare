@@ -7643,6 +7643,7 @@ nsFreshcare.admin.grower =
 										'<td class="ns1blankspaceHeaderCaption">Title</td>' +
 										'<td class="ns1blankspaceHeaderCaption">Actual</td>' +
 										'<td class="ns1blankspaceHeaderCaption">Result Status</td>' +
+										'<td class="ns1blankspaceHeaderCaption">COP</td>' +
 										'<td class="ns1blankspaceHeaderCaption">Paid?</td>' +
 										'<td class="ns1blankspaceHeaderCaption">Cert Body</td>' +
 										'<td class="ns1blankspaceHeaderCaption">Auditor</td>' +
@@ -7666,6 +7667,8 @@ nsFreshcare.admin.grower =
 								   		this["audit.actualdate"] + '</td>' +
 								   '<td class="ns1blankspaceRow" id="ns1blankspaceAudit_resultstatustext-' + this.id + '">' + 
 								   		this["audit.resultstatustext"] + '</td>' +
+								   '<td class="ns1blankspaceRow" id="ns1blankspaceAudit_resultstatustext-' + this.id + '">' + 
+								   		this["audit.codeofpracticetext"] + '</td>' +
 								   '<td class="ns1blankspaceRow" id="ns1blankspaceAudit_paid-' + this.id + '">' + 
 								   		(this["audit.paid"] == "Y" ? 'Yes' : 'No') + '</td>' +
 								   '<td class="ns1blankspaceRow" id="ns1blankspaceAudit_auditbusinesstext-' + this.id + '">' + 
