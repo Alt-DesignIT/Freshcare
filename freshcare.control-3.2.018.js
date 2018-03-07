@@ -315,7 +315,7 @@ ns1blankspace.option.preLoad = function()
 		{
 			if (x.nameSpace === '1blankspace.supportIssue') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.supportissue-2.0.9.js';}
 			if (x.nameSpace === '1blankspace.messaging.imap') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.messaging.imap-2.0.614b.js';}
-			if (x.nameSpace === '1blankspace.messaging.conversation') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.messaging.conversation-2.0.6.js';}
+			if (x.nameSpace === '1blankspace.messaging.conversation') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.messaging.conversation-2.0.7.js';}
 			if (x.nameSpace === '1blankspace.action') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.action-2.0.4.js';}
 			if (x.nameSpace === '1blankspace.report') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.report-2.0.312.js';}		
 			if (x.nameSpace === '1blankspace.financial') {x.source = '/site/' + nsFreshcare.site + '/1blankspace.financial-2.0.4a.js';}
@@ -2346,7 +2346,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.extend',
-		source: '/site/' + nsFreshcare.site + '/freshcare.extend-3.2.017.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.extend-3.2.018.js',
 		sourceNS: nsFreshcare
 	},
 	{
