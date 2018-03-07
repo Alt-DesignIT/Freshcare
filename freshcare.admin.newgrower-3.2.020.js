@@ -5,7 +5,8 @@
  * 01 FEB 2010
  */
  
- // v3.1.210 replaced all dialog('close') with dialog('destroy')
+// v3.1.210 replaced all dialog('close') with dialog('destroy')
+// v3.2.015 SUP023421 Changed 'Growers' to 'Members'
 
 nsFreshcare.admin.newgrower = 
 {
@@ -16,7 +17,6 @@ nsFreshcare.admin.newgrower =
 	init: function (oParam) 
 	{ 
 		ns1blankspace.app.reset();
-		// v3.2.015 SUP023422 Added COP Based Training
 		ns1blankspace.object = 21;	
 		ns1blankspace.objectName = 'newgrower';
 		ns1blankspace.objectMethod = 'AGRI_TEMP_TRAINEE';
@@ -43,16 +43,10 @@ nsFreshcare.admin.newgrower =
 	home: 		function (oParam, oResponse)
 	{
 		// v3.1.209 Search filters now namespace dependent
+
 		var sSortColumn = ns1blankspace.util.getParam(oParam, 'sortColumn', {'default': 'createddate'}).value;
 		var sSortDirection = ns1blankspace.util.getParam(oParam, 'sortDirection', {'default': 'desc'}).value;
-		var oRoot = ns1blankspace.rootnamespace;
-		var oNewGrowerRoot = (oRoot.admin && oRoot.admin.newgrower) ? oRoot.admin.newgrower : nsFreshcare.admin.newgrower;
-		var aFilters = [{field: 'coursetext', comparison: 'IS_NOT_NULL'}];
-		oNewGrowerRoot.data.objectContextData = undefined;
-		if (oNewGrowerRoot.data && oNewGrowerRoot.data.search)
-		{
-			aFilters = (oNewGrowerRoot.data.search.filters) ? oNewGrowerRoot.data.search.filters : aFilters;
-		}
+
 
 		ns1blankspace.app.context({'new': true, action: true, actionOptions: true, inContext: false});
 
@@ -85,11 +79,12 @@ nsFreshcare.admin.newgrower =
 			
 			var oSearch = new AdvancedSearch();
 			oSearch.method = 'AGRI_TEMP_TRAINEE_SEARCH';		
-			oSearch.addField('businessname,tradename,firstname,surname,suburb,state,createduser,createdusertext,createddate');		//,agritemptrainee.user.contactbusinesstext
-			$.each(aFilters, function()
-			{
-				oSearch.addFilter(this.field, this.comparison, this.value1, this.value2, this.value3, this.applyToSubSearch);
-			});
+
+			oSearch.addField('businessname,tradename,firstname,surname,suburb,state,createduser,createdusertext,createddate,abn,mailingaddress1,mailingsuburb' +
+							',seregisternewbusiness,mailingstate,mailingpostcode,mailingcountry,jobtitle,title,firstname,surname,postcode,fax,email');		//,agritemptrainee.user.contactbusinesstext
+			
+			oSearch.addFilter('course', (ns1blankspace.objectName == 'newelearning' ? 'IS_NULL' : 'IS_NOT_NULL'));
+
 			oSearch.rows = 80;
 			oSearch.sort(sSortColumn, sSortDirection);
 			
@@ -102,7 +97,6 @@ nsFreshcare.admin.newgrower =
 			
 			if (oResponse.data.rows.length == 0)
 			{
-				// v3.2.015 SUP023422 Added COP Based Training
 				aHTML.push('<table id="ns1blankspaceMostLikely">' +
 								'<tr><td class="ns1blankspaceNothing">No new ' + nsFreshcare.data.growerText + 's found</td></tr>' +
 								'</table>');
@@ -196,15 +190,6 @@ nsFreshcare.admin.newgrower =
 			var iMaximumColumns = 1;
 			var iRows = 40;
 			var dToday = new Date();
-			var oRoot = ns1blankspace.rootnamespace;
-			var oNewGrowerRoot = (oRoot.admin && oRoot.admin.newgrower) ? oRoot.admin.newgrower : nsFreshcare.admin.newgrower;
-			var sFields = 'abn,address1,address2,businessname,auditcontactbusiness,auditcontactbusinesstext' +
-							',category,categorytext,codeofpractice,codeofpracticetext,country,course,coursetext,crop,email,fax,firstname,gender,gendertext' +
-							',harvestmonth,jobtitle,joindate,mailingaddress1,mailingaddress2,mailingcountry,mailingpostcode,mailingstate,mailingsuburb' +
-							',membership,membershiptext,mobile,notes,phone,postcode,sendprintedcertificates,state,suburb,surname,title,titletext,tradename' +
-							',createddate,createduser,createdusertext,modifieddate,modifieduser,modifiedusertext';
-			var aFilters = [{field: 'coursetext', comparison: 'IS_NOT_NULL'}];
-
 			if (oParam)
 			{
 				if (oParam.source != undefined) {iSource = oParam.source}
@@ -218,24 +203,21 @@ nsFreshcare.admin.newgrower =
 			
 			if (sSearchContext != undefined && iSource != ns1blankspace.data.searchSource.browse)
 			{
+				if(ns1blankspace.objectName == 'newelearning')
+				{
+					nsFreshcare.admin.newelearning.data.matchingData = undefined;
+				}
 				$('#ns1blankspaceControl').html(ns1blankspace.xhtml.loading);
 				
 				ns1blankspace.objectContext = sSearchContext;
-				oNewGrowerRoot.data.objectContextData = undefined;
-				if (oNewGrowerRoot.data && oNewGrowerRoot.data.search)
-				{
-					sFields = (oNewGrowerRoot.data.search.fields) ? oNewGrowerRoot.data.search.fields : sFields;
-					aFilters = (oNewGrowerRoot.data.search.filters) ? oNewGrowerRoot.data.search.filters : aFilters;
-				}
-
 				var oSearch = new AdvancedSearch();		
 				oSearch.method = 'AGRI_TEMP_TRAINEE_SEARCH';
-				oSearch.addField(sFields);
-				$.each(aFilters, function()
-				{
-					oSearch.addFilter(this.field, this.comparison, this.value1, this.value2, this.value3, this.applyToSubSearch);
-				});
-
+				oSearch.addField('abn,address1,address2,businessname,auditcontactbusiness,auditcontactbusinesstext' +
+							',category,categorytext,codeofpractice,codeofpracticetext,country,course,coursetext,crop,email,fax,firstname,gender,gendertext' +
+							',harvestmonth,jobtitle,joindate,mailingaddress1,mailingaddress2,mailingcountry,mailingpostcode,mailingstate,mailingsuburb' +
+							',membership,membershiptext,mobile,notes,phone,postcode,sendprintedcertificates,state,suburb,surname,title,titletext,tradename' +
+							',createddate,createduser,createdusertext,modifieddate,modifieduser,modifiedusertext,seindustryrole,seprevioustraining,seexistingbusiness,secertificatenumber,seregisternewbusiness');
+				
 				oSearch.addFilter('id', 'EQUAL_TO', sSearchContext);
 				oSearch.getResults(function(data) {nsFreshcare.admin.newgrower.show(oParam, data)});
 			}
@@ -273,6 +255,7 @@ nsFreshcare.admin.newgrower =
 					oSearch.addOperator("or");
 					oSearch.addFilter('businessname', 'TEXT_IS_LIKE', sSearchText);
 					oSearch.addBracket(')');
+					oSearch.addFilter('course', (ns1blankspace.objectName == 'newelearning' ? 'IS_NULL' : 'IS_NOT_NULL'));
 
 					oSearch.sort('businessname', 'asc');
 					oSearch.getResults(function(data) {nsFreshcare.admin.newgrower.search.process(oParam, data)});
@@ -392,6 +375,7 @@ nsFreshcare.admin.newgrower =
 
 	show: function (oParam, oResponse)
 	{
+		// v3.2.020 SUP022964 eLearning Trainees logged into Freshcare
 		var aHTML = [];
 		var iShowStep = 1;
 
@@ -409,7 +393,6 @@ nsFreshcare.admin.newgrower =
 		if (iShowStep === 1 && oResponse && oResponse.data.rows.length == 0)
 		{
 			ns1blankspace.objectContextData = undefined;
-			// v3.2.015 SUP023422 Added COP Based Training	
 			aHTML.push('<table><tr><td class="ns1blankspaceNothing">Sorry can\'t find ' + nsFreshcare.data.growerText + '.</td></tr></table>');
 					
 			$('#ns1blankspaceMain').html(aHTML.join(''));
@@ -433,8 +416,17 @@ nsFreshcare.admin.newgrower =
 				oSearch.getResults(function(oResponse)
 				{
 					if (oResponse.status === "OK")
-					{
-						oParam.showStep = 2;
+					{	
+
+					
+						if(ns1blankspace.objectName == 'newelearning')
+						{
+							oParam.showStep = 3;
+						}
+						else
+						{
+							oParam.showStep = 2;
+						}
 						ns1blankspace.objectContextData.productGroups = oResponse.data.rows;
 						nsFreshcare.admin.newgrower.show(oParam);
 					}
@@ -448,6 +440,7 @@ nsFreshcare.admin.newgrower =
 			// Get CodeOfPractice & trainer details for the training course if not populated
 			else if (iShowStep == 2)
 			{
+
 				if (ns1blankspace.objectContextData.codeofpractice === '' 
 					|| ns1blankspace.objectContextData.trainercontactbusiness  == undefined || ns1blankspace.objectContextData.trainercontactperson === undefined)
 				{
@@ -503,7 +496,14 @@ nsFreshcare.admin.newgrower =
 				{
 					if (oResponse.status == 'OK')
 					{
-						oParam.showStep = 10;
+						if(ns1blankspace.objectName == 'newelearning')
+						{
+							oParam.showStep = 4;
+						}
+						else
+						{
+							oParam.showStep = 10;
+						}
 						ns1blankspace.objectContextData.scopeValues = oResponse.data.rows; 
 						// We need to map the scope values to person groups - DELETE ONCE ON SUBSCRIPTION
 						// v3.1.204 SUP023020 Removed
@@ -522,6 +522,40 @@ nsFreshcare.admin.newgrower =
 				});
 			}
 
+
+			else if (iShowStep == 4)
+			{
+				var oSearch = new AdvancedSearch();
+				oSearch.method = 'AGRI_CODE_OF_PRACTICE_SEARCH';
+				oSearch.addField('membership,agricodeofpractice.membership.code,membershiptext');
+				oSearch.addFilter('id', 'EQUAL_TO', ns1blankspace.objectContextData.codeofpractice);
+				oSearch.getResults(function(oResponse)
+				{
+					if (oResponse.status == 'OK')
+					{
+						oParam.showStep = 10;
+
+						if (oResponse.data.rows.length > 0)
+						{
+							ns1blankspace.objectContextData.membership = oResponse.data.rows[0].membership;	
+							ns1blankspace.objectContextData.membershiptext = oResponse.data.rows[0].membershiptext
+							ns1blankspace.objectContextData['agricodeofpractice.membership.code'] = oResponse.data.rows[0]['agricodeofpractice.membership.code'];
+						}
+						else
+						{
+							ns1blankspace.objectContextData.membership = '';
+							ns1blankspace.objectContextData.membershiptext = '';
+							ns1blankspace.objectContextData['agricodeofpractice.membership.code'] = '';
+						}						
+						nsFreshcare.admin.newgrower.show(oParam);
+					}
+					else
+					{
+						ns1blankspace.status.error('Unable to find Scope values: ' + oResponse.error.errornotes);
+					}
+				});
+			}
+
 			// Display
 			else if (iShowStep === 10)
 			{
@@ -529,7 +563,7 @@ nsFreshcare.admin.newgrower =
 				$('#ns1blankspaceControlContext').html(ns1blankspace.data.contactBusinessText.formatXHTML() + 
 							'<br /><span style="color:#A0A0A0;font-size:0.825em;">' + ns1blankspace.data.contactPersonText.formatXHTML() + '</span>');
 				ns1blankspace.history.view({
-					newDestination: 'nsFreshcare.admin.newgrower.init({id: ' + ns1blankspace.objectContext + '})',
+					newDestination: 'nsFreshcare.admin.' + ns1blankspace.objectName + '.init({id: ' + ns1blankspace.objectContext + '})',
 					move: false
 					});
 				
@@ -544,13 +578,13 @@ nsFreshcare.admin.newgrower =
 		
 		if (ns1blankspace.objectContextData == undefined)
 		{
-			// v3.2.015 SUP023422 Added COP Based Training
 			aHTML.push('<table><tr><td valign="top">Sorry can\'t find this ' + nsFreshcare.data.growerText + '.</td></tr></table>');
 					
 			$('#ns1blankspaceMain').html(aHTML.join(''));
 		}
 		else
 		{
+		
 			aHTML.push('<table class="ns1blankspaceMain">' +
 						'<tr class="ns1blankspaceRow">' +
 						'<td id="ns1blankspaceSummaryColumn1" class="ns1blankspaceColumn1Flexible"></td>' +
@@ -564,6 +598,7 @@ nsFreshcare.admin.newgrower =
 		
 			aHTML.push('<table class="ns1blankspace" id="ns1blankspaceSummaryColumn1Table1">');
 			
+
 			if (ns1blankspace.objectContextData['businessname'] != '')
 			{
 				aHTML.push('<tr><td class="ns1blankspaceSummaryCaption">Legal Name</td></tr>' +
@@ -595,13 +630,25 @@ nsFreshcare.admin.newgrower =
 			
 			aHTML.push('<tr><td class="ns1blankspaceSummaryCaption">Membership</td></tr>' +
 						'<tr><td class="ns1blankspaceSummary">' +
-						ns1blankspace.objectContextData['membershiptext'] + ' ' + ns1blankspace.objectContextData.codeofpracticetext + 
+						ns1blankspace.objectContextData['membershiptext'] + ' '  + ns1blankspace.objectContextData['codeofpracticetext'] + 
 						'</td></tr>');
 
-			aHTML.push('<tr><td class="ns1blankspaceSummaryCaption">Trainer</td></tr>' +
+			if(ns1blankspace.objectName == 'newelearning')
+			{
+				var sCreated = ns1blankspace.objectContextData['createddate'].substr(0, ns1blankspace.objectContextData['createddate'].length - 8);
+				aHTML.push('<tr><td class="ns1blankspaceSummaryCaption">Course Date</td></tr>' +
+							'<tr><td class="ns1blankspaceSummary">' +
+							sCreated +
+							'</td></tr>');
+			}
+			else
+			{
+				aHTML.push('<tr><td class="ns1blankspaceSummaryCaption">Trainer</td></tr>' +
 						'<tr><td class="ns1blankspaceSummary">' +
 						ns1blankspace.objectContextData['trainercontactbusinesstext'] + ' (' + ns1blankspace.objectContextData['trainercontactpersontext'] + ')' +
-						'</td></tr>');
+						'</td></tr>');	
+			}
+
 			
 			// v3.1.208b SUP023149 Now shows coursedate instead of join date
 			if (ns1blankspace.objectContextData.coursedate)
@@ -626,7 +673,6 @@ nsFreshcare.admin.newgrower =
 						'Find Potential Duplicates</span></td></tr>');
 
 			aHTML.push('<tr><td>&nbsp;</td></tr>');
-			// v3.2.015 SUP023422 Added COP Based Training
 			aHTML.push('<tr><td><span id="ns1blankspaceSummaryCreateGrower" class="ns1blankspaceAction" style="width:150px;">' +
 						'Create ' + nsFreshcare.data.growerText + '</span></td></tr>');
 
@@ -643,9 +689,17 @@ nsFreshcare.admin.newgrower =
 				})
 				.on("click", function()
 				{
-					nsFreshcare.admin.newgrower.findDuplicates.show({xhtmlElementID: this.id});
+					if(ns1blankspace.objectName == 'newelearning')
+					{
+						nsFreshcare.admin.newelearning.findDuplicates.show({xhtmlElementID: this.id});
+					}
+					else
+					{
+						nsFreshcare.admin.newgrower.findDuplicates.show({xhtmlElementID: this.id});		
+					}
+
 				});
-			// v3.2.015 SUP023422 Added COP Based Training	
+				
 			$('#ns1blankspaceSummaryCreateGrower')
 				.button(
 				{
@@ -654,27 +708,53 @@ nsFreshcare.admin.newgrower =
 				})
 				.on("click", function()
 				{	
-					// v3.2.015 SUP023422 Added COP Based Training
-					ns1blankspace.container.confirm(
-					{title: 'Add ' + nsFreshcare.data.growerText + '?', html: 'Are you sure you want to create this ' + nsFreshcare.data.growerText + '?',
-						buttons: 
-						[
-							{text: "Yes", label: "Yes", icons: {primary: 'ui-icon-check'},
-								click: function() 
-								{
-									$(this).dialog('destroy');
-									nsFreshcare.admin.newgrower.createNewGrower.send();
+
+					if(nsFreshcare.admin.newelearning.data.matchingData == undefined && ns1blankspace.objectName == 'newelearning')
+					{
+						ns1blankspace.container.confirm(
+						{title: 'Add ' + nsFreshcare.data.growerText + '?', html: 'Please search for duplicates before creating the new ' + nsFreshcare.data.growerText,
+							buttons: 
+							[
+								{text: "OK", label: "OK", icons: {primary: 'ui-icon-check'},
+									click: function() 
+									{
+										$(this).dialog('destroy');
+									}
 								}
-							},
-							{text: "No", label: "No", icons: {primary: 'ui-icon-close'}, 
-								click: function() 
-								{
-									$(this).dialog('destroy');
-									return;
+							]
+						});
+					}
+					else
+					{
+						ns1blankspace.container.confirm(
+						{title: 'Add ' + nsFreshcare.data.growerText + '?', html: 'Are you sure you want to create this ' + nsFreshcare.data.growerText + '?',
+							buttons: 
+							[
+								{text: "Yes", label: "Yes", icons: {primary: 'ui-icon-check'},
+									click: function() 
+									{
+										$(this).dialog('destroy');
+										if (ns1blankspace.objectName == 'newelearning')
+										{
+											nsFreshcare.admin.newelearning.processTrainee.configure();
+										}
+										else
+										{
+											nsFreshcare.admin.newgrower.createNewGrower.send();
+										}
+									}
+								},
+								{text: "No", label: "No", icons: {primary: 'ui-icon-close'}, 
+									click: function() 
+									{
+										$(this).dialog('destroy');
+										return;
+									}
 								}
-							}
-						]
-					});
+							]
+						});
+					}
+					
 					
 				});
 		}	
@@ -1221,7 +1301,6 @@ nsFreshcare.admin.newgrower =
 				if (ns1blankspace.okToSave && $('#ns1blankspaceDetailsEmailUpdate').val() != '' && !nsFreshcare.util.validateEmail($('#ns1blankspaceDetailsEmailUpdate').val()))
 				{
 					ns1blankspace.okToSave = false;
-					// v3.2.015 SUP023422 Added COP Based Training
 					ns1blankspace.status.message('Please provide a valid email address for the ' + nsFreshcare.data.growerText);
 					return false;
 				}
@@ -1229,7 +1308,6 @@ nsFreshcare.admin.newgrower =
 				if (ns1blankspace.okToSave && ns1blankspace.objectContext === -1 && $('#ns1blankspaceMainAddress').html() === '')
 				{
 					ns1blankspace.okToSave = false;
-					// v3.2.015 SUP023422 Added COP Based Training
 					ns1blankspace.status.message('Please add Address details for a new ' + nsFreshcare.data.growerText);
 					return false;
 				}
@@ -1314,8 +1392,16 @@ nsFreshcare.admin.newgrower =
 						notes: $('#ns1blankspaceDetailsNotesUpdate').val(),
 						harvestmonth: nsFreshcare.admin.grower.membership.harvestMonths.store({xhtmlElementId: 'ns1blankspaceDetailsHarvestMonthsUpdate'}),
 						auditcontactbusiness: ns1blankspace.objectContextData.auditcontactbusiness,
-						codeofpractice: ns1blankspace.objectContextData.codeofpractice,
-						membership: ns1blankspace.objectContextData.membership
+						codeofpractice: (ns1blankspace.objectName == 'newelearning') ? $('#ns1blankspaceDetailsCOPUpdate').attr('data-id') : ns1blankspace.objectContextData.codeofpractice,
+						membership: (ns1blankspace.objectName == 'newelearning') ? $('#ns1blankspaceDetailsMembershipUpdate').attr('data-id') : ns1blankspace.objectContextData.membership
+					}
+
+					if (ns1blankspace.objectName == 'newelearning')
+					{	
+					 	oTmpBusinessData.seexistingbusiness = $("input[name='radioSeExistingBusiness']:checked").val();
+					 	oTmpBusinessData.seregisternewbusiness = $("input[name='SeRegisterNewBusiness']:checked").val();
+					 	oTmpBusinessData.seprevioustraining = $("#textSePreviousTraining").val();
+					 	oTmpBusinessData.seindustryrole = $("#ns1blankspaceDetailsSeIndustryRoleUpdate").val();	
 					}
 
 					// Calculate sorted crops data
@@ -1449,14 +1535,12 @@ nsFreshcare.admin.newgrower =
 					{
 						if (oResponse.status === 'OK')
 						{
-							// v3.2.015 SUP023422 Added COP Based Training
 							ns1blankspace.status.message('New ' + nsFreshcare.data.growerText + ' saved');
 							oParam.saveNewGrowerStep = 4;
 							nsFreshcare.admin.newgrower.save.send(oParam);
 						}
 						else
 						{
-							// v3.2.015 SUP023422 Added COP Based Training
 							ns1blankspace.status.error('Error saving new ' + nsFreshcare.data.growerText + ': ' + oResponse.error.errornotes);
 						}
 					}
@@ -1479,14 +1563,12 @@ nsFreshcare.admin.newgrower =
 						{
 							if (oResponse.status === 'OK')
 							{
-								// v3.2.015 SUP023422 Added COP Based Training
 								ns1blankspace.status.message(nsFreshcare.data.growerText + ' Scope saved');
 								oParam.saveObjectIndex += 1;
 								nsFreshcare.admin.newgrower.save.send(oParam);
 							}
 							else
 							{
-								// v3.2.015 SUP023422 Added COP Based Training
 								ns1blankspace.status.error('Error saving new ' + nsFreshcare.data.growerText + ' Scope: ' + oResponse.error.errornotes);
 							}
 						}
@@ -1516,14 +1598,12 @@ nsFreshcare.admin.newgrower =
 						{
 							if (oResponse.status === 'OK')
 							{
-								// v3.2.015 SUP023422 Added COP Based Training
 								ns1blankspace.status.message(nsFreshcare.data.growerText + ' Category saved');
 								oParam.saveObjectIndex += 1;
 								nsFreshcare.admin.newgrower.save.send(oParam);
 							}
 							else
 							{
-								// v3.2.015 SUP023422 Added COP Based Training
 								ns1blankspace.status.error('Error saving new ' + nsFreshcare.data.growerText + ' Category: ' + oResponse.error.errornotes);
 							}
 						}
@@ -1541,7 +1621,7 @@ nsFreshcare.admin.newgrower =
 			else if (oParam.saveNewGrowerStep === 10)
 			{
 				ns1blankspace.inputDetected = false;
-				nsFreshcare.admin.newgrower.init({id: ns1blankspace.objectContext});
+				nsFreshcare.admin[ns1blankspace.objectName].init({id: ns1blankspace.objectContext});
 			}
 		}
 	},
@@ -1553,24 +1633,26 @@ nsFreshcare.admin.newgrower =
 		send: function(oParam)
 		{
 			// This is the process to add the new grower to the db. We use the same code as in admin.grower.save but different functions for collecting details tab data
-			var aRelationshipObject = [			
-			{
-				object: 'relationship',
-				method: 'CONTACT_RELATIONSHIP_MANAGE',
-				saveSource: 'relationshipsData',
-				dataSource: '',
-				dataSourcePrefix: 'relationship'
-			}];
+			oParam = oParam || {};
 
-			if (oParam === undefined) {oParam = {}}
-			
-			nsFreshcare.admin.grower.data.saveObjects = nsFreshcare.admin.grower.data.saveObjects.concat(aRelationshipObject);
+			if ($.grep(nsFreshcare.admin.grower.data.saveObjects, function(x) {return x.object == 'relationship'}).length == 0)
+			{
+				nsFreshcare.admin.grower.data.saveObjects = nsFreshcare.admin.grower.data.saveObjects.concat = [			
+				{
+					object: 'relationship',
+					method: 'CONTACT_RELATIONSHIP_MANAGE',
+					saveSource: 'relationshipsData',
+					dataSource: '',
+					dataSourcePrefix: 'relationship'
+				}];
+			}
+
 			oParam.functionValidate = nsFreshcare.admin.newgrower.save.validate;
 			oParam.functionSaveDetails = nsFreshcare.admin.newgrower.createNewGrower.details;
 			oParam.functionSaveAddress = nsFreshcare.admin.grower.save.address;
 			oParam.functionSaveMore = nsFreshcare.admin.newgrower.createNewGrower.extendedTasks;
 			oParam.newMembership = true;
-			oParam.functionSearch = nsFreshcare.admin.newgrower.remove;
+			oParam.functionSearch = nsFreshcare.admin.newgrower.updateTempTraineeStatus;
 
 			// We have to render both the details and address tabs to make sure the data is picked up
 			if ($('#ns1blankspaceMainDetails').html() === '')
@@ -1614,152 +1696,244 @@ nsFreshcare.admin.newgrower =
 			var aSubscriptionCategoryData = ns1blankspace.util.getParam(oParam, 'subscriptionCategoryData', {"default": []}).value;
 			var aSubscriptionScopeData = ns1blankspace.util.getParam(oParam, 'subscriptionScopeData', {"default": []}).value;
 			var oSubscriptionStatusChangeData = ns1blankspace.util.getParam(oParam, 'subscriptionStatusChangeData', {"default": {}}).value;
-			var aRelationshipsData = ns1blankspace.util.getParam(oParam, 'relationshipsData', {'default': []}).value;
 			var aSubscriptionSitesLinkData = ns1blankspace.util.getParam(oParam, 'subscriptionSitesLinkData', {"default": []}).value;
 			var oTrainingCourseAttendeeData = ns1blankspace.util.getParam(oParam, 'trainingCourseAttendeeData', {'default': {}}).value;
+			var aRelationshipsData = ns1blankspace.util.getParam(oParam, 'relationshipsData', {'default': []}).value;
+			
+			if(ns1blankspace.objectName == 'newelearning')
+			{
+				var oTrainingCourseData = ns1blankspace.util.getParam(oParam, 'trainingCourseData', {"default": {}}).value;
+			}
+
 
 			// v3.1.206 SUP023052 Was not picking up notes that Trainer had entered
+			// v3.2.020 SUP022964 eLearning Trainees logged into Freshcare
 			var sNotes = ($('#ns1blankspaceDetailsNotesUpdate').val() != '')
 							? $('#ns1blankspaceDetailsNotes').html()  + '\r\n' + $('#ns1blankspaceDetailsNotesUpdate').val()
 							: $('#ns1blankspaceDetailsNotes').html();
 
-			oBusinessData = $.extend(true, oBusinessData, 
-			{
-				reference: oParam.nextReference,
-				tradename: $('#ns1blankspaceDetailsTradingNameUpdate').val(),
-				legalname: $('#ns1blankspaceDetailsLegalNameUpdate').val(),
-				abn: $('#ns1blankspaceDetailsABNUpdate').val(),
-				phonenumber: $('#ns1blankspaceDetailsPhoneUpdate').val(),
-				faxnumber: $('#ns1blankspaceDetailsFaxUpdate').val(),
-				notes: sNotes,
-				customerstatus: nsFreshcare.data.contactStatusActive
-			});
-			oBusinessData['se' + nsFreshcare.data.sendPrintedCertificatesId] = $.map($.grep(nsFreshcare.data.sendPrintedCertificatesOptions, function(x) {return x.title == 'No'}),
-																						function(y) {return y.id}).shift();
 
-			oPersonData = $.extend(true, oPersonData,
+			if (ns1blankspace.objectName == 'newgrower') 
 			{
-				firstname: $('#ns1blankspaceDetailsFirstNameUpdate').val(),
-				surname: $('#ns1blankspaceDetailsSurnameUpdate').val(),
-				title: $('#ns1blankspaceDetailsTitleUpdate').attr('data-id'),
-				position: $('#ns1blankspaceDetailsPositionUpdate').val(),
-				gender: $('#ns1blankspaceDetailsGenderUpdate').attr('data-id'),
-				workphone: $('#ns1blankspaceDetailsPhoneUpdate').val(),
-				fax: $('#ns1blankspaceDetailsFaxUpdate').val(),
-				mobile: $('#ns1blankspaceDetailsMobileUpdate').val(),
-				email: $('#ns1blankspaceDetailsEmailUpdate').val(),
-				notes: sNotes,
-				customerstatus: nsFreshcare.data.contactStatusActive,
-				contactbusiness: ''
-			});
-		
-			oAgriBusinessData = $.extend(true, oAgriBusinessData,
+				oParam.configure = {createMember: true};
+			}
+			else
 			{
-				contactbusiness: '',
-				joindate: $('#ns1blankspaceDetailsTrainingDateUpdate').val(),	
-				prioritymembership: $('#ns1blankspaceDetailsMembershipUpdate').attr('data-id')
-			}) 
-
-			// Only add business Group of 'Grower'
-			aBusinessGroupsData.push(
-			{
-				group: nsFreshcare.data.businessGroupGrowerID,
-				contactbusiness: ''
-			});
-			
-			// v3.12 SUP022744 Only add person Group of 'Grower'
-			aPersonGroupsData.push(
-			{
-				group: nsFreshcare.data.grower.categoryGrower,
-				contactperson: ''
-			});
-			
-			// v3.1.0 add to contactperson for easier identification. Later add to attending trainee contact
-			aPersonGroupsData.push(
-			{
-				group: nsFreshcare.data.groupTrainee,
-				contactperson: ''
-			});
-
-			// Add the Trainer relationship
-			aRelationshipsData.push( 
-			{
-				contactbusiness: ns1blankspace.objectContextData.trainercontactbusiness,
-				othercontactbusiness: '',
-				type: nsFreshcare.data.relationshipTrainer,
-				startdate: $('#ns1blankspaceDetailsTrainingDateUpdate').val()
-			});
-
-			var sCrops = $('#ns1blankspaceMembershipCropsUpdate').val();
-			if (sCrops != 'wine grapes')
-			{
-				var aCropsSorted = $.map($('#ns1blankspaceMembershipCropsUpdate_SelectRows .ns1blankspaceMultiSelect'), 
-										function(x) 
-										{
-											return {
-														value: $(x).html(),
-														sortValue: $(x).html().toUpperCase()
-													}
-										})
-										.sort(ns1blankspace.util.sortBy('value'));
-				sCrops = $.map(aCropsSorted, function(x) {return x.value}).join(', ');
+				oParam.configure.createMember = (oParam.configure.isMember && oParam.configure.createBusiness);
 			}
 
-			// Subscription data
-			aSubscriptionsData = [
+			if(oParam.configure.createMember || oParam.configure.createBusiness)
 			{
-				contactbusiness: '',
-				contactperson: '',
-				membership: $('#ns1blankspaceDetailsMembershipUpdate').attr('data-id'),
-				startdate: $('#ns1blankspaceDetailsTrainingDateUpdate').val(),
-				codeofpractice: ns1blankspace.objectContextData.codeofpractice,
-				status: nsFreshcare.data.grower.subscriptionStatusTI,
-				laststatuschangedate: $('#ns1blankspaceDetailsTrainingDateUpdate').val(),
-				crop: sCrops,
-				harvestmonth: nsFreshcare.admin.grower.membership.harvestMonths.store({xhtmlElementId: 'ns1blankspaceDetailsHarvestMonthsUpdate'})
-			}];
-
-			// Status Change Data
-			oSubscriptionStatusChangeData = 
-			{
-				subscription: '',
-				changecontactbusiness: ns1blankspace.user.contactBusiness,
-				changecontactperson: ns1blankspace.user.contactPerson,
-				changedate: $('#ns1blankspaceDetailsTrainingDateUpdate').val(),
-				tostatus: nsFreshcare.data.grower.subscriptionStatusTI
-			};
-
-			// Add Scope
-			// v3.1.2 SUP022744 Now adds scope instead of persongroups
-			$('.nsFreshcareScope.nsFreshcareSelected').each(function()
-			{
-				aSubscriptionScopeData.push(
+				oBusinessData = $.extend(true, oBusinessData, 
 				{
-					scope: this.id.split('_').pop(), 
-					object: nsFreshcare.objectSubscription,
-					objectcontext: ''
+					tradename: $('#ns1blankspaceDetailsTradingNameUpdate').val(),
+					legalname: $('#ns1blankspaceDetailsLegalNameUpdate').val(),
+					abn: $('#ns1blankspaceDetailsABNUpdate').val(),
+					phonenumber: $('#ns1blankspaceDetailsPhoneUpdate').val(),
+					faxnumber: $('#ns1blankspaceDetailsFaxUpdate').val(),
+					notes: sNotes,
+					customerstatus: nsFreshcare.data.contactStatusActive
 				});
-			});
-			if (aSubscriptionScopeData.length === 0)
-			{
-				// v3.2.015 SUP023422 Added COP Based Training
-				aSubscriptionScopeData.push(
+
+				if(oParam.configure.newMember)
 				{
-					scope: $.grep(nsFreshcare.data.scopeOptions, function(x) {return x.scopetext == nsFreshcare.data.growerText}).shift().id, 
-					object: nsFreshcare.objectSubscription,
-					objectcontext: ''
-				});			
+					oBusinessData.reference = oParam.nextReference;
+					oBusinessData['se' + nsFreshcare.data.sendPrintedCertificatesId] = $.map($.grep(nsFreshcare.data.sendPrintedCertificatesOptions, function(x) {return x.title == 'No'}),
+																				function(y) {return y.id}).shift();
+				}
+
+			}
+			else if(oParam.configure.updateBusiness)
+			{
+				var eLearningBusinessData = {};
+				$.each(nsFreshcare.admin.newelearning.data.matchingData.updateOnBusiness, function(index, vals) 
+				{	
+					//var sPrefix = (vals.indexOf('street') == 0 || vals.indexOf('mailing') == 0) ? 'business' : '';
+					eLearningBusinessData[vals] = nsFreshcare.admin.newgrower.data.objectContextData['contactbusiness.' + vals];
+				});
+				if (nsFreshcare.admin.newelearning.data.matchingData.contactBusiness != undefined) {eLearningBusinessData['id'] = nsFreshcare.admin.newelearning.data.matchingData.contactBusiness}
+				oBusinessData = $.extend(true, oBusinessData, eLearningBusinessData);
 			}
 
-			// Category data
-			$('.nsFreshcareProductGroup.nsFreshcareSelected').each(function()
+
+			if(oParam.configure.createMember || oParam.configure.createPerson)
 			{
-				aSubscriptionCategoryData.push(
+				oPersonData = $.extend(true, oPersonData,
 				{
-					productcategory: this.id.split('_').pop(), 
-					subscription: ''
+					firstname: $('#ns1blankspaceDetailsFirstNameUpdate').val(),
+					surname: $('#ns1blankspaceDetailsSurnameUpdate').val(),
+					title: $('#ns1blankspaceDetailsTitleUpdate').attr('data-id'),
+					position: $('#ns1blankspaceDetailsPositionUpdate').val(),
+					gender: $('#ns1blankspaceDetailsGenderUpdate').attr('data-id'),
+					workphone: $('#ns1blankspaceDetailsPhoneUpdate').val(),
+					fax: $('#ns1blankspaceDetailsFaxUpdate').val(),
+					mobile: $('#ns1blankspaceDetailsMobileUpdate').val(),
+					email: $('#ns1blankspaceDetailsEmailUpdate').val(),
+					notes: sNotes,
+					customerstatus: nsFreshcare.data.contactStatusActive,
+					contactbusiness: ''
 				});
-			});
+
+			}
+			else if(oParam.configure.updatePerson)
+			{
+				var eLearningPersonData = {};
+				$.each(nsFreshcare.admin.newelearning.data.matchingData.updateOnPerson, function(index, vals) 
+				{	
+					eLearningPersonData[vals] = nsFreshcare.admin.newgrower.data.objectContextData['contactbusiness.contactperson.' +vals];
+				});
+
+				if (nsFreshcare.admin.newelearning.data.matchingData.contactPerson != undefined) {eLearningPersonData['id'] = nsFreshcare.admin.newelearning.data.matchingData.contactPerson}
+				
+				if(nsFreshcare.admin.newelearning.data.matchingData.contactBusiness != undefined)
+				{
+					eLearningPersonData['contactbusiness'] = nsFreshcare.admin.newelearning.data.matchingData.contactBusiness;
+				}
+				else
+				{
+					eLearningPersonData['contactbusiness'] = '';
+				}
+				oPersonData = $.extend(true, oPersonData, eLearningPersonData);
+			}
+
+
+			if(oParam.configure.createMember || (!oParam.configure.createBusiness && oParam.configure.createBusinessgroup))
+			{
+				// Only add business Group of 'Grower'
+				aBusinessGroupsData.push(
+				{
+					group: nsFreshcare.data.businessGroupGrowerID,
+					contactbusiness: ''
+				});
+			}
+			
+			if(oParam.configure.createMember || (!oParam.configure.createPerson && oParam.configure.createPersonGroup))
+			{
+				// v3.1.0 add to contactperson for easier identification. Later add to attending trainee contact
+				aPersonGroupsData.push(
+				{
+					group: nsFreshcare.data.groupTrainee,
+					contactperson: ''
+				});
+			}
+
+
+			if(oParam.configure.createMember || (!oParam.configure.isMember && oParam.configure.createBusiness) || oParam.configure.createRelationship)
+			{
+				aRelationshipsData.push( 
+				{
+					contactbusiness: ((ns1blankspace.objectName == 'newelearning') ? nsFreshcare.data.eLearningBusiness : ns1blankspace.objectContextData.trainercontactbusiness),
+					othercontactbusiness: '',
+					type: nsFreshcare.data.relationshipTrainer,
+					startdate: $('#ns1blankspaceDetailsTrainingDateUpdate').val()
+				});
+			}
+
+			if(oParam.configure.createMember)
+			{
+				// v3.12 SUP022744 Only add person Group of 'Grower'
+				aPersonGroupsData.push(
+				{
+					group: nsFreshcare.data.grower.categoryGrower,
+					contactperson: ''
+				});
+			}
+				
+			if(oParam.configure.createMember || oParam.configure.createSubscription)
+			{
+				oAgriBusinessData = $.extend(true, oAgriBusinessData,
+				{
+					contactbusiness: '',
+					joindate: $('#ns1blankspaceDetailsTrainingDateUpdate').val(),	
+					prioritymembership: $('#ns1blankspaceDetailsMembershipUpdate').attr('data-id')
+				});		
+
+				var sCrops = $('#ns1blankspaceMembershipCropsUpdate').val();
+				if (sCrops != 'wine grapes')
+				{
+					var aCropsSorted = $.map($('#ns1blankspaceMembershipCropsUpdate_SelectRows .ns1blankspaceMultiSelect'), 
+											function(x) 
+											{
+												return {
+															value: $(x).html(),
+															sortValue: $(x).html().toUpperCase()
+														}
+											})
+											.sort(ns1blankspace.util.sortBy('value'));
+					sCrops = $.map(aCropsSorted, function(x) {return x.value}).join(', ');
+				}
+
+				// Subscription data
+				aSubscriptionsData = [
+				{
+					contactbusiness: '',
+					contactperson: '',
+					membership: $('#ns1blankspaceDetailsMembershipUpdate').attr('data-id'),
+					startdate: $('#ns1blankspaceDetailsTrainingDateUpdate').val(),
+					codeofpractice: ns1blankspace.objectContextData.codeofpractice,
+					status: nsFreshcare.data.grower.subscriptionStatusTI,
+					laststatuschangedate: $('#ns1blankspaceDetailsTrainingDateUpdate').val(),
+					crop: sCrops,
+					harvestmonth: nsFreshcare.admin.grower.membership.harvestMonths.store({xhtmlElementId: 'ns1blankspaceDetailsHarvestMonthsUpdate'})
+				}];
+
+				// Status Change Data
+				oSubscriptionStatusChangeData = 
+				{
+					subscription: '',
+					changecontactbusiness: ns1blankspace.user.contactBusiness,
+					changecontactperson: ns1blankspace.user.contactPerson,
+					changedate: $('#ns1blankspaceDetailsTrainingDateUpdate').val(),
+					tostatus: nsFreshcare.data.grower.subscriptionStatusTI
+				};
+
+				// Add Scope
+				// v3.1.2 SUP022744 Now adds scope instead of persongroups
+				$('.nsFreshcareScope.nsFreshcareSelected').each(function()
+				{
+					aSubscriptionScopeData.push(
+					{
+						scope: this.id.split('_').pop(), 
+						object: nsFreshcare.objectSubscription,
+						objectcontext: ''
+					});
+				});
+				if (aSubscriptionScopeData.length === 0)
+				{
+					aSubscriptionScopeData.push(
+					{
+						scope: $.grep(nsFreshcare.data.scopeOptions, function(x) {return x.title == 'Grower'}).shift().id, 
+						object: nsFreshcare.objectSubscription,
+						objectcontext: ''
+					});			
+				}
+
+				// Category data
+				$('.nsFreshcareProductGroup.nsFreshcareSelected').each(function()
+				{
+					aSubscriptionCategoryData.push(
+					{
+						productcategory: this.id.split('_').pop(), 
+						subscription: ''
+					});
+				});
+			
+			}
+
+			if(ns1blankspace.objectName == 'newelearning')
+			{
+				oTrainingCourseData = 
+				{
+					package: oParam.configure.packageID,
+					coursedate: nsFreshcare.admin.newgrower.data.objectContextData['createddate'],
+					location: 'eLearning',
+					state: '9',
+					status: '2',
+					trainercontactbusiness: nsFreshcare.data.eLearningBusiness,
+					title: oParam.configure.packageTitle,
+					trainercontactperson: nsFreshcare.data.eLearningPerson
+				}
+			}
 
 			// Training Course Attendee data
 			// v3.1.2 SUP022932 Was not saving first and surname to attending trainee
@@ -1767,13 +1941,15 @@ nsFreshcare.admin.newgrower =
 			{
 				traineecontactbusiness: '',
 				traineecontactperson: '',
-				course: $('#ns1blankspaceDetailsTrainingCourseUpdate').attr('data-id'),
 				status: '1',
 				attendingtrainee: $('#ns1blankspaceDetailsFirstNameUpdate').val() + ' ' + $('#ns1blankspaceDetailsSurnameUpdate').val(),
 				firstname: $('#ns1blankspaceDetailsFirstNameUpdate').val(),
 				surname: $('#ns1blankspaceDetailsSurnameUpdate').val()
 			}
-
+			if(ns1blankspace.objectName == 'newelearning')
+			{
+				oTrainingCourseAttendeeData.course = '';
+			}
 
 			oParam.detailsTab = true;
 			oParam.businessData = oBusinessData;
@@ -1788,6 +1964,10 @@ nsFreshcare.admin.newgrower =
 			oParam.relationshipsData = aRelationshipsData;
 			oParam.subscriptionSitesLinkData = aSubscriptionSitesLinkData;
 			oParam.trainingCourseAttendeeData = oTrainingCourseAttendeeData;
+			if(ns1blankspace.objectName == 'newelearning')
+			{
+				oParam.trainingCourseData = oTrainingCourseData;
+			}
 
 			nsFreshcare.admin.newgrower.data.objectContextData = ns1blankspace.objectContextData;
 			ns1blankspace.objectContextData = undefined;
@@ -1846,8 +2026,78 @@ nsFreshcare.admin.newgrower =
 				}
 			}
 
-			// Create trainee record if required
 			else if (oParam.extendedTasksStep === 2)
+			{
+				if (Object.keys(oParam.trainingCourseData).length > 0)
+				{
+					var oData = oParam.trainingCourseData;
+
+					$.ajax(
+					{
+						type: 'POST',
+						url: ns1blankspace.util.endpointURI('AGRI_EDUCATION_TRAINING_COURSE_MANAGE'),
+						data: oData,
+						success: function(oResponse)
+						{
+							
+							if (oResponse.status === 'OK')
+							{
+								oParam.extendedTasksStep = 3;
+								oParam.course = oResponse.id;
+								nsFreshcare.admin.newgrower.createNewGrower.extendedTasks(oParam);
+							}
+							else
+							{
+								ns1blankspace.status.error('Error adding Training course: ' + oResponse.error.errornotes);
+							}
+						}
+					});
+				}
+				else
+				{
+					oParam.extendedTasksStep = 3;
+					nsFreshcare.admin.newgrower.createNewGrower.extendedTasks(oParam);
+				}
+			}
+
+			else if (oParam.extendedTasksStep === 3)
+			{
+				if (Object.keys(oParam.trainingCourseData).length > 0)
+				{
+					var oData = {};
+
+					oData.id = nsFreshcare.admin.newgrower.data.objectContext;
+					oData.course = oParam.course;
+
+					$.ajax(
+					{
+						type: 'POST',
+						url: ns1blankspace.util.endpointURI('AGRI_TEMP_TRAINEE_MANAGE'),
+						data: oData,
+						success: function(oResponse)
+						{
+							
+							if (oResponse.status === 'OK')
+							{
+								oParam.extendedTasksStep = 4;
+								nsFreshcare.admin.newgrower.createNewGrower.extendedTasks(oParam);
+							}
+							else
+							{
+								ns1blankspace.status.error('Error updating the course on trainee: ' + oResponse.error.errornotes);
+							}
+						}
+					});
+				}
+				else
+				{
+					oParam.extendedTasksStep = 4;
+					nsFreshcare.admin.newgrower.createNewGrower.extendedTasks(oParam);
+				}
+			}
+
+			// Create trainee attendance record if required
+			else if (oParam.extendedTasksStep === 4)
 			{
 				if (oParam.trainingCourseAttendeeData)
 				{
@@ -1855,7 +2105,10 @@ nsFreshcare.admin.newgrower =
 					
 					oData.traineecontactbusiness = ns1blankspace.objectContext;
 					oData.traineecontactperson = oParam.contactperson.id;
-
+					if(ns1blankspace.objectName == 'newelearning')
+					{
+						oData.course = oParam.course;
+					}
 					$.ajax(
 					{
 						type: 'POST',
@@ -1866,7 +2119,7 @@ nsFreshcare.admin.newgrower =
 							
 							if (oResponse.status === 'OK')
 							{
-								oParam.extendedTasksStep = 3;
+								oParam.extendedTasksStep = 5;
 								oParam.attendee = oResponse.id;
 								nsFreshcare.admin.newgrower.createNewGrower.extendedTasks(oParam);
 							}
@@ -1879,13 +2132,11 @@ nsFreshcare.admin.newgrower =
 				}
 				else
 				{
-					oParam.extendedTasksStep = 3;
+					oParam.extendedTasksStep = 5;
 					nsFreshcare.admin.newgrower.createNewGrower.extendedTasks(oParam);
 				}
 			}
-
-
-			else if (oParam.extendedTasksStep === 3)
+			else if (oParam.extendedTasksStep === 5)
 			{
 				
 					var oData = {};
@@ -1909,7 +2160,7 @@ nsFreshcare.admin.newgrower =
 							}
 							else
 							{
-								ns1blankspace.status.error('Error adding Trainee to training course: ' + oResponse.error.errornotes);
+								ns1blankspace.status.error('Error adding Trainee Attendance link: ' + oResponse.error.errornotes);
 							}
 						}
 					});
@@ -1926,5 +2177,21 @@ nsFreshcare.admin.newgrower =
 				}
 			}
 		}
-	}
+	},
+
+	updateTempTraineeStatus:	function() 
+	{
+		var oRoot = ns1blankspace.rootnamespace;
+		var bGrowerCreated = (oParam.id != undefined)
+		console.log('updateTempTraineeStatus');
+		
+		if (bGrowerCreated)
+		{
+			oRoot.admin.grower.init(oParam);
+		}
+		else
+		{
+			nsFreshcare.admin.newgrower.init();
+		}
+	}	
 }

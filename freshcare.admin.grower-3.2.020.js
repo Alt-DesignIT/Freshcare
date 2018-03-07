@@ -5,7 +5,8 @@
  * 01 FEB 2010
  */
  
- // v3.1.210 replaced all dialog('close') with dialog('destroy')
+// v3.1.210 replaced all dialog('close') with dialog('destroy')
+// v3.2.015 SUP023421 Changes references to Grower to Member
 
 nsFreshcare.admin.grower = 
 {
@@ -190,7 +191,6 @@ nsFreshcare.admin.grower =
 		ns1blankspace.objectMethod = 'CONTACT_BUSINESS';
 		ns1blankspace.objectContextData = undefined;
 		ns1blankspace.objectContext = -1;
-		// v3.2.015 SUP023422 Added COP Based Training
 		ns1blankspace.viewName = nsFreshcare.data.growersText;	
 		ns1blankspace.data.contactBusiness = undefined;
 		ns1blankspace.data.contactBusinessText = undefined;
@@ -254,7 +254,6 @@ nsFreshcare.admin.grower =
 			oSearch.addFilter("contactbusiness.contactperson.id", 'EQUAL_TO', 'field:contactbusiness.primarycontactperson', '', '', 'Y');
 			oSearch.addFilter('contactbusiness.businessgroup', 'EQUAL_TO', nsFreshcare.data.businessGroupGrowerID);		// v3.1.2 SUP022744 Used to be persongroup
 			// v3.1.2 SUP022859 Only show JASANZ users growers for the selected CB if set
-			// v3.2.015 SUP023422 Added COP Based Training
 			if (nsFreshcare.user.roleID == nsFreshcare.data.roles.jasanz && nsFreshcare.data.viewFilter.certificationBody) 
 			{
 				oSearch.addFilter("contactbusiness.relationshipotherbusiness.contactbusiness", "EQUAL_TO", nsFreshcare.data.viewFilter.certificationBody);
@@ -277,7 +276,6 @@ nsFreshcare.admin.grower =
 			
 			if (oResponse.data.rows.length == 0)
 			{
-				// v3.2.015 SUP023422 Added COP Based Training
 				aHTML.push('<table id="ns1blankspaceMostLikely">' +
 								'<tr><td class="ns1blankspaceNothing">Click New to create a new ' + nsFreshcare.data.growerText + ' record.</td></tr>' +
 								'</table>');
@@ -469,7 +467,6 @@ nsFreshcare.admin.grower =
 					oSearch.addFilter('contactbusiness.businessgroup', 'EQUAL_TO', nsFreshcare.data.businessGroupGrowerID);			// v3.1.2 SUP022744 used to be persongroup				
 		
 					// v3.1.2 SUP022859 Only show JASANZ users audits for the selected CB if set
-					// v3.2.015 SUP023422 Added COP Based Training
 					if (nsFreshcare.user.roleID == nsFreshcare.data.roles.jasanz && nsFreshcare.data.viewFilter.certificationBody) 
 					{
 						oSearch.addFilter("contactbusiness.relationshipotherbusiness.contactbusiness", "EQUAL_TO", nsFreshcare.data.viewFilter.certificationBody);
@@ -589,7 +586,6 @@ nsFreshcare.admin.grower =
 
 			if (oParam.removeGrowerStep === undefined) 
 			{
-				// v3.2.015 SUP023422 Added COP Based Training
 				ns1blankspace.container.confirm({title: 'Delete ' + nsFreshcare.data.growerText + '?', html: 'Are you sure you want to delete this ' + nsFreshcare.data.growerText + '?',
 													buttons: 
 													[
@@ -897,10 +893,8 @@ nsFreshcare.admin.grower =
 				{
 					ns1blankspace.status.clear();
 					oParam = {};
-					// v3.2.015 SUP023422 Added COP Based Training
 					aText.unshift('<table><tr><td>The following data must be removed manually prior to removing the ' + nsFreshcare.data.growerText + '</td></tr>');
 					aText.push('</table>');
-					// v3.2.015 SUP023422 Added COP Based Training
 					ns1blankspace.container.confirm({title: 'Cannot remove ' + nsFreshcare.data.growerText,
 													html: aText.join('')});
 				}
@@ -960,7 +954,6 @@ nsFreshcare.admin.grower =
 						// If we have something to delete, confirm it with the user and continue if they confirm
 						if (aText.length > 0)
 						{
-							// v3.2.015 SUP023422 Added COP Based Training
 							aText.unshift('<table><tr><td>The following data will be deleted when removing ' + nsFreshcare.data.growerText + '. Continue deleting?</td></tr>');
 							aText.push('</table>');
 							
@@ -983,7 +976,6 @@ nsFreshcare.admin.grower =
 												}
 											}
 										];
-							// v3.2.015 SUP023422 Added COP Based Training			
 							ns1blankspace.container.confirm({title: 'Delete ' + nsFreshcare.data.growerText,
 															html: aText.join(''),
 															buttons: aButtons});
@@ -1251,7 +1243,6 @@ nsFreshcare.admin.grower =
 					{
 						if (oResponse.status === 'OK')
 						{
-							// v3.2.015 SUP023422 Added COP Based Training
 							ns1blankspace.status.message(nsFreshcare.data.growerText + ' removed.');
 							oRoot.admin.grower.init({showHome: true});
 						}
@@ -1300,7 +1291,6 @@ nsFreshcare.admin.grower =
 						
 			aHTML.push('<tr><td id="ns1blankspaceControlAddress" class="ns1blankspaceControl">' +
 							'Address / Sites</td></tr>');
-			// v3.2.015 SUP023422 Added COP Based Training
 			if (nsFreshcare.user.roleID != nsFreshcare.data.roles.jasanz)
 			{
 				aHTML.push('<tr><td id="ns1blankspaceControlGroups" class="ns1blankspaceControl">' +
@@ -1323,7 +1313,6 @@ nsFreshcare.admin.grower =
 
 			aHTML.push('<tr><td id="ns1blankspaceControlActions" class="ns1blankspaceControl">' +
 							'Actions</td></tr>');
-			// v3.2.015 SUP023422 Added COP Based Training				
 			if (nsFreshcare.user.roleID != nsFreshcare.data.roles.jasanz)
 			{
 				aHTML.push('<tr><td id="ns1blankspaceControlAttachments" class="ns1blankspaceControl">' +
@@ -1399,7 +1388,6 @@ nsFreshcare.admin.grower =
 		
 		$('#ns1blankspaceControlGroups').click(function(event)
 		{
-			// v3.2.015 SUP023422 Added COP Based Training
 			ns1blankspace.show({selector: '#ns1blankspaceMainGroups', refresh: true, context: {inContext: false}});
 			nsFreshcare.admin.grower.groups.show({contextGroup: nsFreshcare.data.growerText});
 		});
@@ -1524,7 +1512,6 @@ nsFreshcare.admin.grower =
 			// Get Relationships
 			else if (iStep === 4) 
 			{
-				// v3.2.015 SUP023422 Added COP Based Training
 				oParam.relationshipTypes = nsFreshcare.data.relationshipTrainer + ',' + nsFreshcare.data.relationshipAuditor;
 				oParam.step = (nsFreshcare.user.roleID == nsFreshcare.data.roles.jasanz ? 5 : 10);
 				oParam = ns1blankspace.util.setParam(oParam, "onComplete", nsFreshcare.admin.grower.show);
@@ -1623,7 +1610,6 @@ nsFreshcare.admin.grower =
 						'<tr><td class="ns1blankspaceSummary">' +
 						ns1blankspace.data.contactPersonText +
 						'</td></tr>');
-			// v3.2.015 SUP023422 Added COP Based Training
 			if (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin && ns1blankspace.objectContextData['contactbusiness.contactperson.user.username'] != '')
 			{
 				aHTML.push('<tr><td class="ns1blankspaceSummaryCaption">User Name</td></tr>' +
@@ -1805,7 +1791,6 @@ nsFreshcare.admin.grower =
 				aHTML.push('<tr><td>&nbsp;</td></tr>');
 
 				// Allow admin users to create user
-				// v3.2.015 SUP023422 Added COP Based Training
 				if (nsFreshcare.user.roleID == nsFreshcare.data.roles.admin && ns1blankspace.objectContextData['contactbusiness.contactperson.user.username'] == '')
 				{
 					aHTML.push('<tr><td class="ns1blankspaceAction">' +
@@ -1814,7 +1799,6 @@ nsFreshcare.admin.grower =
 				}
 
 				// Allow admin to re-enable user if disabled
-				// v3.2.015 SUP023422 Added COP Based Training
 				if (nsFreshcare.user.roleID == nsFreshcare.data.roles.admin && ns1blankspace.objectContextData['contactbusiness.contactperson.user.disabled'] == 'Y')
 				{
 					aHTML.push('<tr><td class="ns1blankspaceAction">' +
@@ -1897,7 +1881,6 @@ nsFreshcare.admin.grower =
 					})
 					.on("click", function()
 					{
-						// v3.2.015 SUP023422 Added COP Based Training
 						nsFreshcare.internal.entity.user.add.show(
 						{
 							xhtmlElementID: this.id,
@@ -2138,7 +2121,6 @@ nsFreshcare.admin.grower =
 			var aHTML = [];
 				
 			aHTML.push('<table class="ns1blankspace">');
-			// v3.2.015 SUP023422 Added COP Based Training
 			aHTML.push('<tr class="ns1blankspaceCaption">' +
 							'<td class="ns1blankspaceCaption">' +
 							nsFreshcare.data.growerText + ' Notes' +
@@ -2893,7 +2875,6 @@ nsFreshcare.admin.grower =
 				oFilters.push({operation: 'addFilter', name: 'actiontype', comparison: 'IN_LIST', value1: '5,9,10'});
 				
 				// v3.1.2 SUP022859 If JASANZ login, only show CB emails 
-				// v3.2.015 SUP023422 Added COP Based Training
 				if (nsFreshcare.user.roleID == nsFreshcare.data.roles.jasanz)
 				{
 					if (ns1blankspace.objectContextData.auditorUsers == undefined) {ns1blankspace.objectContextData.auditorUsers = []}
@@ -3228,7 +3209,6 @@ nsFreshcare.admin.grower =
 				oFilters.push({operation: 'addFilter', name: 'actiontype', comparison: 'IN_LIST', value1: iActionTypes});
 				
 				// v3.1.2 SUP022859 Only show CB emails if jasanz login
-				// v3.2.015 SUP023422 Added COP Based Training
 				if (nsFreshcare.user.roleID == nsFreshcare.data.roles.jasanz)
 				{
 					if (ns1blankspace.objectContextData.auditorUsers == undefined) {ns1blankspace.objectContextData.auditorUsers = []}
@@ -3390,7 +3370,9 @@ nsFreshcare.admin.grower =
 				})
 				.click(function() 
 				{
-					 ns1blankspace.attachments.add(oParam);
+					// v3.2.010 removed as causes add to go below list of attachments
+					delete (oParam.xhtml);
+					ns1blankspace.attachments.add(oParam);
 				});
 			
 				oParam.xhtmlElementID = 'ns1blankspaceAttachmentsColumn1';
@@ -3800,7 +3782,6 @@ nsFreshcare.admin.grower =
 					if (ns1blankspace.okToSave && ns1blankspace.objectContext === -1 && $('#ns1blankspaceMainAddress').html() === '')
 					{
 						ns1blankspace.okToSave = false;
-						// v3.2.015 SUP023422 Added COP Based Training
 						ns1blankspace.status.message('Please add Address details for a new ' + nsFreshcare.data.growerText);
 					}
 
@@ -3808,7 +3789,6 @@ nsFreshcare.admin.grower =
 					if (ns1blankspace.okToSave && $('#ns1blankspaceDetailsEmail').val() != '' && !nsFreshcare.util.validateEmail($('#ns1blankspaceDetailsEmail').val()))
 					{
 						ns1blankspace.okToSave = false;
-						// v3.2.015 SUP023422 Added COP Based Training
 						ns1blankspace.status.message('Please provide a valid email address for the ' + nsFreshcare.data.growerText);
 					}
 				} 
@@ -3883,7 +3863,6 @@ nsFreshcare.admin.grower =
 										}).length > 0)
 									{
 										ns1blankspace.okToSave = false;
-										// v3.2.015 SUP023422 Added COP Based Training
 										ns1blankspace.status.message('An address you are trying to remove is linked to the new Membership. Please remove it from the Membership and then remove from the ' + nsFreshcare.data.growerText);
 										return false;
 									}
@@ -4560,14 +4539,13 @@ nsFreshcare.admin.grower =
 
 							if (sWithdrawnText != '')
 							{
-								// v3.2.015 SUP023422 Added COP Based Training
 								sWithdrawnText = nsFreshcare.data.growerText + ' ' + ns1blankspace.objectContextData['contactbusiness.tradename'].formatXHTML() + 
 													' has been withdrawn from the following Membership' + (aSubscriptionsWithdrawn.length > 1 ? 's' : '') + ':<p>&nbsp;</p>' +
 										'<table class="ns1blankspace"><tr><td style="padding: 5px;"><strong>Membership</strong></td><td style="padding: 5px;"><strong>Reason</strong></td></tr>' + 
 										sWithdrawnText + '</table>';
 
 								oData.message = sWithdrawnText;
-								// v3.2.015 SUP023422 Added COP Based Training
+
 								oData.subject = nsFreshcare.data.growerText + ' ' + ns1blankspace.objectContextData['contactbusiness.tradename'].formatXHTML() + ' has been withdrawn from Membership' +
 												(aSubscriptionsWithdrawn.length > 1 ? 's' : '');
 								oData.to = sToID;
@@ -5320,7 +5298,6 @@ nsFreshcare.admin.grower =
 				var oMembership = this;
 				$('#ns1blankspaceControl-' + this.id).click(function(event)
 				{
-					// v3.2.015 SUP023422 Added COP Based Training
 					ns1blankspace.show({selector: '#ns1blankspaceMainMembership' + (this.id).split('-').pop(),
 										context: 
 										{
@@ -5719,6 +5696,7 @@ nsFreshcare.admin.grower =
 										'>' +
 									'</td></tr>');		
 
+					// v3.2.010 Had an extra quote for non-supportAdmin so wasn't showing Last Status Changed date
 					aHTML.push('<tr class="ns1blankspaceCaption">' +
 									'<td class="ns1blankspaceCaption">' +
 									'Last Status Change Date' +
@@ -5727,10 +5705,9 @@ nsFreshcare.admin.grower =
 									'<td class="ns1blankspaceDate"' +
 										((nsFreshcare.supportAdmin)
 											? '><input id="ns1blankspaceMembership' + iMembership + 'LastStatusChanged" class="ns1blankspaceDate">'
-											: ' id=""ns1blankspaceMembership' + iMembership + 'LastStatusChanged"'
+											: ' id="ns1blankspaceMembership' + iMembership + 'LastStatusChanged"'
 										) +
 									'</td></tr>');		
-
 					aHTML.push('<tr class="ns1blankspaceCaption">' +
 									'<td class="ns1blankspaceCaption">' +
 									'Start Date' +
@@ -6095,6 +6072,7 @@ nsFreshcare.admin.grower =
 						'On ' + oMembership["agrisubscription.expirychangeddate"] + ' by ' + oMembership["agrisubscription.expirychangedbyusertext"].formatXHTML());
 					$('#ns1blankspaceMembership' + iMembership + 'ExpiryChangeReasonContainer').html(oMembership["agrisubscription.expirychangereason"].formatXHTML());
 					
+					$('#ns1blankspaceMembership' + iMembership + 'LastStatusChanged').html(oMembership["agrisubscription.laststatuschangedate"].formatXHTML());
 					$('#ns1blankspaceMembership' + iMembership + 'LastStatusChanged').val(oMembership["agrisubscription.laststatuschangedate"].formatXHTML());
 					$('#ns1blankspaceMembership' + iMembership + 'Audit').val(oMembership["agrisubscription.agricertificate.audittext"].formatXHTML());
 					$('#ns1blankspaceMembership' + iMembership + 'Audit').attr('data-id', oMembership["agrisubscription.agricertificate.audit"].formatXHTML());
@@ -6950,7 +6928,6 @@ nsFreshcare.admin.grower =
 			if ($('#' + sXHTMLElementID).attr('data-id') != oMembership['agrisubscription.expirymonth'])
 			{
 				// Change caption of reason to Re-Certification Due Change Reason
-				// v3.2.015 SUP023422 Added COP Based Training
 				if (nsFreshcare.user.roleID == nsFreshcare.data.roles.admin)
 				{
 					$('#' + sXHTMLElementID.replace('ExpiryMonth', 'ExpiryChangeReasonContainer'))
@@ -6979,7 +6956,6 @@ nsFreshcare.admin.grower =
 			else
 			{
 				// Change caption of reason to Reason for change (but only if it's not already set to that!)
-				// v3.2.015 SUP023422 Added COP Based Training
 				if (sFreshcare.user.roleID == nsFreshcare.data.roles.admin && $('#ns1blankspaceMainMembership' + iMembership + ' .ns1blankspaceExpiryMonthChange:visible').length > 0
 					&& $('#' + sXHTMLElementID.replace('ExpiryMonth', 'ExpiryChangeReasonCaption')).html() == 'Re-Certification Due Change Reason'
 					 && oMembership['agrisubscription.expirychangereason'] != '')
@@ -7637,7 +7613,8 @@ nsFreshcare.admin.grower =
 						// First remove any 'loading' rows that are present
 						aHTML = [];
 						$('#ns1blankspaceAuditsLoading_' + iMembership).remove();
-						// v3.2.015 SUP023422 Added COP Based Training
+
+						// v3.2.020 SUP022649 Added COP to table
 						aHTML.push('<tr class="ns1blankspaceCaption" id="ns1blankspaceMembership' + iMembership + 'AuditHeader">' +
 										'<td class="ns1blankspaceHeaderCaption">Reference</td>' +
 										'<td class="ns1blankspaceHeaderCaption">Title</td>' +
@@ -7900,10 +7877,9 @@ nsFreshcare.admin.grower =
 						{
 							// v2.0.3g SUP021400 Non-admin only see business name for source of change
 							// v3.0.1 Added abilty to remove top row and modify if admin user
-							// v3.2.015 SUP023422 Added COP Based Training
 							var sClass = (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin) ? ' ns1blankspaceStatusTransaction' + iMembership + 'RowEdit' : '';
 							aHTML = [];
-							// v3.2.015 SUP023422 Added COP Based Training
+
 							aHTML.push('<tr class="ns1blankspaceMembership' + iMembership + 'StatusTransactions"' +
 											' id="ns1blankspace' + iMembership + 'StatusTransactionRow-' + oRow.id + '"' +
 											' data-rowid="' + oRow.id + '">' + 
@@ -7920,7 +7896,7 @@ nsFreshcare.admin.grower =
 								   		((nsFreshcare.user.roleID === nsFreshcare.data.roles.admin) ? ' (' + oRow["changecontactpersontext"]  + ')' : '') +
 								   		'</td>' +
 								   		'<td class="ns1blankspaceRow">');
-							// v3.2.015 SUP023422 Added COP Based Training
+
 							if (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin && i === 0)
 							{
 								aHTML.push('<span class="ns1blankspaceGrowerMembership' + iMembership + 'StatusRemove"' +
@@ -8351,7 +8327,7 @@ nsFreshcare.admin.grower =
 		{
 			show: function(oParam)
 			{
-				// v3.2.015 SUP023422 Members form
+				// v3.2.020 SUP023422 Now searches for training courses linked to attendees
 				var aHTML = [];
 				var iMembership = ns1blankspace.util.getParam(oParam, 'membership').value;
 				var oMembership = ns1blankspace.util.getParam(oParam, 'membershipData').value;
@@ -8632,6 +8608,7 @@ nsFreshcare.admin.grower =
 				oSearch.addFilter("address.addresslink.objectcontext", "EQUAL_TO", iContactBusiness);
 				oSearch.sort('status', 'asc');
 				oSearch.sort('addresssuburb', 'asc');
+				oSearch.rows = 100;	 // v3.2.019 SUP023550 Some members have more than 20 sites!!!!
 				oSearch.rf = 'json';
 				oSearch.getResults(function(oResponse) 
 				{

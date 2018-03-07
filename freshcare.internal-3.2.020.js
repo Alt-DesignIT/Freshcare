@@ -5,13 +5,11 @@
  * 01 FEB 2010
  */
  
-// v3.1.210 replaced all dialog('close') with dialog('destroy')
-// v3.2.015 SUP023421 Change 'Growers' to 'Members'
+ // v3.1.210 replaced all dialog('close') with dialog('destroy')
 
 nsFreshcare.internal = 
 {
 	data: {},
-
 	financial: 
 	{
 		data: 
@@ -140,7 +138,6 @@ nsFreshcare.internal =
 											{name: 'CertificationBody', title: 'Certification Body', values: 'certificationBodies', field: 'auditbusiness'}
 										 ];
 						// v3.1.209b SUP023219 Must pass feeTYpe for SSS to work here too
-						// v3.2.018 SUP023499 Need to pass feeTypeSecondary
 						oParam.columns = [
 											{title: 'Cert Body', name: 'CertificationBodyText', field: 'auditbusinesstext'},
 											{title: 'Membership', name: 'MembershipText', field: 'audit.agrisubscription.membership.code'},
@@ -150,7 +147,7 @@ nsFreshcare.internal =
 											{title: 'Audit Date', name: 'AuditDate', field: 'actualdate'},
 											{title: 'Invoice Amount', name: 'InvoiceAmt', 
 												functionCalculate: nsFreshcare.internal.financial.invoice.commissions.calculateLineItemAmount,
-												functionCalculateParam: {feeType: '2', feeTypeSecondary: '3'}, /* Cert Renewal Fee & Secondary M/Ship fee*/
+												functionCalculateParam: {feeType: '2'}, /* Cert Renewal Fee */
 												elementEditClass: 'nsFreshcareInvoicesBulkEdit', elementEditSave: false, elementEditMandatory: true
 											},
 											{name: 'CertificationBody', field: 'auditbusiness', hidden: true}
@@ -253,6 +250,7 @@ nsFreshcare.internal =
 						oSearch.addFilter('contactbusiness.contactperson.persongroup', 'EQUAL_TO', nsFreshcare.data.groupAccountsContact);
 					}
 					oSearch.addBracket(')');
+					oSearch.rows = 100;		// v3.2.019 Needed to up the row count
 					oSearch.sort('tradename', 'asc');
 					oSearch.getResults(function(oResponse)
 					{
@@ -896,10 +894,8 @@ nsFreshcare.internal =
 
 				calculateLineItemAmount: function(oRow)
 				{
-					// v3.2.010 SUP023467 No allowing for different secondary fee for ECA
 					var sReturn;
 					var iFeeType = ns1blankspace.util.getParam(oRow, 'feeType', {'default': '2'}).value;
-					var iFeeTypeSecondary = ns1blankspace.util.getParam(oRow, 'feeTypeSecondary', {'default': '3'}).value;
 
 					if (oRow['audit.contactbusiness.agribusiness.prioritymembership'] === oRow['audit.agrisubscription.membership'])
 					{
@@ -908,7 +904,7 @@ nsFreshcare.internal =
 					}
 					else
 					{
-						oRow.feeType = iFeeTypeSecondary;	// Secondary Membership Fee
+						oRow.feeType = '3';	// Secondary Membership Fee
 						//sReturn = oRow['audit.agrisubscription.membership.secondarymembershipfee'];
 					}
 					return nsFreshcare.internal.financial.invoice.commissions.getMembershipFee(oRow);
@@ -2574,6 +2570,7 @@ nsFreshcare.internal =
 				{
 					if (bCanRemove)
 					{
+						// v3.2.015 SUP023422 Added COP Based Training
 						if (nsFreshcare.user.roleID == nsFreshcare.data.roles.admin
 							|| (nsFreshcare.user.roleID != nsFreshcare.data.roles.admin && oRow[sStatusColumn] != nsFreshcare.data.contactStatusInactive))
 						{
@@ -2908,6 +2905,7 @@ nsFreshcare.internal =
 				.css('cursor', 'pointer');
 
 				// User can remvoe contact
+				// v3.2.015 SUP023422 Added COP Based Training
 				$('#' + sXHTMLContainerID + ' .ns1blankspaceBusinessContactRemove')
 					.button(
 					{
@@ -2929,6 +2927,7 @@ nsFreshcare.internal =
 						}
 						else
 						{	// We remove if admin, otherwise, just inactivate 
+							// v3.2.015 SUP023422 Added COP Based Training
 							$.extend(true, oParam,
 							{
 								rowID: iRowID, 
@@ -3641,7 +3640,7 @@ nsFreshcare.internal =
 				aHTML.push('</table>');
 
 				$('#' + sXHTMLElementEditID).html(aHTML.join(''));
-
+				// v3.2.015 SUP023422 Added COP Based Training
 				if (nsFreshcare.user.roleID !== nsFreshcare.data.roles.admin)
 				{
 					$('.ns1blankspaceHideNonAdmin').hide();
@@ -3858,6 +3857,7 @@ nsFreshcare.internal =
 					$('#ns1blankspaceBusinessContactMailingCountry').val('Australia');
 
 					// v3.1.205 SUP023021 Auditors don't need approval to add contacts
+					// v3.2.015 SUP023422 Added COP Based Training
 					if (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin || nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor)
 					{
 						$('#ns1blankspaceBusinessContactStatus').val('Active');
@@ -4020,6 +4020,7 @@ nsFreshcare.internal =
 						{
 							oParam.savePrimaryContactStep = 4;
 							// v3.2.005 SUP023190 Added replyTo for auditors
+							// v3.2.015 SUP023422 Added COP Based Training
 							if (nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor || nsFreshcare.user.roleID === nsFreshcare.data.roles.grower || nsFreshcare.user.roleID === nsFreshcare.data.roles.trainer)
 							{
 								$.extend(oParam, false,
@@ -4047,14 +4048,16 @@ nsFreshcare.internal =
 							// Redisplay the record as the Primary Contact is shown on the Details tab for Growers and in the Control panel for all others
 							// Work out which init function to call!
 							// v3.2.016 Was looking at roleID instead of role
+							// v3.2.020 Was using roleID instead of roleLower
 							if (nsFreshcare.user.roleID != nsFreshcare.data.roles.admin)
 							{	// We're viewing a grower page
-								if (oRoot[nsFreshcare.user.role.toLowerCase()] && oRoot[nsFreshcare.user.roleID].grower)
+								if (oRoot[nsFreshcare.user.roleLower] && oRoot[nsFreshcare.user.roleLower].grower)
 								{
-									oRoot[nsFreshcare.user.role.toLowerCase()].grower.init({id: ns1blankspace.objectContext});
+									oRoot[nsFreshcare.user.roleLower].grower.init({id: ns1blankspace.objectContext});
 								}
 								else
 								{
+									// v3.2.015 SUP023422 Added COP Based Training
 									nsFreshcare[nsFreshcare.user.role.toLowerCase()].grower.init({id: ns1blankspace.objectContext});
 								}
 							}
@@ -4254,6 +4257,7 @@ nsFreshcare.internal =
 									ns1blankspace.objectContextData.people = $.grep(ns1blankspace.objectContextData.people, function(x) {x.id != oParam.id});
 
 									// Need to send email notification if grower or auditor or trainer are inactivating
+									// v3.2.015 SUP023422 Added COP Based Training
 									if (iStatus == nsFreshcare.data.contactStatusInactive
 										&& (nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor 
 											|| nsFreshcare.user.roleID === nsFreshcare.data.roles.grower 
@@ -4321,6 +4325,7 @@ nsFreshcare.internal =
 							}
 						}
 						// Email, Phone or Mobile must be populated if external user updating
+						// v3.2.015 SUP023422 Added COP Based Training
 						else if (ns1blankspace.okToSave && nsFreshcare.user.roleID != nsFreshcare.data.roles.admin)
 						{
 							if ($('#ns1blankspaceBusinessContactPhone').val() == ''
@@ -4768,6 +4773,7 @@ nsFreshcare.internal =
 
 						// If external user updating grower - Work out which object save function to call and set functionPostSave
 						// v3.1.204 SUP023021 Now calls fFunctionPostSave if it exists, otherwise, call relevant grower.save.send
+						// v3.2.015 SUP023422 Added COP Based Training
 						if (fFunctionPostSave)
 						{
 							fFunctionPostSave(oParam);
@@ -6322,7 +6328,7 @@ nsFreshcare.internal =
 				aHTML.push('<table id="ns1blankspaceActions" class="ns1blankspace">');
 			
 				aHTML.push('<tr class="ns1blankspaceCaption">');
-
+				// v3.2.015 SUP023422 Added COP Based Training
 				if (bEmailsOnly && nsFreshcare.user.roleID === nsFreshcare.data.roles.admin)		// Column for incoming / outgoing icons
 				{
 					aHTML.push('<td class="ns1blankspaceHeaderCaption" style="font-size:0.875em;">&nbsp;</td>');
@@ -6863,6 +6869,7 @@ nsFreshcare.internal =
 			{
 				var aHTML = [];
 				var sClass = (oRow.priority === '3') ? ' nsFreshcareImportant' : '';
+				// v3.2.015 SUP023422 Added COP Based Training
 				var sClassEdit = (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin 
 									|| (nsFreshcare.user.roleID === nsFreshcare.data.roles.auditor && oRow.actionbytext === ns1blankspace.user.logonName)) 
 								? ' nsFreshcareNoteEdit' 
@@ -6889,7 +6896,7 @@ nsFreshcare.internal =
 				aHTML.push('<td id="ns1blankspaceNote_description-' + oRow.id + '" class="ns1blankspaceRow' + sClass + sClassEdit + '"' +
 								' data-fieldname="description">' +
 								oRow.description.formatXHTML() + '</td>');
-
+				// v3.2.015 SUP023422 Added COP Based Training
 				aHTML.push('<td class="ns1blankspaceRow">' +
 								'<span id="ns1blankspaceNote_priority-' + oRow.id + '" class="ns1blankspaceRow ns1blankspaceRowPriority"' +
 									' data-priority="' + oRow.priority + '">' +
@@ -7237,6 +7244,7 @@ nsFreshcare.internal =
 
 			row: function(oRow, oParam)
 			{	// v3.1.1f Moved from grower.admin.emails
+				// v3.2.015 SUP023422 Added COP Based Training
 				var aHTML = [];
 				var bAdmin = (nsFreshcare.user.roleID === nsFreshcare.data.roles.admin);
 
@@ -8645,11 +8653,6 @@ nsFreshcare.internal =
 										',notes,primarycontactperson,modifieddate' +
 										',directdebitaccountname,directdebitaccountnumber,directdebitbank,directdebitbranchnumber');
 
-					// v3.2.010 SUP023329 Now responds to option as ECA don't use it
-					if (nsFreshcare.option.exportToXero)
-					{
-						oSearch.addField('sexerocontactid,sexerocontactupdated');
-					}
 					oSearch.addField(ns1blankspace.option.auditFields);
 					
 					//oSearch.addField(ns1blankspace.extend.elements());
@@ -8836,7 +8839,7 @@ nsFreshcare.internal =
 			$('#ns1blankspaceControlFinancial').click(function(event)
 			{
 				ns1blankspace.show({selector: '#ns1blankspaceMainFinancials', refresh: true});
-				ns1blankspace.contactBusiness.financials.show();
+				ns1blankspace.contactBusiness.financials();
 			});
 			
 			$('#ns1blankspaceControlXero').click(function(event)

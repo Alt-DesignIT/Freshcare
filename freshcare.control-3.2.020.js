@@ -166,6 +166,7 @@ nsFreshcare.option.carTypeReportTypes = false;		// v3.1.209 SUP023095 Used by EC
 nsFreshcare.option.carTypeSeverity = true;			// v3.1.209 SUP023095 Not used by ECA
 nsFreshcare.option.copJASANZDesc = true;			// v3.1.211 SUP023196 Not used by ECA
 nsFreshcare.option.exportToXero = true;				// v3.2.010 SUP023329 Not used by ECA
+nsFreshcare.option.qualifyingTraining = true;		// v3.2.020 SUP023422 Not yet used by ECA
 
 nsFreshcare.data.switched = {};
 nsFreshcare.data.viewFilter = {};
@@ -285,6 +286,7 @@ ns1blankspace.option.calendarActionTypes = '4';
 ns1blankspace.option.actionTypeDefault = {id: '4', title: 'File Note'};
 delete(ns1blankspace.option.messagingCheckURL) //= "https://mail.lab.ibcom.biz"; 		// v3.1.210 removed
 ns1blankspace.option.passwordErrorMessage = '<br />Password needs to be at least 6 characters and contain at least 1 number.';
+ns1blankspace.option.spaceTextMaximumLength = 20;	// v3.2.019 SUP023235 Governs the length of the space name
 
 ns1blankspace.option.preLoad = function()
 {
@@ -703,6 +705,17 @@ nsFreshcare.setup =
 				type: 1
 			},
 			{
+				// v3.2.020 SUP022964 eLearning Trainees logged into Freshcare
+				title: "New eLearning",
+				namespace: "newelearning",
+				parentNamespace: "admin",
+				rootnamespace: nsFreshcare,
+				endpoint: "AGRI_TEMP_TRAINEE",
+				show: true,
+				group: 2,
+				type: 1
+			},
+			{
 				title: "New " + nsFreshcare.data.growerText + " Memberships",
 				namespace: "newmemberships",
 				parentNamespace: "admin",
@@ -730,7 +743,33 @@ nsFreshcare.setup =
 				endpoint: "AGRI_EDUCATION_TRAINING_COURSE_ATTENDEE",
 				show: true,
 				group: 2,
-				type: 1
+				type: 1,
+				search: 
+				{
+					filters: 
+					[
+						{
+							caption: "Membership",
+							name: "agritrainingcourseattendee.course.package.membership",
+							type: 'Select',
+							comparison: 'EQUAL_TO',
+							method: "AGRI_MEMBERSHIP_SEARCH",
+							methodFilter: "status-EQUAL_TO-" + nsFreshcare.data.membershipStatusActive ,
+							fixed: false
+						},
+						{
+							caption: "COP",
+							name: "agritrainingcourseattendee.course.package.codeofpractice",
+							type: 'Select',
+							comparison: 'EQUAL_TO',
+							method: "AGRI_CODE_OF_PRACTICE_SEARCH",
+							methodFilter: 'agricodeofpractice.membership.code-TEXT_IS_LIKE|code-TEXT_IS_LIKE',
+							methodColumns: 'agricodeofpractice.membership.code-space-code',
+							fixed: false
+						}
+					],
+					caption: "<br />More filters..",
+				}
 			},
 			{
 				title: "Create Links",
@@ -2232,7 +2271,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.admin.audit',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.audit-3.2.016.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.audit-3.2.020.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2271,6 +2310,11 @@ nsFreshcare.scripts =
 		sourceNS: nsFreshcare
 	},
 	{
+		// v3.2.020 SUP022964 eLearning Trainees logged into Freshcare
+		nameSpace: 'freshcare.admin.newelearning',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newelearning-3.2.020.js',
+		sourceNS: nsFreshcare
+	},	{
 		nameSpace: 'freshcare.admin.newgrower',
 		source: '/site/' + nsFreshcare.site + '/freshcare.admin.newgrower-3.2.020.js',
 		sourceNS: nsFreshcare
@@ -2307,7 +2351,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.admin.trainingcourse',
-		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainingcourse-3.2.015.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.admin.trainingcourse-3.2.020.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2342,7 +2386,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.customer.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.customer.grower-3.2.015.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.customer.grower-3.2.019.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2352,7 +2396,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.external.grower',
-		source: '/site/' + nsFreshcare.site + '/freshcare.external.grower-3.2.015.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.external.grower-3.2.020.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -2412,7 +2456,7 @@ nsFreshcare.scripts =
 	},
 	{
 		nameSpace: 'freshcare.report',
-		source: '/site/' + nsFreshcare.site + '/freshcare.report-3.2.010.js',
+		source: '/site/' + nsFreshcare.site + '/freshcare.report-3.2.019a.js',
 		sourceNS: nsFreshcare
 	},
 	{
@@ -6083,6 +6127,7 @@ var isValidDate = function(value, userFormat)
 			var aMonths = 'January,February,March,April,May,June,July,August,September,October,November,December'.split(',');
 			aMonths = $.map(aMonths, function(a) {return (m.length == 3) ? a.substr(0,3) : a;});
 			m = $.inArray(m, aMonths);
+			m += 1;
 		}
 	    return (
 	      m > 0 && m < 13 &&

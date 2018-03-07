@@ -9977,6 +9977,7 @@ nsFreshcare.extend =
 				oSearch.addField('contactbusiness,group,grouptext');
 				oSearch.addFilter('contactbusiness', 'IN_LIST', aIDs.join(','));
 				oSearch.addFilter('group', 'IN_LIST', sPortalGroups);
+				oSearch.rows = 200;		// v3.2.018 Added rows parameter
 				oSearch.getResults(function(oResponse)
 				{
 					var sElementID = '#ns1blankspaceBusinesses_BusinessType-';
@@ -10062,6 +10063,7 @@ nsFreshcare.extend =
 				oSearch.addField('contactbusiness,group,grouptext');
 				oSearch.addFilter('contactbusiness', 'IN_LIST', aIDs.join(','));
 				oSearch.addFilter('group', 'IN_LIST', sPortalGroups);
+				oSearch.rows = 200;		// v3.2.018 Added rows parameter
 				oSearch.getResults(function(oResponse)
 				{
 					var sElementID = '#ns1blankspacePeople_BusinessType-';

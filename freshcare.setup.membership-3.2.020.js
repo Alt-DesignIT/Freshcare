@@ -635,23 +635,22 @@ $.extend(true,nsFreshcare.setup,
 		setMembershipCopID: function()
 		{
 			// v3.2.020 SUP023422 Added COP Based Training
-			// Special case for Audit Lapsed - if user has chosen Audit Lapsed, it's data-id will be "_1" - need to change to "-1"
-			if ($('#ns1blankspaceMembershipCropsUpdate').attr('data-id'))
+			if ($('#ns1blankspaceMembershipCOPQualifyingTraining').attr('data-id'))
 			{
 				var oSearch = new AdvancedSearch();
 				oSearch.method = 'AGRI_CODE_OF_PRACTICE_SEARCH';
 				oSearch.addField('membership');
-				oSearch.addFilter('id', 'EQUAL_TO', $('#ns1blankspaceMembershipCropsUpdate').attr('data-id'));
+				oSearch.addFilter('id', 'EQUAL_TO', $('#ns1blankspaceMembershipCOPQualifyingTraining').attr('data-id'));
 				oSearch.rows = 1;
 				oSearch.getResults(function(oResponse)
 				{
 					if (oResponse.status === 'OK' && oResponse.data.rows.length > 0)
 					{
-						$('#ns1blankspaceMembershipCropsUpdate').attr('data-id', oResponse.data.rows[0].id);
+						$('#ns1blankspaceMembershipCOPQualifyingTraining').attr('data-id', oResponse.data.rows[0].id);
 					}
 					else
 					{
-						$('#ns1blankspaceMembershipCropsUpdate').removeAttr('data-id')
+						$('#ns1blankspaceMembershipCOPQualifyingTraining').removeAttr('data-id')
 						ns1blankspace.status.error(oResponse.error.errornotes);
 					}
 				});
@@ -1194,8 +1193,6 @@ $.extend(true,nsFreshcare.setup,
 		{
 			search: function(oParam)
 			{
-		
-				
 				var bDefaultOnly = ns1blankspace.util.getParam(oParam, 'defaultOnly', {"default": false}).value;
 
 				ns1blankspace.data.defaultCOPText = '';
@@ -1259,7 +1256,6 @@ $.extend(true,nsFreshcare.setup,
 			show: function(oParam)
 			{
 				var aHTML = [];
-				var oResponse;
 				var bAddCOP = ns1blankspace.util.getParam(oParam, 'newCOP', {"default": false}).value;
 				if (oParam === undefined) {oParam = {}}
 
@@ -1270,10 +1266,6 @@ $.extend(true,nsFreshcare.setup,
 				}
 				else
 				{
-					if (oResponse === undefined) 
-					{
-						oResponse = oParam.response;
-					}
 
 					$('#ns1blankspaceMainCOP').attr('data-loading', '');
 						
@@ -1297,7 +1289,7 @@ $.extend(true,nsFreshcare.setup,
 							        '<td class="ns1blankspaceHeaderCaption">&nbsp;</td>' +
 							    '</tr>');
 					
-					$.each(oResponse.data.rows, function() 
+					$.each(ns1blankspace.objectContextData.codesOfPractice, function() 
 					{
 
 						aHTML.push('<tr id="ns1blankspaceCOPRow_' + this.id + '">');
@@ -1638,15 +1630,16 @@ $.extend(true,nsFreshcare.setup,
 
 				aHTML.push('<tr class="ns1blankspaceCaption ns1blankspaceTraineeMembershipDetails COPBasedTrainingDropbox">' +
 							'<td class="ns1blankspaceCaption">' +
-							'Qualify Training COP' +
+							'Qualifying Training COP' +
 							'</td></tr>' +
 							'<tr class="ns1blankspace ns1blankspaceTraineeMembershipDetails COPBasedTrainingDropbox">' +
 							'<td class="ns1blankspace">' +
-							'<input id="ns1blankspaceMembershipCropsUpdate"' +
+							'<input id="ns1blankspaceMembershipCOPQualifyingTraining"' +
 								' class="ns1blankspaceSelect ns1blankspaceWatermark"' +
-								' data-click="nsFreshcare.setup.membership.setMembershipCopID"' +
+								//' data-click="nsFreshcare.setup.membership.setMembershipCopID"' +
 								' data-method="AGRI_CODE_OF_PRACTICE_SEARCH"' +
 								' data-columns="agricodeofpractice.membership.code-space-code"' +
+								' data-methodFilter="agricodeofpractice.membership.code-TEXT_IS_LIKE|code-TEXT_IS_LIKE"' +
 								' maxlength="300"' +
 								' value="Search for Qualifying Codes of Practice">' +
 							'</td></tr>');
@@ -1667,9 +1660,9 @@ $.extend(true,nsFreshcare.setup,
 					$('[name="COPBasedTraining"][value="' + oThisCOP["agricodeofpractice.copbasedtraining"] + '"]').attr('checked', true);
 					if (nsFreshcare.option.copJASANZDesc)
 					{
-						$('#ns1blankspaceMembershipCOPJASANZDesc').val(oThisCOP['agricodeofpractice.secopjasanzdesc']);
+						$('#ns1blankspaceMembershipCOPJASANZDesc').val(oThisCOP['agricodeofpractice.secopjasanzdesc'].formatXHTML());
 					}
-					if(oThisCOP['agricodeofpractice.copbasedtraining']=='Y')
+					if (oThisCOP['agricodeofpractice.copbasedtraining']=='Y')
 					{
 						$('.COPBasedTrainingDropbox').show();
 					}
@@ -1735,7 +1728,7 @@ $.extend(true,nsFreshcare.setup,
 				$.ajax(
 				{
 					type: 'POST',
-					url: ns1blankspace.util.endpointURI('AGRI_CODE_OF_PRACTICE_QUALIFYING_TRAINING_manage'),
+					url: ns1blankspace.util.endpointURI('AGRI_CODE_OF_PRACTICE_QUALIFYING_TRAINING_MANAGE'),
 					data: oData,
 					dataType: 'json',
 					success: function(data)
@@ -1759,14 +1752,14 @@ $.extend(true,nsFreshcare.setup,
 				var aHTML = [];
 				var oSearch = new AdvancedSearch();
 				oSearch.method = 'AGRI_CODE_OF_PRACTICE_QUALIFYING_TRAINING_SEARCH';
-				oSearch.addField('id,codeOfPractice,QualifyingCodeOfPracticeText,QualifyingCodeOfPractice');
-				oSearch.addFilter('codeOfPractice', 'EQUAL_TO', CopId);
+				oSearch.addField('id,codeofpractice,qualifyingcodeofpracticetext,qualifyingcodeofpractice,agriqualifyingtraining.qualifyingcodeofpractice.membership.code');
+				oSearch.addFilter('codeofpractice', 'EQUAL_TO', CopId);
 				oSearch.rows = 50;
 				oSearch.getResults(function(oResponse)
 				{
 					if (oResponse.status == 'OK')
 					{
-							aHTML.push('<table id="ns1blankspaceMembershipCropsUpdate_SelectRows" style="width:100%;"><tbody>');
+							aHTML.push('<table id="ns1blankspaceMembershipCOPQualifyingTraining_SelectRows" style="width:100%;"><tbody>');
 				
 								$.each(oResponse.data.rows, function()
 								{
@@ -1775,7 +1768,7 @@ $.extend(true,nsFreshcare.setup,
 									aHTML.push('<td class="ns1blankspaceMultiSelect"' + 
 									' id="ns1blankspaceQualifyingTraining_SelectRows' + this.id + 
 									'">' +
-										this.qualifyingcodeofpracticetext + 
+										this['agriqualifyingtraining.qualifyingcodeofpractice.membership.code'] + ' - ' + this.qualifyingcodeofpracticetext + 
 									'</td>');
 
 									aHTML.push('<td width="20px" data-id="' + this.id + '" class="ns1blankspaceQualifyingTrainingRemove' +
@@ -1899,10 +1892,10 @@ $.extend(true,nsFreshcare.setup,
 									ns1blankspace.status.message('COP Saved.');
 									delete (ns1blankspace.objectContextData.codesOfPractice);
 									nsFreshcare.setup.membership.codeOfPractice.show();
-									var QualifyingId=$('#ns1blankspaceMembershipCropsUpdate').attr('data-id');
+									var QualifyingId=$('#ns1blankspaceMembershipCOPQualifyingTraining').attr('data-id');
 									if(QualifyingId!=undefined)
 									{
-										oParam.QualifyingCodeOfPractice = $('#ns1blankspaceMembershipCropsUpdate').attr('data-id');
+										oParam.QualifyingCodeOfPractice = $('#ns1blankspaceMembershipCOPQualifyingTraining').attr('data-id');
 										oParam.CodeOfPractice = oResponse.id;
 										nsFreshcare.setup.membership.codeOfPractice.addQualifyingtraining(oParam);
 									}
