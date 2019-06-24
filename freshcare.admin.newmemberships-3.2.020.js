@@ -1231,57 +1231,68 @@ nsFreshcare.admin.newmemberships =
 					}
 				});
 			}
+
+			// Add Attendance link if using qualifyingtraining
 			else if (oParam.addMembershipStep === 8)
 			{
-				sMessage = 'Updating Attendee record..';
-				if (oThisTrainee.xhtmlElement)
+				if (nsFreshcare.option.qualifyingTraining)
 				{
-					nsFreshcare.admin.certificate.rowStatus({xhtmlElement: oThisTrainee.xhtmlElement, statusMessage: sMessage});
-				}
-				else {ns1blankspace.status.working(sMessage);}
-
-				var oData = {};
-					
-				oData.attendee = oThisTrainee.id;
-				oData.contactbusiness = oThisTrainee['traineecontactbusiness'];
-				oData.contactperson = oThisTrainee['traineecontactperson'];
-				oData.subscription = oParam.subscriptionID;
-
-				$.ajax(
-				{
-
-					type: 'POST',
-					url: ns1blankspace.util.endpointURI('AGRI_TRAINEE_ATTENDANCE_LINK_MANAGE'),
-					data: oData,
-					success: function(oResponse)
+					sMessage = 'Adding Attendance Link..';
+					if (oThisTrainee.xhtmlElement)
 					{
-						delete(oParam.addMembershipStep);
-						if (oResponse.status === 'OK')
+						nsFreshcare.admin.certificate.rowStatus({xhtmlElement: oThisTrainee.xhtmlElement, statusMessage: sMessage});
+					}
+					else {ns1blankspace.status.working(sMessage);}
+
+					var oData = {};
+						
+					oData.attendee = oThisTrainee.id;
+					oData.contactbusiness = oThisTrainee['traineecontactbusiness'];
+					oData.contactperson = oThisTrainee['traineecontactperson'];
+					oData.subscription = oParam.subscriptionID;
+
+					$.ajax(
+					{
+
+						type: 'POST',
+						url: ns1blankspace.util.endpointURI('AGRI_TRAINEE_ATTENDANCE_LINK_MANAGE'),
+						data: oData,
+						success: function(oResponse)
 						{
-							delete(oParam.subscriptionID);
-							oParam.traineeDataIndex += 1
-							if (oThisTrainee.xhtmlElement)
-							{	
-								$(oThisTrainee.xhtmlElement).parent().parent().hide();
-								nsFreshcare.admin.certificate.rowStatus({xhtmlElement: oThisTrainee.xhtmlElement, remove: true});
-							}
-							nsFreshcare.admin.newmemberships.addMembership(oParam);
-						}
-						else
-						{
-							sMessage = 'Error updating Attendee record: ';
-							if (oThisTrainee.xhtmlElement)
+							delete(oParam.addMembershipStep);
+							if (oResponse.status === 'OK')
 							{
-								nsFreshcare.admin.certificate.rowStatus({xhtmlElement: oThisTrainee.xhtmlElement, errorMessage: sMessage, errorNotes: oResponse.error.errornotes});
-								oParam.traineeDataIndex += 1;
+								delete(oParam.subscriptionID);
+								oParam.traineeDataIndex += 1
+								if (oThisTrainee.xhtmlElement)
+								{	
+									$(oThisTrainee.xhtmlElement).parent().parent().hide();
+									nsFreshcare.admin.certificate.rowStatus({xhtmlElement: oThisTrainee.xhtmlElement, remove: true});
+								}
 								nsFreshcare.admin.newmemberships.addMembership(oParam);
 							}
-							else {ns1blankspace.status.error(sMessage + oResponse.error.errornotes)}
+							else
+							{
+								sMessage = 'Error updating Attendee record: ';
+								if (oThisTrainee.xhtmlElement)
+								{
+									nsFreshcare.admin.certificate.rowStatus({xhtmlElement: oThisTrainee.xhtmlElement, errorMessage: sMessage, errorNotes: oResponse.error.errornotes});
+									oParam.traineeDataIndex += 1;
+									nsFreshcare.admin.newmemberships.addMembership(oParam);
+								}
+								else {ns1blankspace.status.error(sMessage + oResponse.error.errornotes)}
+							}
 						}
-					}
-				});
+					});
+				}
+				else
+				{
+					delete(oParam.addMembershipStep);
+					delete(oParam.subscriptionID);
+					oParam.traineeDataIndex += 1
+					nsFreshcare.admin.newmemberships.addMembership(oParam);
+				}
 			}
-
 		}
 		else
 		{
