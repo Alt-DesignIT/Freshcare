@@ -1,0 +1,390 @@
+h3
+{
+	font-size: 0.875em;
+	color: #525252;
+}
+
+a:link, a:visited, a:active
+{
+	color: #5B7F00;
+}
+
+a:hover
+{
+	color: #006EBA;
+}
+
+td.ns1blankspaceRowSelect, td.ns1blankspaceMostLikely, td.ns1blankspaceControl
+{
+	color: #5B7F00;
+}
+
+td.ns1blankspaceHighlight
+{
+	font-weight: bold;	
+	color: #5B7F00;	
+}
+
+.ns1blankspaceDeleted
+{
+	color: #999999;
+	text-decoration: line-through
+}
+
+td.nsFreshcareRowNoBorder
+{
+	font-size: 0.875em;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-right: 8px;
+	padding-left: 2px;
+}
+
+.ns1blankspaceReportOutput
+{
+	margin-top: 10px; 
+	margin-left: 5px;
+}
+
+.ns1blankspaceReportOptions
+{
+	margin-left:2px; 
+	font-size:0.875em;
+}
+
+.ns1blankspaceReportParameterFixed
+{
+	color:#B8B8B8;
+	padding:2px;
+}
+
+#ns1blankspaceToolTip
+{
+	position: relative;
+	width: 100px; 
+	z-index: 99999;
+	background-color: #DDEABB;
+	border: solid 1px #D0D0D0;
+}
+
+
+#ns1blankspaceViewControlActionStatus
+{
+	top: 0px;
+	left: 648px;
+	padding-top: 0px;
+	padding-left: 2px;
+	color: #5B7F00;
+	/*width:170px;*/
+	z-index: 50;
+	font-size: 0.75em;
+   	height: 40px;
+}
+
+#ns1blankspaceViewFreshcare
+{
+	background: url(/site/1554/logo.png);
+}
+
+#ns1blankspaceViewOperations
+{
+	background: url(/jscripts/images/1blankspace.icons.50-2.0.0.png) 0px -50px;
+}
+
+#ns1blankspaceViewMoney
+{
+	background: url(/jscripts/images/1blankspace.icons.50-2.0.0.png) 50px -350px;
+}
+
+#ns1blankspaceViewSetupLookup
+{
+	background: url(/jscripts/images/1blankspace.icons.50-2.0.0.png) 100px -300px;
+}
+
+td.ns1blankspaceLogonCaption
+{
+    font-weight: 500;
+    color: #555;
+}
+
+.ns1blankspaceSummaryCaption
+{
+	color: #4C4C4C;
+	font-weight: bold;
+}
+
+.ns1blankspaceCaption
+{
+	color: #4C4C4C;
+	font-weight: bold;
+	padding-top: 5px;
+	padding-bottom: 2px;
+	padding-right: 2px;
+	padding-left: 2px;
+}
+
+table.ns1blankspaceColumn2
+{
+	border-left-style: solid;
+	border-width: 1px;
+	border-color: #4C4C4C;
+	padding-left: 10px;
+	margin-left: 15px;
+	margin-right: 15px;
+}
+
+table.ns1blankspaceColumn1
+{
+	border-right-style:solid;
+	border-width: 1px;
+	border-color: #4C4C4C;
+	padding-right: 10px;
+}
+
+td.ns1blankspaceColumn1Divider
+{
+	border-right-style:solid;
+	border-width: 1px;
+	border-color: #4C4C4C;
+	padding-right: 10px;
+}
+
+td.ns1blankspaceTreeColumn1
+{
+	border-left-style:solid;
+	border-width: 1px;
+	border-color: #4C4C4C;
+	padding-left: 5px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+td.ns1blankspaceLogonCaption
+{
+	font-weight: 500;
+	color: #4C4C4C;
+}
+
+td.ns1blankspaceLogonNotes
+{
+	color: #999999;
+	font-size: 0.875em;
+	padding-left: 15px;
+	border-left-style:solid;
+	border-width: 1px;
+	border-color: #4C4C4C;
+}
+
+td.ns1blankspaceSearchSub
+{
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: white;
+	cursor: pointer;
+	font-size: 0.875em;
+	padding: 3px;
+	color: #4C4C4C;
+}
+
+/* PREVIOUSLY COLOR=888888 */
+.ns1blankspaceHeaderCaption
+{
+	color: #4C4C4C;
+	font-weight: 300;
+	padding: 2px;
+	padding-bottom: 4px;
+	padding-right: 8px;
+	border-bottom-style:solid;
+	border-width: 1px;
+	border-color: #D0D0D0;	
+}
+
+.ns1blankspaceCaptionLarge
+{
+	color: #4C4C4C;
+	font-weight: 500;
+	padding-bottom: 4px;
+	font-size: 1em;
+}
+
+.ns1blankspaceTableCaption
+{
+	background-color: #EFEFEF;
+}
+
+table.ns1blankspaceViewControlSearchFilterContainer
+{
+	font-size: 0.875em;
+	color: #4C4C4C;
+	border-spacing: 2px 2px;
+
+	background-color: #E8E8E8;
+	width: 175px;
+	border-style: solid;
+	border-width: 3px;
+	border-color: #E8E8E8;
+	
+	margin-top:2px;
+	margin-bottom:1px;
+	margin-right:1px;
+	margin-left:1px;
+
+	opacity: 0.98;
+}
+
+td.ns1blankspaceNothing, div.ns1blankspaceNothing
+{
+	font-size: 0.875em;
+	color: #4C4C4C;
+}
+
+td.ns1blankspaceViewControlBrowse
+{
+	border-right-style:solid;
+	border-width: 1px;
+	border-color: #4C4C4C;	
+	cursor: pointer;
+	color: #4C4C4C;
+	text-align: center;
+	width: 20px;
+	background-color: #F8F8F8;
+}
+
+td.ns1blankspaceViewControlBrowseAll
+{
+	cursor: pointer;
+	color: #4C4C4C;
+	text-align: center;
+	width: 20px;
+	background-color: #F8F8F8;
+}
+
+
+/* ********************************************************************************************************/
+/* Now create Freshcare specific classes */
+/* ********************************************************************************************************/
+
+
+td.nsFreshcareReadOnly
+{
+	color: #808080;
+	width: 100%;
+	padding-left: 3px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	margin-bottom: 5px;
+	height: 17px;
+}
+
+.nsFreshcareImportant
+{
+	color: red;
+}
+
+input.nsFreshcareDisabled, textarea.nsFreshcareDisabled
+{
+	background-color: #EFEFEF;
+}
+
+td.nsFreshcareNotCertified, td.nsFreshcarePending {
+	color: #EE8F00;
+}
+
+textarea.nsFreshcareTextMulti {
+
+	font-size: 0.875em;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #4C4C4C;
+	padding-left: 3px;
+	padding-top: 3px;
+	margin-bottom: 5px;
+}
+
+td.nsFreshcareSelectable {
+
+	font-size: 0.875em;
+	color: #5B7F00;
+	/*color: #99CB33;*/
+	border-style: solid;
+	border-width: 1px;
+	border-color: #FFFFFF;
+	cursor: pointer;
+}
+
+td.nsFreshcareSelected {
+
+	background-color: #5B7F00;
+	/*font-weight: bold;*/
+	color: #FFFFFF;
+}
+
+td.nsFreshcareSystem, span.nsFreshcareSystem
+{
+	color: #ADADAD;
+	font-size: 0.625em;
+	background-color: #EFEFEF;
+	border: 1px solid #B8B8B8;
+	border-radius: 2px;
+	padding: 5px;
+}
+
+input.nsFreshcareSelectGrower {
+    border-color: #B8B8B8;
+    border-style: solid;
+    border-width: 1px;
+    font-size: 0.875em;
+    margin-bottom: 5px;
+    padding-bottom: 3px;
+    padding-left: 3px;
+    padding-top: 3px;
+    width: 100%;
+}
+.nsFreshcareDetails {
+	background-color: #DDEABB;
+	padding-bottom: 10px;
+	padding-top: 15px;
+}
+
+
+td.nsFreshcareHarvestMonths
+{
+	border: #FFFFFF solid 1px ;
+	background-color: #B8B8B8;
+	padding: 5px;
+	margin: 5px;
+	font-size: 0.75em;
+}
+
+td.nsFreshcareHarvestMonthsSelected
+{
+	border: #FFFFFF solid 1px ;
+	background-color: #5B7F00;
+	padding: 5px;
+	margin: 5px;
+	font-size: 0.75em;
+	/*font-weight: bold; */
+	color: #FFFFFF;
+}
+
+td.nsFreshcareInactive
+{
+	color: #A4A4A4;
+}
+
+.modal-header
+{
+	background-color: #DDEABB;
+}
+
+.ui-dialog-title
+{
+	font-family: "Verdana", "Arial", "Helvetica", "Sans-Serif";
+	font-size:0.875em;
+}
+
+.ui-dialog-buttonpane
+{
+	font-family: "Verdana", "Arial", "Helvetica", "Sans-Serif";
+	font-size:0.75em;
+}
